@@ -1,0 +1,22 @@
+# === Build tools ===
+build-essential
+cmake
+git
+python3-colcon-common-extensions
+python3-rosdep
+python3-vcstool
+
+# === Linters and formatters ===
+clang-format
+python3-pytest
+uncrustify
+
+# === Google Test (for C++ unit tests) ===
+libgtest-dev
+
+# === Quality of life tools ===
+curl
+wget
+
+# === ROS 2 specific packages ===
+ros-jazzy-ament-lint-common

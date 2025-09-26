@@ -9,7 +9,6 @@ Short description of changes and why they are needed.
 - [ ] Bugfix
 - [ ] Feature
 - [ ] Documentation
-- [ ] Chore
 
 ## How to test
 

@@ -1,20 +1,14 @@
 ---
-name: Issue Report
-about: Report a issue in the system
-title: "[Issue]: "
-labels:
+name: Bug
+about: Report a bug in the system
+title: "[Bug]: "
+labels: bug
 assignees: ""
 ---
 
-## Description
+### Description
 
-A clear and concise description of the issue.
-
-### Additional Context
-
-Add any other context about the problem here.
-
-## Optional
+A clear and concise description of the bug.
 
 ### Steps to Reproduce
 
@@ -33,3 +27,5 @@ Add screenshots if applicable.
 ### Environment
 
 Version, OS, etc.
+
+### Additional Context

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# TODO: Consider using +e to avoid getting stuck on errors
 set -e
 
 # Configuration
+USERNAME=$(whoami)
 IMAGE_NAME="ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"
 TAG="${ROS_DISTRO}"
@@ -10,7 +10,7 @@ CONTAINER_NAME="ros2-testing-worshop-roscon-es-25-container"
 SCRIPT_FOLDER_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPOSITORY_FOLDER_PATH="${SCRIPT_FOLDER_PATH}/.."
 # TODO Review this (whether to allow dynamic user name or fixed one)
-WORKSPACE_ROOT_CONTAINER="/home/ros2/ros2_ws"
+WORKSPACE_ROOT_CONTAINER="/home/${USERNAME}/ws"
 
 # Flags
 BUILD_FIRST=false
@@ -96,18 +96,19 @@ fi
 # Allow GUI applications
 xhost +
 
-# TODO: Again, careful with the user used
+# TODO: Check why graphical tools (Rviz) are not working correctly (OpenGL not using the GPU)
 # Run the container
 docker run -it \
   --net=host \
   ${NVIDIA_FLAGS} \
-  -u "$(id -u):$(id -g)" \
   --name "${CONTAINER_NAME}" \
-  -e DISPLAY \
-  -e "QT_X11_NO_MITSHM=1" \
-  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-  -v "${REPOSITORY_FOLDER_PATH}:${WORKSPACE_ROOT_CONTAINER}/src:rw" \
-  -v "${HOME}/.ssh:/home/ros2/.ssh:ro" \
+  -e DISPLAY=$DISPLAY \
+  -e QT_X11_NO_MITSHM=1 \
+  -e XDG_RUNTIME_DIR=/tmp/runtime-${USER} \
+  -e NVIDIA_DRIVER_CAPABILITIES=all \
+  -v "/tmp/.X11-unix:/tmp/.X11-unix" \
+  -v "${REPOSITORY_FOLDER_PATH}/ws:${WORKSPACE_ROOT_CONTAINER}" \
+  -v "${HOME}/.ssh:/home/${USERNAME}/.ssh" \
   -w "${WORKSPACE_ROOT_CONTAINER}" \
   "${IMAGE_NAME}:${TAG}" \
   "${ARGS[@]}"
@@ -116,6 +117,7 @@ docker run -it \
 xhost -
 
 # Function to be able to overwrite the image on exit
+# TODO (jesus): Check why this is not working sometimes after changes
 function onexit() {
   while true; do
     read -p "Do you want to overwrite the image called '$IMAGE_NAME' with the current changes? [y/n]: " answer

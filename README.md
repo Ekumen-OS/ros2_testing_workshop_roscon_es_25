@@ -37,9 +37,8 @@ Al finalizar el taller, los participantes serán capaces de:
 
 <!-- TODO Revisar cuando tengamos todo preparado, añadir links a los ejercicios practicos -->
 
-0. **Trabajo previo**
-
-   - Buildear y probar la imagen de `Docker` que contiene todo. Para ello, hay una [guía](./docker/README.md) preparada.
+> [!IMPORTANT]
+> Antes del workshop, es recomendable construir y probar la imagen de `Docker` que contiene todo. Para ello, hay una [guía](./docker/README.md) preparada.
 
 1. **Análisis Estático**
 

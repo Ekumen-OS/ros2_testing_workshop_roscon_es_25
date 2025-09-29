@@ -13,8 +13,8 @@ RUN apt-get update && \
 RUN rm requirements.txt
 
 # Some dependencies need to be installed with pip instead of apt
-# RUN apt-get update && apt-get install -y --no-install-recommends python3-pip && rm -rf /var/lib/apt/lists/*
-# RUN python3 -m pip install --no-cache-dir --break-system-packages ament-lint
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
+RUN python3 -m pip install --no-cache-dir --break-system-packages colcon-lint
 
 # TODO Deal with the annoying user that Ubuntu 24 already has on uid 1000
 # Create a non-root user, removing the default 'ubuntu' user
@@ -41,13 +41,16 @@ RUN apt-get update && apt-get install -y sudo \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# TODO (jesus): Add rosdep commands to install dependencies from packages
+
 # Set the new user and work directory
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
-# Source ROS 2 on container startup
+# Source ROS 2 and colcon autocompletion on container startup
 SHELL ["/bin/bash", "-c"]
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # Default entrypoint
 ENTRYPOINT ["/bin/bash"]

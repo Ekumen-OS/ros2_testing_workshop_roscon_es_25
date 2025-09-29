@@ -17,6 +17,7 @@ libgtest-dev
 # === Quality of life tools ===
 curl
 wget
+nano
 
 # === ROS 2 specific packages ===
 ros-jazzy-ament-lint-common

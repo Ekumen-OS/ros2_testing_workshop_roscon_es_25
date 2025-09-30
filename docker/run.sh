@@ -96,7 +96,6 @@ fi
 # Allow GUI applications
 xhost +
 
-# TODO: Check why graphical tools (Rviz) are not working correctly (OpenGL not using the GPU)
 # Run the container
 docker run -it \
   --net=host \
@@ -107,7 +106,8 @@ docker run -it \
   -e XDG_RUNTIME_DIR=/tmp/runtime-${USER} \
   -e NVIDIA_DRIVER_CAPABILITIES=all \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
-  -v "${REPOSITORY_FOLDER_PATH}/ws:${WORKSPACE_ROOT_CONTAINER}" \
+  -v "/dev/dri:/dev/dri" \
+  -v "${REPOSITORY_FOLDER_PATH}/modules:${WORKSPACE_ROOT_CONTAINER}/src/" \
   -v "${HOME}/.ssh:/home/${USERNAME}/.ssh" \
   -w "${WORKSPACE_ROOT_CONTAINER}" \
   "${IMAGE_NAME}:${TAG}" \

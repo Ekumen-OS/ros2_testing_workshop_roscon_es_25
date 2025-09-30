@@ -1,84 +1,78 @@
-# ROS 2 Testing: Una Guía Práctica de Supervivencia
+# ROS 2 Testing: A Practical Survival Guide
 
-Este taller tiene como objetivo introducir las **mejores prácticas para diseñar, probar y mantener nodos de ROS 2 en C++**, asegurando calidad de código, facilidad de mantenimiento y confianza en los despliegues.
+This workshop aims to introduce the **best practices for designing, testing, and maintaining ROS 2 nodes in C++**, ensuring code quality, ease of maintenance, and confidence in deployments.
 
-El taller combina teoría con ejercicios prácticos para que los asistentes puedan aplicar los conceptos directamente en su propio flujo de trabajo.
+The workshop combines theory with practical exercises so that attendees can apply the concepts directly in their own workflow.
 
----
+## 🎯 Knowledge objectives
 
-## 🎯 Objetivos de Aprendizaje
+By the end of the workshop, participants will be able to:
 
-Al finalizar el taller, los participantes serán capaces de:
-
-- Configurar análisis estático en sus proyectos ROS 2 para reforzar estándares de calidad.
-- Diseñar nodos ROS 2 de forma que la lógica principal sea **testeable independientemente** de las interfaces ROS.
-- Crear y ejecutar **tests unitarios** en C++ usando `ament_cmake_gtest` y `ament_cmake_gmock`.
-- Implementar **tests de interfaces ROS 2** (publishers, subscribers, parámetros, servicios).
-- Realizar **tests de integración** entre múltiples nodos.
-- Conocer cómo realizar **tests end-to-end** con `rosbag` y simulación.
-- Integrar todos estos pasos en un flujo de **Integración Continua** con GitHub Actions.
+- Configure static analysis in their ROS 2 projects to enforce quality standards.
+- Design ROS 2 nodes so that the main logic is **independently testable** from the ROS interfaces.
+- Create and run **unit tests** in C++ using `ament_cmake_gtest` and `ament_cmake_gmock`.
+- Implement **ROS 2 interface tests** (publishers, subscribers, parameters, services).
+- Perform **integration tests** between multiple nodes.
+- Know how to perform **end-to-end tests** with `rosbag` and simulation.
+- Integrate all these steps into a **Continuous Integration** workflow with GitHub Actions.
 
 ---
 
-## 🖥️ Requisitos Técnicos
+## 🖥️ Technical requirements
 
-- Portátil con Linux, Docker y un IDE (libre elección) instalado.
-- Cuenta de Github configurada.
-- Uso de la terminal de Linux y comandos básicos.
-- Conceptos fundamentales de ROS 2 y C++.
+- Laptop with Linux, Docker, and an IDE (of your choice) installed.
+- A configured GitHub account.
+- Use of the Linux terminal and basic commands.
+- Fundamental concepts of ROS 2 and C++.
 
-👉 Se recomienda revisar previamente los siguientes tutoriales oficiales sobre cómo trabajar con ROS 2:
+👉 It is recommended to first review the following official tutorials on how to work with ROS 2:
 
-- [ROS 2 Tutoriales Básicos](https://docs.ros.org/en/jazzy/Tutorials.html)
+- [ROS 2 Basic Tutorials](https://docs.ros.org/en/jazzy/Tutorials.html)
 
 ---
 
-## 📋 Contenido del Taller
+## 📋 Workshop content
 
 <!-- TODO Revisar cuando tengamos todo preparado, añadir links a los ejercicios practicos -->
 
 > [!IMPORTANT]
-> Antes del workshop, es recomendable construir y probar la imagen de `Docker` que contiene todo. Para ello, hay una [guía](./docker/README.md) preparada.
+> Before the workshop, it is recommended to build and test the `Docker` image that contains everything. For this, there is a prepared [guide](./docker/README.md).
 
-1. **Análisis Estático**
+1. **Linters**
 
-   - Configuración de `ament_lint` para linters, `uncrustify` y chequeos de dependencias.
-   - Ejemplo práctico con `colcon lint`.
+   - Introduction to the different linters and tools available, configuration of `ament_lint_auto` to integrate with CI.
+   - Practical example with `colcon lint`.
 
-2. **Diseño Testeable**
+2. **Unit Testing**
 
-   - Principios para desacoplar lógica y comunicación ROS 2.
-   - Uso de **Dependency Injection** para publishers, subscribers y servicios.
-   - Ejemplos de código refactorizado.
+   - Principles for decoupling logic and ROS 2 communication.
+   - Use of **Dependency Injection** for publishers, subscribers, and services.
+   - Configuration of `ament_cmake_gtest` and `ament_cmake_gmock`.
+   - Example: testing an algorithm in isolation.
 
-3. **Unit Testing en C++**
+3. **ROS 2 Unit Testing**
 
-   - Configuración de `ament_cmake_gtest` y `ament_cmake_gmock`.
-   - Ejemplo: testear un algoritmo en aislamiento.
+   - How to test publishers/subscribers/services/parameters.
+   - Using `ament_add_ros_isolated_gtest` to avoid interference between tests.
+   - Practical exercise: testing a simple node.
 
-4. **Testing de Interfaces ROS 2**
+4. **Integration Testing**
 
-   - Cómo testear publishers/subscribers/servicios/parámetros.
-   - Uso de `ament_add_ros_isolated_gtest` para evitar interferencias entre tests.
-   - Ejercicio práctico: testear un nodo sencillo.
+   - Validate communication and behavior between multiple nodes.
+   - Example: interaction between a producer and a consumer node.
 
-5. **Testing de Integración**
+5. **End-to-End Testing**
 
-   - Validar comunicación y comportamiento entre varios nodos.
-   - Ejemplo: interacción entre un nodo productor y un consumidor.
+   - Complete system validation with `rosbag` and simulation environments.
+   - Examples of testing pipelines.
+   - Theoretical content only.
 
-6. **End-to-End Testing**
-
-   - Validación completa del sistema con `rosbag` y entornos de simulación.
-   - Ejemplos de pipelines de testing.
-   - Solo contenido teórico.
-
-7. **Integración Continua**
-   - Añadir análisis estático y tests a un workflow de GitHub Actions.
-   - Ejemplo de workflow mínimo.
+6. **Continuous Integration**
+   - Add static analysis and tests to a GitHub Actions workflow.
+   - Example of a minimal workflow.
 
 ---
 
-## 📦 Recursos y Herramientas
+## 📦 Tools and resources
 
 (Rellenar con links y recursos)

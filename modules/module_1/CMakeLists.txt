@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(modulo_1)
+project(module_1)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -17,6 +17,7 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+  # This is the key to execute the tests with the linters
   ament_lint_auto_find_test_dependencies()
 endif()
 

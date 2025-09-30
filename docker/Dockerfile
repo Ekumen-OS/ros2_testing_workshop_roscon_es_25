@@ -16,24 +16,12 @@ RUN rm requirements.txt
 RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
 RUN python3 -m pip install --no-cache-dir --break-system-packages colcon-lint
 
-# TODO Deal with the annoying user that Ubuntu 24 already has on uid 1000
-# Create a non-root user, removing the default 'ubuntu' user
-# RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
-# ARG USERNAME=ros2
-# ARG USER_UID=1000
-# ARG USER_GID=$USER_UID
-# RUN apt-get update && apt-get install -y sudo \
-#     && groupadd --gid $USER_GID $USERNAME \
-#     && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME \
-#     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
-#     && chmod 0440 /etc/sudoers.d/$USERNAME
-
-# --- Take ownership of the existing non-root user (ID 1000) ---
+# Take ownership of the existing non-root user (ID 1000)
 ARG USERNAME=ros2
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-# The ROS base image has a user 'ros' at UID/GID 1000.
+# The Ubuntu 24 base image has a defualt user 'ubuntu' at UID/GID 1000.
 # We modify this user to match the host user's name.
 RUN apt-get update && apt-get install -y sudo \
     && groupmod --gid $USER_GID --new-name $USERNAME ubuntu \

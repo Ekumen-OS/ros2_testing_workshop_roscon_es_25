@@ -105,11 +105,11 @@ docker run -it \
   -e QT_X11_NO_MITSHM=1 \
   -e XDG_RUNTIME_DIR=/tmp/runtime-${USER} \
   -e NVIDIA_DRIVER_CAPABILITIES=all \
-  -v "/tmp/.X11-unix:/tmp/.X11-unix" \
-  -v "/dev/dri:/dev/dri" \
-  -v "${REPOSITORY_FOLDER_PATH}/modules:${WORKSPACE_ROOT_CONTAINER}/src/" \
-  -v "${HOME}/.ssh:/home/${USERNAME}/.ssh" \
-  -w "${WORKSPACE_ROOT_CONTAINER}" \
+  --device /dev/dri:/dev/dri \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v ${REPOSITORY_FOLDER_PATH}/modules:${WORKSPACE_ROOT_CONTAINER}/src/ \
+  -v ${HOME}/.ssh:/home/${USERNAME}/.ssh \
+  -w ${WORKSPACE_ROOT_CONTAINER} \
   "${IMAGE_NAME}:${TAG}" \
   "${ARGS[@]}"
 

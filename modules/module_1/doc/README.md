@@ -1,3 +1,24 @@
+**Table of Contents**
+
+- [Module 1 – Linters](#module-1--linters)
+  - [Objectives](#objectives)
+  - [Motivation](#motivation)
+  - [Comparison of Linters in ROS 2](#comparison-of-linters-in-ros-2)
+    - [Configuration](#configuration)
+    - [Frequent Conflicts and Incompatibilities](#frequent-conflicts-and-incompatibilities)
+    - [Recommendations](#recommendations)
+  - [Other Useful Tools](#other-useful-tools)
+    - [Colcon lint](#colcon-lint)
+    - [ROS 2 doctor](#ros-2-doctor)
+  - [Exercises](#exercises)
+    - [Exercise 1](#exercise-1)
+      - [Definition of success](#definition-of-success)
+    - [Exercise 2](#exercise-2)
+      - [Definition of success](#definition-of-success-1)
+  - [References](#references)
+  
+---
+
 # Module 1 – Linters
 
 In this module, we will work with **linters** in ROS 2.
@@ -13,9 +34,9 @@ By the end of the module, participants will be able to:
 
 ## Motivation
 
-Linters are automated tools that **analyze source code** to flag programming errors, bugs, style inconsistencies, and suspicious constructs. Think of them as a grammar and spell checker for your code. They don't check if your logic is correct, but they ensure the code adheres to a set of predefined rules, making it **more readable, consistent, and less prone to common errors**. These linters can be intgerated with IDEs to automatically provide feedback and reformat code on save for example, maintaining the quality during active development as well.
+Linters are automated tools that **analyze source code** to flag programming errors, bugs, style inconsistencies, and suspicious constructs. Think of them as a grammar and spell checker for your code. They don't check if your logic is correct, but they ensure the code adheres to a set of predefined rules, making it **more readable, consistent, and less prone to common errors**. These linters can be integrated with IDEs to automatically provide feedback and reformat code on save for example, maintaining the quality during active development as well.
 
-Their importance in maintaining high-quality software cannot be understimated:
+Their importance in maintaining high-quality software cannot be underestimated:
 
 - **Enforce Consistency**: In any project, especially collaborative ones, a consistent coding style is crucial for readability. Linters automatically enforce these style guides, ensuring everyone writes code that looks and feels the same.
 - **Prevent Bugs**: Static analysis tools can detect potential issues, such as memory leaks, uninitialized variables, or dangerous code patterns, long before the code is ever run. This saves significant time in debugging.
@@ -47,13 +68,17 @@ In C++ ROS 2 projects, it's common to combine formatters (for style) with static
 
 ### Configuration
 
-To enforce a specific style in the linters, you can add configuration files to the root of your package, for example, a `.clang-format` file. This file tells `ament_clang_format` how to format the code. A simple configuration might look like this:
+The `ament_lint` packages provide default configurations for the linters they wrap, and these can change between distros. This can affect CI/CD pipelines, so for production projects, you should always create your own configuration files.
+
+To enforce a specific style in the linters, you can add these configuration files to the root of your package, for example, a `.clang-format` file. This file tells `ament_clang_format` how to format the code. A simple configuration might look like this:
 
 ```yaml
 BasedOnStyle: Google
 IndentWidth: 2
 ColumnLimit: 120
 ```
+
+The official docs also provide an official guide on the defined guidelines for each language (see [references](#references) for more information), helping you to configure correctly your linters.
 
 ---
 
@@ -64,7 +89,10 @@ ColumnLimit: 120
 - **Overlapping warnings**:
   Tools like cppcheck and others (clang-tidy or LLVM analysis) can produce similar warnings. Using them together without filtering can generate a lot of "noise" that ends up being ignored.
 - **False positives**:
-  Some warnings may not correspond to real errors, especially in code conditioned by macros, templates, or specific optimizations.
+  Some warnings may not correspond to real errors, especially in code conditioned by macros, templates, or specific optimizations. If these false positives become a problem, you can supress the linter warnings (or even if the "correct" code according to the linter is not better than the current one). Some examples of how to do this:
+    - C++ (clang-tidy): `// NOLINT` or `// NOLINTNEXTLINE` at the end of the line.
+    - C++ (cpplint): `// NOLINT(category/rule_name)` to be more specific.
+    - Python (flake8): `# noqa` at the end of the line, or `# noqa: E501` to ignore a specific error code (like line length).
 
 ---
 
@@ -79,7 +107,7 @@ Taking into account the information above, plus experiences seen from some users
 
 ## Other Useful Tools
 
-### Colcon-lint
+### Colcon lint
 
 `colcon lint` analyzes your package and its configuration files (package.xml, CMakeLists.txt) to detect common problems:
 
@@ -132,11 +160,18 @@ colcon test --packages-select module_1
 colcon test-result --verbose
 ```
 
-The task for this exercise is to analyze the inconsistencies in the current code, fix them, and see how the linter tests pass afterward.
+The task for this exercise is to analyze the inconsistencies in the current code, fix them (you can use the `--reformat` directly for the style ones), and see how the linter tests pass afterwards.
+
+#### Definition of success
+
+Your task is complete when you run the tests again, and the output of `colcon test-result --verbose` shows **0 errors** and **0 failures** for the linter tests associated with `module_1`.
+
+Notice that you should only have the changes applied by reformatting with the formatter and solving the problems highlighted with the static analysis tools.
 
 ---
 
 ### Exercise 2
+
 The objective of this exercise is to see the utility of the other tools that are not directly for the code, but for the packages themselves. The ROS 2 package for this module has some dependencies that are missing from being explicitly defined in the package.xml.
 
 Run colcon lint for the module 1 package:
@@ -147,10 +182,24 @@ source install/setup.bash
 colcon lint --packages-select module_1
 ```
 
-And we will see that some indications appear. The task is to correct these indications and run the command again to see that they, indeed, no longer appear.
+And we will see that some indications appear. The task is to correct these indications, adding the missing dependencies and ficing the style inconsistencies.
 
+#### Definition of success
+
+Your task is complete when you run the command `colcon lint --packages-select module_1` and it produces **no warning output** and finishes with a **successful exit code (0)**. A clean run should look like this:
+
+```bash
+colcon lint --packages-select module_1
+Starting >>> module_1
+Finished <<< module_1 [0.5s]
+
+Summary: 1 package finished [0.7s]
+```
+
+<a id="references"></a>
 ## References
 
+- [ROS 2 code style guide](https://docs.ros.org/en/jazzy/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html)
 - [ament_lint_auto docs](https://github.com/ament/ament_lint/blob/jazzy/ament_lint_auto/doc/index.rst)
 - [ament_lint repo](https://github.com/ament/ament_lint/tree/jazzy) (all the available linters for ROS 2 packages)
 - [ament_lint CLI utilities](https://docs.ros.org/en/jazzy/Tutorials/Advanced/Ament-Lint-For-Clean-Code.html)

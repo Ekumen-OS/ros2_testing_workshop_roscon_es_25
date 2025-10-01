@@ -8,7 +8,7 @@ By the end of this module, you will be able to:
 
 - Structure ROS 2 nodes so that **core logic** can be tested independently of ROS interfaces.
 - Apply **SOLID design principles** to create modular, maintainable, and testable code.
-- Write unit tests using [GoogleTest](https://github.com/google/googletest) (`gtest`) and GoogleMock (`gmock`).
+- Write unit tests using GoogleTest (`gtest`) and GoogleMock (`gmock`).
 - Integrate tests into the ROS 2 build system using `ament_cmake_gtest` and `ament_cmake_gmock`.
 - Run unit tests with `colcon tes`t and analyze the results.
 
@@ -55,7 +55,16 @@ In the context of ROS 2, **SRP** and **DIP** are especially important: separatin
 
 ### Example
 
-## Using googletest in ROS 2
+## GoogleTest
+
+With our code structured to be testable, we need the right tools to actually write and run the tests. For C++ projects, the industry standard is [GoogleTest](https://google.github.io/googletest/primer.html), commonly referred to as `gtest`.
+
+GoogleTest provides a simple and expressive way to define tests using macros like `TEST`, `EXPECT_EQ`, or `ASSERT_TRUE`. It produces structured output that integrates cleanly with continuous integration systems. Beyond readability, the biggest reason to use gtest in ROS 2 is its seamless integration: the build system provides wrappers such as `ament_cmake_gtest`, which make it trivial to add tests that are executed automatically when you run `colcon test`.
+
+In addition to `gtest`, the same framework also provides [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, which is a library for creating mock objects. A mock is a fake implementation of a class that behaves the way you tell it to. This is particularly useful in robotics, where real data often comes from sensors or hardware that is not always available during testing. By mocking a sensor interface, you can test how your algorithm reacts to predefined inputs without requiring a physical device.
+
+In summary:
+> `gtest` is used to validate algorithm correctness, and `gmock` is used to simulate external dependencies, both of which are essential for reliable unit testing in ROS 2.
 
 ## Exercises
 

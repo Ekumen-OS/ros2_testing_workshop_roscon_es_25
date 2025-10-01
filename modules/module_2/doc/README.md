@@ -14,7 +14,7 @@ By the end of this module, you will be able to:
 
 ## Motivation
 
-Unit tests validate the smallest building blocks of a system — functions and classes — in complete isolation. They are the fastest and most reliable feedback loop for developers, and they form the foundation of the testing pyramid.
+Unit tests validate the smallest building blocks of a system (functions and classes) in complete isolation. They are the fastest and most reliable feedback loop for developers, and they form the foundation of the testing pyramid.
 
 In ROS 2, unit testing is especially important because nodes often mix algorithmic logic (e.g., obstacle detection, planning) with ROS middleware (publishers, subscribers, services). This tight coupling makes it difficult to test algorithms without spinning up ROS infrastructure.
 
@@ -33,11 +33,25 @@ Since algorithm correctness is already validated at the unit level, integration 
 
 In short:
 
-Unit testing in ROS 2 protects your algorithms. It reduces complexity, speeds up development, and prevents subtle bugs from leaking into higher layers where they are harder to detect and debug.
+> Unit testing in ROS 2 protects your algorithms. It reduces complexity, speeds up development, and prevents subtle bugs from leaking into higher layers where they are harder to detect and debug.
 
 ## Testable Design
 
-Decoupling Logic from ROS 2 Interfaces is a fundamental principle for building reliable ROS 2 systems is to decouple the core algorithm/logic from the ROS 2 communication interfaces. This design pattern allows you to test the most critical part of your software (the algorithms) without the overhead and complexity of the ROS 2 environment (nodes, topics, services, etc.).
+<!-- Explain what SOLID principles are and reference -->
+
+When we talk about testable design, we mean writing code that can be easily and reliably exercised in isolation. A testable component has clear inputs and outputs, few hidden dependencies, and does not require a full system to be running in order to be validated.
+
+The **SOLID principles** from object-oriented programming are a useful guide for achieving this. They are not specific to ROS, but they help us avoid tangled designs where business logic, framework code, and external dependencies are mixed together in ways that make testing slow or brittle. By following SOLID, we make our code easier to test, but also easier to extend, reuse, and maintain.
+
+The five SOLID principles are:
+
+- Single Responsibility Principle (SRP): a class should only have one reason to change. Keeping algorithms separate from ROS plumbing ensures each part can be tested independently.
+- Open/Closed Principle (OCP): entities should be open for extension but closed for modification. With well-defined interfaces, we can extend functionality without rewriting existing tests.
+- Liskov Substitution Principle (LSP): subtypes must be substitutable for their base types. This makes it possible to replace real components with mocks or fakes in unit tests.
+- Interface Segregation Principle (ISP): favor small, specific interfaces over large, general ones. Narrow interfaces are easier to mock and lead to more focused tests.
+- Dependency Inversion Principle (DIP): depend on abstractions, not on concretions. This allows unit tests to supply fake dependencies instead of requiring live ROS publishers or hardware.
+
+In the context of ROS 2, **SRP** and **DIP** are especially important: separating algorithmic logic from communication logic makes algorithms independently testable, and depending on abstractions allows us to swap real ROS inputs for mocks during unit tests. Together, these principles help us build software that is not only more testable, but also more robust and adaptable in the long term.
 
 ### Example
 
@@ -48,4 +62,4 @@ Decoupling Logic from ROS 2 Interfaces is a fundamental principle for building r
 ## References
 
 - https://wiki.ros.org/Quality/Tutorials/UnitTesting
-- https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Testing/Testing-Main.htmllation, or hardware.
+- https://docs.ros.org/en/rolling/Tutorials/Intermediate/Testing/Cpp.html

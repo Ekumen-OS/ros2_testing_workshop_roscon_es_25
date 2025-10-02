@@ -24,27 +24,19 @@ By the end of this module, participants will be able to:
 
 ## Motivation
 
-Unit tests validate the smallest building blocks of a system (functions and classes) in complete isolation. They are the fastest and most reliable feedback loop for developers, and they form the foundation of the testing pyramid.
+Unit tests validate the smallest building blocks of a system (functions and classes) in isolation. They provide the fastest and most reliable feedback loop for developers and form the foundation of the testing pyramid.
 
-In ROS 2, unit testing is especially important because nodes often mix algorithmic logic (e.g., obstacle detection, planning) with ROS middleware (publishers, subscribers, services). This tight coupling makes it difficult to test algorithms without spinning up ROS infrastructure.
+In ROS 2, this is especially important because nodes often combine algorithmic logic (e.g., obstacle detection, planning) with middleware interfaces (publishers, subscribers, services). Testing such nodes directly requires spinning up ROS infrastructure, which slows feedback and introduces non-determinism.
 
-By applying unit testing:
+Unit tests solve this by keeping the focus on algorithms alone: they run **faster**, produce **deterministic** results, and allow **refactoring** with confidence. Higher-level integration and simulation tests can then concentrate on validating communication and system behavior, rather than re-checking algorithm correctness.
 
-- **Algorithms remain correct regardless of ROS glue code**: core logic can be validated independently of message passing.
-- **Tests are fast and deterministic**: unit tests execute in milliseconds and avoid the non-determinism of ROS communication or timing.
-- **Refactoring is safer**: developers can confidently change ROS interfaces or restructure algorithms knowing the core logic is still validated.
-- **Design quality improves**: unit testing enforces separation of concerns, with ROS interfaces in one layer and algorithms in another, in line with principles such as SRP and DIP.
-- **Higher-level tests are simplified**: integration and simulation tests can focus on validating communication and system behavior, not algorithm correctness.
-
-In short:
-
-> Unit testing in ROS 2 protects your algorithms. It reduces complexity, speeds up development, and prevents subtle bugs from leaking into higher layers where they are harder to detect and debug.
+> In short: Unit testing in ROS 2 protects your algorithms. It reduces complexity, speeds up development, and prevents subtle bugs from leaking into higher layers where they are harder to detect and debug.
 
 ## Testable Design
 
 Testable design means writing code that can be exercised in isolation, with well-defined inputs and outputs and minimal hidden dependencies. Such code does not require the full system to be running in order to be validated.
 
-A useful guide for achieving this is the set of **SOLID principles** from object-oriented programming, which encourage modularity, abstraction, and separation of concerns:
+A well-known guide for achieving this is the set of **SOLID principles** from object-oriented programming:
 
 - **Single Responsibility Principle (SRP)**: a class should only have one reason to change. Keeping algorithms separate from ROS plumbing ensures each part can be tested independently.
 - **Open/Closed Principle (OCP)**: entities should be open for extension but closed for modification. Well-defined interfaces allow extensions without rewriting existing tests.
@@ -54,7 +46,7 @@ A useful guide for achieving this is the set of **SOLID principles** from object
 
 In ROS 2, **SRP** and **DIP** are the most relevant. Separating algorithmic logic from middleware allows algorithms to be validated independently, while abstracting dependencies makes it straightforward to substitute real inputs with mocks during tests.
 
-A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, increases portability, and ensures that the algorithm can be maintained and tested independently of the ROS version in use.
+A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, ensures portability across ROS versions, and makes the algorithm easier to test and maintain over time.
 
 ### Example
 

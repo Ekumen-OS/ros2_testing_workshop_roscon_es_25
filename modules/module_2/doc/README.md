@@ -8,6 +8,7 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
   - [Testable Design](#testable-design)
     - [Example](#example)
   - [GoogleTest](#googletest)
+  - [Ament Integration](#ament-integration)
   - [Exercises](#exercises)
   - [References](#references)
 
@@ -51,7 +52,7 @@ A useful guide for achieving this is the set of **SOLID principles** from object
 - **Interface Segregation Principle (ISP)**: favor small, specific interfaces over large, general ones. Narrow interfaces are easier to mock and lead to more focused tests.
 - **Dependency Inversion Principle (DIP)**: depend on abstractions, not on concretions. This allows unit tests to supply fake dependencies instead of requiring live ROS publishers or hardware.
 
-In ROS 2, **SRP** and **DIP** are the most critical. Separating algorithmic logic from middleware allows algorithms to be validated independently, while abstracting dependencies makes it straightforward to substitute real inputs with mocks during tests.
+In ROS 2, **SRP** and **DIP** are the most relevant. Separating algorithmic logic from middleware allows algorithms to be validated independently, while abstracting dependencies makes it straightforward to substitute real inputs with mocks during tests.
 
 A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, increases portability, and ensures that the algorithm can be maintained and tested independently of the ROS version in use.
 
@@ -69,10 +70,48 @@ In summary:
 
 > `gtest` is used to validate algorithm correctness, and `gmock` is used to simulate external dependencies, both of which are essential for reliable unit testing in ROS 2.
 
+## Ament Integration
+
+ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build and run with `colcon test`. The integration has three pieces: `package.xml`, `CMakeLists.txt`, and how tests are executed.
+
+- Add the following lines to `package.xml`:
+
+    ```xml
+    <test_depend>ament_cmake_gtest</test_depend>
+    <!-- add ament_cmake_gmock only if using gmock -->
+    <test_depend>ament_cmake_gmock</test_depend> 
+    ```
+
+- Add to `CMakeLists.txt`:
+
+    ```CMake
+    if(BUILD_TESTING)
+      find_package(ament_cmake_gtest REQUIRED)
+      # Define test executable
+      ament_add_gtest(test_module_2_algorithm test/test_algorithm.cpp)
+      # Link against internal libraries
+      target_link_libraries(test_module_2_algorithm algorithm)
+      # Link against external libraries
+      ament_target_dependencies(test_module_2_algorithm Eigen3)
+
+      # Same for mocks
+    endif()
+    ```
+
+    The `if(BUILD_TESTING)` block keeps tests out of non-testing builds.
+
+- Run the tests with `colcon`:
+
+    ```bash
+    colcon build --packages-select module_2
+    colcon test  --packages-select module_2
+    colcon test-result --verbose
+    ```
+
 ## Exercises
 
 ## References
 
 - [SOLID principles](https://en.wikipedia.org/wiki/SOLID)
+- [Writing Basic Tests with C++ with GTest](https://docs.ros.org/en/rolling/Tutorials/Intermediate/Testing/Cpp.html)
 - https://wiki.ros.org/Quality/Tutorials/UnitTesting
-- https://docs.ros.org/en/rolling/Tutorials/Intermediate/Testing/Cpp.html

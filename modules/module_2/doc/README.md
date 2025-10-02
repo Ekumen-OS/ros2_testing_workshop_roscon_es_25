@@ -50,9 +50,23 @@ A recommended practice is to implement core algorithms using ROS-agnostic librar
 
 ### Example
 
+How could the filtering logic be tested in the example below? The callback mixes computation, state, logging, and publishing: does this follow the Single Responsibility Principle (SRP)?
+
+```cpp
+void callback(const std_msgs::msg::Float64 & msg) {
+  double value = msg.data;
+
+  double filtered = 0.9 * prev_ + 0.1 * value;
+  prev_ = filtered;
+
+  RCLCPP_INFO(this->get_logger(), "Filtered = %f", filtered);
+  publisher_->publish(std_msgs::msg::Float64{filtered});
+}
+```
+
 ## GoogleTest
 
-Once code is structured for testability, a framework is required to define and run the tests. The industry standard is [GoogleTest](https://google.github.io/googletest/primer.html), commonly referred to as `gtest`.
+Once code is structured for testability, a framework is required to define and run the tests. The industry standard is [GoogleTest](https://github.com/google/googletest), commonly referred to as `gtest`.
 
 GoogleTest provides a simple and expressive way to define tests using macros such as `TEST`, `EXPECT_EQ`, or `ASSERT_TRUE`. It produces structured output that integrates cleanly with continuous integration systems. Beyond readability, the biggest reason to use gtest in ROS 2 is its seamless integration, which make it trivial to add tests that are executed automatically.
 
@@ -128,5 +142,8 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
 ## References
 
 - [SOLID principles](https://en.wikipedia.org/wiki/SOLID)
-- [Writing Basic Tests with C++ with GTest](https://docs.ros.org/en/rolling/Tutorials/Intermediate/Testing/Cpp.html)
-- https://wiki.ros.org/Quality/Tutorials/UnitTesting
+- [Writing Basic Tests with C++ with GTest](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Testing/Cpp.html)
+- [Google Test Repo](https://github.com/google/googletestl)
+- [Google Test Macros](https://google.github.io/googletest/reference/testing.html)
+- [Google Test Assertions](https://google.github.io/googletest/reference/assertions.html)
+- [Google Mock Basics](https://google.github.io/googletest/gmock_for_dummies.html)

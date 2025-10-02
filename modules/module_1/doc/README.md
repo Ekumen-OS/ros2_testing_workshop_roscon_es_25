@@ -49,6 +49,8 @@ In the ROS 2 ecosystem, integrating these tools is made simple through the ament
 - `ament_cppcheck` integrates the static analyzer `cppcheck`.
 - `ament_cpplint` uses Google's `cpplint` style checker.
 
+The main package that can be considered the "engine" of these packages is called `ament_lint_common`. Its primary goal is to standardize how static code analysis is performed across ROS 2 packages, providing essential CMake functions and Python scripts so that the individual linters can be plugged into the build system easily.
+
 These ament packages provide a standardized way to add, configure, and execute these checks as part of the normal development workflow using tools like `colcon`. This seamless integration makes it easy to maintain high code quality and is a fundamental part of building **robust, production-ready ROS 2 applications**.
 
 ## Comparison of Linters in ROS 2
@@ -68,7 +70,7 @@ In C++ ROS 2 projects, it's common to combine formatters (for style) with static
 
 ### Configuration
 
-The `ament_lint` packages provide default configurations for the linters they wrap, and these can change between distros (although it's not common to do so). This can affect CI/CD pipelines, so for production projects, it's recommended to create custom configuration files.
+The `ament_lint` packages provide default configurations for the linters they wrap, and these can change between distros (although it's not common to do so). This can affect CI/CD pipelines, so for production projects, it's recommended to create custom configuration files, but be aware that it can lead to conflicting rules between linters.
 
 To enforce a specific style in the linters, these configuration files can be added to the root of the package, for example, a `.clang-format` file. This file tells `ament_clang_format` how to format the code. A simple configuration might look like this:
 

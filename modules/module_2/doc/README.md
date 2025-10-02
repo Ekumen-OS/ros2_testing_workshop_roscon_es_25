@@ -2,6 +2,15 @@
 
 In this module, we will work with **unit tests** in ROS 2, focusing on designing testable nodes and validating core algorithms with gtest and gmock.  
 
+- [Module 2: Unit Testing](#module-2-unit-testing)
+  - [Objectives](#objectives)
+  - [Motivation](#motivation)
+  - [Testable Design](#testable-design)
+    - [Example](#example)
+  - [GoogleTest](#googletest)
+  - [Exercises](#exercises)
+  - [References](#references)
+
 ## Objectives
 
 By the end of this module, you will be able to:
@@ -10,7 +19,7 @@ By the end of this module, you will be able to:
 - Apply **SOLID design principles** to create modular, maintainable, and testable code.
 - Write unit tests using GoogleTest (`gtest`) and GoogleMock (`gmock`).
 - Integrate tests into the ROS 2 build system using `ament_cmake_gtest` and `ament_cmake_gmock`.
-- Run unit tests with `colcon tes`t and analyze the results.
+- Run unit tests with `colcon test` and analyze the results.
 
 ## Motivation
 
@@ -64,11 +73,13 @@ GoogleTest provides a simple and expressive way to define tests using macros lik
 In addition to `gtest`, the same framework also provides [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, which is a library for creating mock objects. A mock is a fake implementation of a class that behaves the way you tell it to. This is particularly useful in robotics, where real data often comes from sensors or hardware that is not always available during testing. By mocking a sensor interface, you can test how your algorithm reacts to predefined inputs without requiring a physical device.
 
 In summary:
+
 > `gtest` is used to validate algorithm correctness, and `gmock` is used to simulate external dependencies, both of which are essential for reliable unit testing in ROS 2.
 
 ## Exercises
 
 ## References
 
+- [SOLID principles](https://en.wikipedia.org/wiki/SOLID)
 - https://wiki.ros.org/Quality/Tutorials/UnitTesting
 - https://docs.ros.org/en/rolling/Tutorials/Intermediate/Testing/Cpp.html

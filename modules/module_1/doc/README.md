@@ -21,7 +21,7 @@
 
 # Module 1 – Linters
 
-In this module, we will work with **linters** in ROS 2.
+In this module,the focus is on **linters** in ROS 2.
 
 ## Objectives
 
@@ -34,7 +34,7 @@ By the end of the module, participants will be able to:
 
 ## Motivation
 
-Linters are automated tools that **analyze source code** to flag programming errors, bugs, style inconsistencies, and suspicious constructs. Think of them as a grammar and spell checker for your code. They don't check if your logic is correct, but they ensure the code adheres to a set of predefined rules, making it **more readable, consistent, and less prone to common errors**. These linters can be integrated with IDEs to automatically provide feedback and reformat code on save for example, maintaining the quality during active development as well.
+Linters are automated tools that **analyze source code** to flag programming errors, bugs, style inconsistencies, and suspicious constructs. Think of them as a grammar and spell checker for the code. They don't check if logic is correct, but they ensure the code adheres to a set of predefined rules, making it **more readable, consistent, and less prone to common errors**. These linters can be integrated with IDEs to automatically provide feedback and reformat code on save for example, maintaining the quality during active development as well.
 
 Their importance in maintaining high-quality software cannot be underestimated:
 
@@ -68,9 +68,9 @@ In C++ ROS 2 projects, it's common to combine formatters (for style) with static
 
 ### Configuration
 
-The `ament_lint` packages provide default configurations for the linters they wrap, and these can change between distros. This can affect CI/CD pipelines, so for production projects, you should always create your own configuration files.
+The `ament_lint` packages provide default configurations for the linters they wrap, and these can change between distros (although it's not common to do so). This can affect CI/CD pipelines, so for production projects, it's recommended to create custom configuration files.
 
-To enforce a specific style in the linters, you can add these configuration files to the root of your package, for example, a `.clang-format` file. This file tells `ament_clang_format` how to format the code. A simple configuration might look like this:
+To enforce a specific style in the linters, these configuration files can be added to the root of the package, for example, a `.clang-format` file. This file tells `ament_clang_format` how to format the code. A simple configuration might look like this:
 
 ```yaml
 BasedOnStyle: Google
@@ -78,7 +78,7 @@ IndentWidth: 2
 ColumnLimit: 120
 ```
 
-The official docs also provide an official guide on the defined guidelines for each language (see [references](#references) for more information), helping you to configure correctly your linters.
+The official docs also provide an official guide on the defined guidelines for each language (see [references](#references) for more information), helping to configure correctly the linters.
 
 ---
 
@@ -89,7 +89,7 @@ The official docs also provide an official guide on the defined guidelines for e
 - **Overlapping warnings**:
   Tools like cppcheck and others (clang-tidy or LLVM analysis) can produce similar warnings. Using them together without filtering can generate a lot of "noise" that ends up being ignored.
 - **False positives**:
-  Some warnings may not correspond to real errors, especially in code conditioned by macros, templates, or specific optimizations. If these false positives become a problem, you can supress the linter warnings (or even if the "correct" code according to the linter is not better than the current one). Some examples of how to do this:
+  Some warnings may not correspond to real errors, especially in code conditioned by macros, templates, or specific optimizations. If these false positives become a problem, the linter warnings can be suppressed (or even if the "correct" code according to the linter is not better than the current one). Some examples of how to do this:
     - C++ (clang-tidy): `// NOLINT` or `// NOLINTNEXTLINE` at the end of the line.
     - C++ (cpplint): `// NOLINT(category/rule_name)` to be more specific.
     - Python (flake8): `# noqa` at the end of the line, or `# noqa: E501` to ignore a specific error code (like line length).
@@ -102,14 +102,14 @@ Taking into account the information above, plus experiences seen from some users
 
 1. **Choose a single main formatter** for the practical exercises:
    - **`ament_clang_format`** is recommended as the default option. It's simpler to configure, widely compatible with modern tools, and has a lower risk of unexpected conflicts.
-2. **Activate `ament_cppcheck`** as an additional analysis tool to detect logical errors that are not caught by the compiler or the formatter.
-3. If you want an extra style layer, **`ament_cpplint`** can be added, but it is not completely necessary if you are already using clang-format.
+2. **Activate `ament_cpplint`** as an additional analysis tool to detect logical errors that are not caught by the compiler or the formatter.
+3. If an extra style layer is required, **`ament_cppcheck`** can be added, but it is not completely necessary if clang-format is already in use.
 
 ## Other Useful Tools
 
 ### Colcon lint
 
-`colcon lint` analyzes your package and its configuration files (package.xml, CMakeLists.txt) to detect common problems:
+`colcon lint` analyzes the package and its configuration files (package.xml, CMakeLists.txt) to detect common problems:
 
 - Detects missing or incorrectly declared dependencies.
 - Verifies package naming conventions and structure.
@@ -126,7 +126,7 @@ colcon lint
 
 ### ROS 2 doctor
 
-Checks the ROS 2 installation, verifying paths, environment variables, and the general state of the workspace. Simply run the following command in your terminal:
+Checks the ROS 2 installation, verifying paths, environment variables, and the general state of the workspace. Simply run the following command in a terminal:
 
 ```bash
 ros2 doctor
@@ -138,14 +138,16 @@ For this module, the exercises to be carried out are simple, since it will mainl
 
 ### Exercise 1
 
+<!-- use ament_clang_format and ament_cpplint for this exercise -->
+
 The objective of this first exercise is to run the linters on the package C++ code, detect the problems, and correct them following the style recommendations. There are 2 ways to do this:
 
-1.  Run the linters individually one by one from the terminal: the advantage of this option is that you can apply `--reformat` on linters that support it (like `ament_clang_format`) to correct the code automatically.
-2.  Use `ament_lint_auto` (recommended if you want to integrate with CI): this is essentially a CMake function that finds and adds all linters listed as `<test_depend>` in the `package.xml`. Then, when you run the tests, these linters are also executed. Another advantage is that you don't need to remember individual commands.
+1.  Run the linters individually one by one from the terminal: the advantage of this option is that `--reformat` can be applied on linters that support it (like `ament_clang_format`) to correct the code automatically.
+2.  Use `ament_lint_auto` (recommended if Ci is going to be integrated): this is essentially a CMake function that finds and adds all linters listed as `<test_depend>` in the `package.xml`. Then, when tests are run, these linters are also executed. Another advantage is that there is no need to remember individual commands.
 
-In our case, the second option has been chosen for simplicity and ease of use (both can be combined, first executing the linters and then reformatting directly if needed). The linters to be used are defined in the [package.xml](../package.xml), and if we want to add new ones, we just have to tweak this configuration and add the necessary dependencies. The next step is to check that these linters run correctly.
+In our case, the second option has been chosen for simplicity and ease of use (both can be combined, first executing the linters and then reformatting directly if needed). The linters to be used are defined in the [package.xml](../package.xml), and new ones are needed, the only requisite is to tweak this configuration and add the necessary dependencies. The next step is to check that these linters run correctly.
 
-To do this, you first need to build the package:
+To do this, first is necessary to build the package:
 
 ```bash
 cd ~/ws
@@ -160,13 +162,13 @@ colcon test --packages-select module_1
 colcon test-result --verbose
 ```
 
-The task for this exercise is to analyze the inconsistencies in the current code, fix them (you can use the `--reformat` directly for the style ones), and see how the linter tests pass afterwards.
+The task for this exercise is to analyze the inconsistencies in the current code, fix them (`--reformat` can be used directly for the style ones), and see how the linter tests pass afterwards.
 
 #### Definition of success
 
-Your task is complete when you run the tests again, and the output of `colcon test-result --verbose` shows **0 errors** and **0 failures** for the linter tests associated with `module_1`.
+Your task is complete when tests are run again, and the output of `colcon test-result --verbose` shows **0 errors** and **0 failures** for the linter tests associated with `module_1`.
 
-Notice that you should only have the changes applied by reformatting with the formatter and solving the problems highlighted with the static analysis tools.
+The only changes that hsould be applied are thoseapplied by reformatting with the formatter, and fixing the problems highlighted with the static analysis tools.
 
 ---
 
@@ -182,11 +184,11 @@ source install/setup.bash
 colcon lint --packages-select module_1
 ```
 
-And we will see that some indications appear. The task is to correct these indications, adding the missing dependencies and ficing the style inconsistencies.
+Some indications will appear. The task is to correct these indications, adding the missing dependencies and ficing the style inconsistencies.
 
 #### Definition of success
 
-Your task is complete when you run the command `colcon lint --packages-select module_1` and it produces **no warning output** and finishes with a **successful exit code (0)**. A clean run should look like this:
+Your task is complete when the command `colcon lint --packages-select module_1` is run again and it produces **no warning output** and finishes with a **successful exit code (0)**. A clean run should look like this:
 
 ```bash
 colcon lint --packages-select module_1

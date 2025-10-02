@@ -1,0 +1,10 @@
+# Run against all the files: pre-commit run -a
+# Install the git hook scripts: pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-xml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace

@@ -41,11 +41,9 @@ In short:
 
 ## Testable Design
 
-Testable design refers to writing code that can be exercised easily and reliably in isolation. A testable component has clear inputs and outputs, minimal hidden dependencies, and does not require a full system to be operational in order to be validated.
+Testable design means writing code that can be exercised in isolation, with well-defined inputs and outputs and minimal hidden dependencies. Such code does not require the full system to be running in order to be validated.
 
-The **SOLID principles** from object-oriented programming are a useful guide for achieving this. They are not specific to ROS, but they help us avoid tangled designs where business logic, framework code, and external dependencies are mixed together in ways that make testing slow or brittle. Following SOLID results in code that is easier to test, extend, and maintain.
-
-The five SOLID principles are:
+A useful guide for achieving this is the set of **SOLID principles** from object-oriented programming, which encourage modularity, abstraction, and separation of concerns:
 
 - **Single Responsibility Principle (SRP)**: a class should only have one reason to change. Keeping algorithms separate from ROS plumbing ensures each part can be tested independently.
 - **Open/Closed Principle (OCP)**: entities should be open for extension but closed for modification. Well-defined interfaces allow extensions without rewriting existing tests.
@@ -53,7 +51,9 @@ The five SOLID principles are:
 - **Interface Segregation Principle (ISP)**: favor small, specific interfaces over large, general ones. Narrow interfaces are easier to mock and lead to more focused tests.
 - **Dependency Inversion Principle (DIP)**: depend on abstractions, not on concretions. This allows unit tests to supply fake dependencies instead of requiring live ROS publishers or hardware.
 
-In the context of ROS 2, **SRP** and **DIP** are especially important: separating algorithmic logic from communication logic makes algorithms independently testable, and depending on abstractions allows us to swap real ROS inputs for mocks during unit tests. Together, these principles support not only testability but also long-term maintainability and adaptability of the code.
+In ROS 2, **SRP** and **DIP** are the most critical. Separating algorithmic logic from middleware allows algorithms to be validated independently, while abstracting dependencies makes it straightforward to substitute real inputs with mocks during tests.
+
+A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, increases portability, and ensures that the algorithm can be maintained and tested independently of the ROS version in use.
 
 ### Example
 

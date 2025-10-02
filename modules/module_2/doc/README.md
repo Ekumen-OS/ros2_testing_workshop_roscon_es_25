@@ -52,15 +52,38 @@ A recommended practice is to implement core algorithms using ROS-agnostic librar
 
 ## GoogleTest
 
-With code structured for testability, a framework is needed to define and run the tests. For C++ projects, the industry standard is [GoogleTest](https://google.github.io/googletest/primer.html), commonly referred to as `gtest`.
+Once code is structured for testability, a framework is required to define and run the tests. The industry standard is [GoogleTest](https://google.github.io/googletest/primer.html), commonly referred to as `gtest`.
 
-GoogleTest provides a simple and expressive way to define tests using macros like `TEST`, `EXPECT_EQ`, or `ASSERT_TRUE`. It produces structured output that integrates cleanly with continuous integration systems. Beyond readability, the biggest reason to use gtest in ROS 2 is its seamless integration: the build system provides wrappers such as `ament_cmake_gtest`, which make it trivial to add tests that are executed automatically when you run `colcon test`.
+GoogleTest provides a simple and expressive way to define tests using macros such as `TEST`, `EXPECT_EQ`, or `ASSERT_TRUE`. It produces structured output that integrates cleanly with continuous integration systems. Beyond readability, the biggest reason to use gtest in ROS 2 is its seamless integration, which make it trivial to add tests that are executed automatically.
+
+A few core concepts are especially useful:
+
+- **EXPECT vs. ASSERT**:
+  - `EXPECT_*` records a failure but allows the test to continue.
+  - `ASSERT_*` aborts the test immediately on failure.
+
+    Use `EXPECT_*` for checks that can accumulate, and `ASSERT_*` when later steps would be meaningless if the check fails.
+
+- **Fixtures**: allows code to be reused across multiple tests. Define a test class deriving from `::testing::Test` and use `TEST_F` instead of `TEST`.
+- **Parameterized tests**: The same test logic can be executed against multiple input values with `TEST_P`. This reduces duplication and is especially helpful when validating algorithms across many corner cases
+
+See [Macros](https://google.github.io/googletest/reference/testing.html) and [Assertions](https://google.github.io/googletest/reference/assertions.html) in the official documentation for a more in-depth explanation.
 
 In addition to `gtest`, the same framework also provides [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, which is a library for creating mock objects. Mocks are fake implementations of classes that behave in controlled ways, defined by the test. This is particularly useful in robotics, where real data often comes from sensors or hardware that is not always available during testing. By mocking a sensor interface, it is possible to test how an algorithm reacts to predefined inputs without requiring hardware.
 
-In summary:
+Minimal example:
 
-> `gtest` is used to validate algorithm correctness, and `gmock` is used to simulate external dependencies, both of which are essential for reliable unit testing in ROS 2.
+```cpp
+#include <gtest/gtest.h>
+
+TEST(TestBasicMath, Addition)
+{
+  ASSERT_EQ(4, 2 + 2);
+}
+```
+
+> [!NOTE]
+> GoogleTest provides a default `main()`. A custom main is only necessary if special initialization is required before running tests.
 
 ## Ament Integration
 

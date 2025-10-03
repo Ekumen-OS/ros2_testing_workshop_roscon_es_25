@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y sudo \
 
 # Set the new user and work directory
 USER $USERNAME
-WORKDIR /home/$USERNAME
+WORKDIR /home/$USERNAME/ws
 
 # Source ROS 2 and colcon autocompletion on container startup
 SHELL ["/bin/bash", "-c"]

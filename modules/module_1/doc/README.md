@@ -160,7 +160,7 @@ colcon test --packages-select module_1
 colcon test-result --verbose
 ```
 
-The task for this exercise is to analyze the inconsistencies in the current code, fix them (`--reformat` can be used directly for the style ones), and see how the linter tests pass afterwards.
+The task for this exercise is to analyze the inconsistencies in the current code, fix them, and see how the linter tests pass afterwards.
 
 #### Definition of success
 

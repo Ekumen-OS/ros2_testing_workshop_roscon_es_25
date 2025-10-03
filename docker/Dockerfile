@@ -13,27 +13,15 @@ RUN apt-get update && \
 RUN rm requirements.txt
 
 # Some dependencies need to be installed with pip instead of apt
-# RUN apt-get update && apt-get install -y --no-install-recommends python3-pip && rm -rf /var/lib/apt/lists/*
-# RUN python3 -m pip install --no-cache-dir --break-system-packages ament-lint
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
+RUN python3 -m pip install --no-cache-dir --break-system-packages colcon-lint
 
-# TODO Deal with the annoying user that Ubuntu 24 already has on uid 1000
-# Create a non-root user, removing the default 'ubuntu' user
-# RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
-# ARG USERNAME=ros2
-# ARG USER_UID=1000
-# ARG USER_GID=$USER_UID
-# RUN apt-get update && apt-get install -y sudo \
-#     && groupadd --gid $USER_GID $USERNAME \
-#     && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME \
-#     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
-#     && chmod 0440 /etc/sudoers.d/$USERNAME
-
-# --- Take ownership of the existing non-root user (ID 1000) ---
+# Take ownership of the existing non-root user (ID 1000)
 ARG USERNAME=ros2
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-# The ROS base image has a user 'ros' at UID/GID 1000.
+# The Ubuntu 24 base image has a defualt user 'ubuntu' at UID/GID 1000.
 # We modify this user to match the host user's name.
 RUN apt-get update && apt-get install -y sudo \
     && groupmod --gid $USER_GID --new-name $USERNAME ubuntu \
@@ -41,13 +29,16 @@ RUN apt-get update && apt-get install -y sudo \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# TODO (jesus): Add rosdep commands to install dependencies from packages
+
 # Set the new user and work directory
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
-# Source ROS 2 on container startup
+# Source ROS 2 and colcon autocompletion on container startup
 SHELL ["/bin/bash", "-c"]
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # Default entrypoint
 ENTRYPOINT ["/bin/bash"]

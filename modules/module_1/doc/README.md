@@ -1,4 +1,6 @@
-**Table of Contents**
+# Module 1 – Linters
+
+In this module,the focus is on **linters** in ROS 2.
 
 - [Module 1 – Linters](#module-1--linters)
   - [Objectives](#objectives)
@@ -16,12 +18,6 @@
     - [Exercise 2](#exercise-2)
       - [Definition of success](#definition-of-success-1)
   - [References](#references)
-  
----
-
-# Module 1 – Linters
-
-In this module,the focus is on **linters** in ROS 2.
 
 ## Objectives
 

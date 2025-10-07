@@ -12,15 +12,15 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 # Libraries
-add_library(laser_non_testable
-  src/laser_non_testable.cpp
+add_library(bad_laser_detector
+  src/bad_laser_detector.cpp
 )
-target_include_directories(laser_non_testable
+target_include_directories(bad_laser_detector
   PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
 )
-ament_target_dependencies(laser_non_testable
+ament_target_dependencies(bad_laser_detector
   PUBLIC
     rclcpp
     std_msgs
@@ -30,13 +30,13 @@ ament_target_dependencies(laser_non_testable
 # Tests
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-
   ament_lint_auto_find_test_dependencies()
+  add_subdirectory(test)
 endif()
 
 # Installation
 install(
-  TARGETS laser_non_testable
+  TARGETS bad_laser_detector
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   ARCHIVE DESTINATION lib/${PROJECT_NAME}

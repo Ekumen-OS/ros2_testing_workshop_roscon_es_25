@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-#include <std_msgs/msg/string.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
+#include <string>
 
 int an_unused_variable = (int)3.14;
 
-int main(int argc,char ** argv){
-rclcpp::init(argc,argv);
-auto node = rclcpp::Node::make_shared("bad_node");
-auto publisher=node->create_publisher<std_msgs::msg::String>("topic",10);
-rclcpp::Rate loop_rate(1);
+int main(int argc, char** argv) {
+  rclcpp::init(argc, argv);
+  auto node = rclcpp::Node::make_shared("bad_node");
+  auto publisher = node->create_publisher<std_msgs::msg::String>("topic", 10);
+  rclcpp::Rate loop_rate(1);
 
-while(rclcpp::ok()){
- std_msgs::msg::String msg;
- msg.data = "This is a very long string designed specifically to make this line exceed the typical 80-character limit that linters check for.";
- publisher->publish(msg);
- rclcpp::spin_some(node);
- loop_rate.sleep();
+  while (rclcpp::ok()) {
+    std_msgs::msg::String msg;
+    msg.data =
+        "This is a very long string designed specifically to make this line exceed the typical "
+        "80-character limit that linters check for.";
+    publisher->publish(msg);
+    rclcpp::spin_some(node);
+    loop_rate.sleep();
+  }
+
+  rclcpp::shutdown();
+  return 0;
 }
-
-rclcpp::shutdown();
-return 0;}

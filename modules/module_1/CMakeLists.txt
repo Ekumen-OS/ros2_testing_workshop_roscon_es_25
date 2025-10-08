@@ -24,8 +24,13 @@ install(TARGETS bad_example
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
 
-  # This is the key to execute the tests with all the linters included as test dependencies
+  set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../.clang-format")
+  set(ament_cmake_cpplint_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../CPPLINT.cfg")
+
+  # This is the key to execute the tests with all the linters included as test dependencies.
   ament_lint_auto_find_test_dependencies()
+  # NOTE: if any of the packages specified as test dependencies is missing, this won't fail. 
+  # Instead, it will just skip that linter and execute the rest.
 endif()
 
 ament_package()

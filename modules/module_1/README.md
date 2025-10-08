@@ -138,7 +138,7 @@ For this module, the exercises to be carried out are simple, since it will mainl
 
 The objective of this first exercise is to run the linters on the package C++ code, detect the problems, and correct them following the style recommendations. There are 2 ways to do this:
 
-1.  Run the linters individually one by one from the terminal: the advantage of this option is that `--reformat` can be applied on linters that support it (like `ament_clang_format`) to correct the code automatically.
+1.  Run the linters individually one by one from the terminal: the advantage of this option is that `--reformat` can be applied on linters that support it (like `ament_clang_format`) to correct the code automatically, but be sure to pass the configuration file (`--config <path>`) if a custom file is being used. E.g: `ament_clang_format --config .clang-format --reformat package1`.
 2.  Use `ament_lint_auto` (recommended if Ci is going to be integrated): this is essentially a CMake function that finds and adds all linters listed as `<test_depend>` in the `package.xml`. Then, when tests are run, these linters are also executed. Another advantage is that there is no need to remember individual commands.
   
 > [!NOTE]

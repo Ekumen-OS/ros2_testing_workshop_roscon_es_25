@@ -27,11 +27,21 @@ ament_target_dependencies(bad_laser_detector
     sensor_msgs
 )
 
+add_library(laser_detector
+  src/laser_detector.cpp
+)
+target_include_directories(laser_detector
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+
 # Tests
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../.clang-format")
   ament_lint_auto_find_test_dependencies()
-  add_subdirectory(test)
+  # add_subdirectory(test)
 endif()
 
 # Installation

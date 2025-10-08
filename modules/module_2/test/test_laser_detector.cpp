@@ -13,27 +13,41 @@
 // limitations under the License.
 #include <gtest/gtest.h>
 
+#include <vector>
+
 #include "module_2/laser_detector.hpp"
 
-namespace module_2
-{
-namespace test
-{
+namespace module_2 {
+namespace test {
 
-TEST(LaserDetector, TestROIFilter)
-{
+TEST(LaserDetector, TestROIFilter) {
+  // Define laser options
+  const LaserOptions laser_options{
+      -0.4,  // angle_min
+      0.4,   // angle_max
+      0.2,   // angle_increment
+      0.1,   // range_min
+      40.0,  // range_max
+  };
 
+  // Define parameters
+  const double footprint_radius{1.5};
+  const
+
+      // Define input data
+      const std::vector input {}
+
+  // Create dut
+  LaserDetector dut(laser_options, );
+
+  dut.filter();
 }
 
-TEST(LaserDetector, TestPointsInFootprint)
-{
+TEST(LaserDetector, TestPointsInFootprint) {
   // Use parametrized test
 }
 
-TEST(LaserDetector, TestObstacleDetection)
-{
-
-}
+TEST(LaserDetector, TestObstacleDetection) {}
 
 }  // namespace test
 }  // namespace module_2

@@ -13,30 +13,32 @@
 // limitations under the License.
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/laser_scan.hpp>
-#include <std_msgs/msg/bool.hpp>
+#include <vector>
 
-namespace module_2
-{
+namespace module_2 {
+struct LaserOptions {
+  float angle_min{};
+  float angle_max{};
+  float angle_increment{};
+  float range_min{};
+  float range_max{};
+};
 
-class LaserDetector : public rclcpp::Node
-{
-public:
-  LaserDetector();
+class LaserDetector {
+ public:
+  LaserDetector(const LaserOptions& laser_options, const double& footprint_radius,
+                const int& min_points, const double& roi_min_angle, const double& roi_max_angle);
+  void roi_filter(const std::vector<double> scan);
+  int points_inside_footprint(const std::vector<double> scan);
+  bool detect_obstacle(const int num_points);
 
-private:
-  void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
-
+ private:
   // Parameters
+  LaserOptions laser_options_;
   double footprint_radius_{};
-  int    min_points_{};
+  int min_points_{};
   double roi_min_angle_{};
   double roi_max_angle_{};
-
-  // Publishers and subscribers
-  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr sub_scan_;
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pub_detection_;
 };
 
 }  // namespace module_2

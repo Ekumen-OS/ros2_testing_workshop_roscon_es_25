@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "module_2/laser_non_testable.hpp"
+#include "module_2/bad_laser_detector.hpp"
 
-namespace module_2
-{
+namespace module_2 {
 
-LaserDetectorROS::LaserDetectorROS()
-: Node("laser_detector_ros")
-{
+LaserDetectorROS::LaserDetectorROS() : Node("laser_detector_ros") {
   // Declare parameters
   this->declare_parameter("footprint_radius", 0.5);
   this->declare_parameter("min_points", 5);
@@ -36,13 +33,14 @@ LaserDetectorROS::LaserDetectorROS()
   pub_detection_ = this->create_publisher<std_msgs::msg::Bool>("obstacle_detected", 10);
 
   // Subscribers
-  sub_scan_ = this->create_subscription<sensor_msgs::msg::LaserScan>("scan", rclcpp::SensorDataQoS(), std::bind(&LaserDetectorROS::scan_callback, this, std::placeholders::_1));
+  sub_scan_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+      "scan", rclcpp::SensorDataQoS(),
+      std::bind(&LaserDetectorROS::scan_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(this->get_logger(), "Initialized");
 }
 
-void LaserDetectorROS::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
-{
+void LaserDetectorROS::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
   if (msg->ranges.empty()) {
     RCLCPP_WARN(this->get_logger(), "Empty scan received");
     return;
@@ -55,7 +53,8 @@ void LaserDetectorROS::scan_callback(const sensor_msgs::msg::LaserScan::SharedPt
     const float r = msg->ranges[i];
 
     // Skip invalid data
-    if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max){
+    if (!std::isfinite(r) || r < msg->range_min || r > msg->range_max) {
+      continue;
     }
 
     // Skip points outside ROI
@@ -73,7 +72,7 @@ void LaserDetectorROS::scan_callback(const sensor_msgs::msg::LaserScan::SharedPt
   // Check if the number of points inside the footprint is lower than the limit
   bool detection = static_cast<int>(count_inside_footprint) < min_points_;
 
-  // Publish if obstacle is inside the footprint 
+  // Publish if obstacle is inside the footprint
   std_msgs::msg::Bool detection_msg;
   detection_msg.data = detection;
   pub_detection_->publish(detection_msg);

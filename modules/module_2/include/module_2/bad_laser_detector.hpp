@@ -17,20 +17,18 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <std_msgs/msg/bool.hpp>
 
-namespace module_2
-{
+namespace module_2 {
 
-class LaserDetectorROS : public rclcpp::Node
-{
-public:
+class LaserDetectorROS : public rclcpp::Node {
+ public:
   LaserDetectorROS();
 
-private:
+ private:
   void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
   // Parameters
   double footprint_radius_{};
-  int    min_points_{};
+  int min_points_{};
   double roi_min_angle_{};
   double roi_max_angle_{};
 

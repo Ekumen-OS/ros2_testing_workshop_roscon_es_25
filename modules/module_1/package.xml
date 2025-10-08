@@ -5,6 +5,7 @@
   <version>0.0.1</version>
   <description>Module 1: Linters in ROS 2</description>
   <maintainer email="jesus.silva@ekumenlabs.com">Jesus Silva</maintainer>
+  <maintainer email="xavier.ruiz@ekumenlabs.com">Xavier Ruiz</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

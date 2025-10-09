@@ -46,7 +46,6 @@ LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& fo
   // Ensure ROI configuration is valid
   if (roi_min_angle_ >= roi_max_angle_) {
     throw std::runtime_error("Invalid ROI! Maximum angle must be greater than minimum angle");
-
   }
 
   /// BEGIN EDIT ------------------------------------------------------

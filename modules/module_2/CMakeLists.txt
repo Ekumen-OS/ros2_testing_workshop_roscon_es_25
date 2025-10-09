@@ -40,6 +40,7 @@ target_include_directories(laser_detector
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../.clang-format")
+  set(ament_cmake_cpplint_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../CPPLINT.cfg")
   ament_lint_auto_find_test_dependencies()
   add_subdirectory(test)
 endif()

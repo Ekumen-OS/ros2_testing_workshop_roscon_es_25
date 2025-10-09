@@ -178,7 +178,7 @@ The following components require completion:
 
 #### Definition of success
 
-The task is complete when you run the tests and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
+The task is complete when tests are run and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
 
 ## References
 

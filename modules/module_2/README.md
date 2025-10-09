@@ -9,6 +9,7 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
     - [Example](#example)
   - [GoogleTest](#googletest)
   - [Ament Integration](#ament-integration)
+  - [How to Write Tests](#how-to-write-tests)
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
       - [Definition of success](#definition-of-success)
@@ -139,9 +140,23 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
     colcon test-result --verbose
     ```
 
+## How to Write Tests
+
+Writing good unit tests is as much about structure as it is about logic. Two key concepts guide this process: **Test-Driven Development (TDD)** and the **Arrange-Act-Assert (AAA)** pattern.
+
+**Test-Driven Development (TDD)** is an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
+
+The **AAA** pattern provides a simple mental model for structuring each test.
+
+- **Arrange**: prepare the environment, inputs, and objects needed for the test.
+- **Act**: execute the function or behavior being tested.
+- **Assert**: verify that the observed result matches the expected outcome.
+
+Following this structure makes tests easy to read, maintain, and reason about. Each test should describe one behavior clearly, without hidden dependencies or side effects.
+
 ## Exercises
 
-The exercises for this module focus on transforming non-testable code into testable code and validating the core logic using the GoogleTest framework. You will apply the Single Responsibility Principle (SRP) by extracting the obstacle detection algorithm and validating its functionality with unit tests.
+The exercises for this module focus on transforming non-testable code into testable code and validating the core logic using the GoogleTest framework.
 
 ### Exercise 1
 
@@ -156,7 +171,10 @@ The following components require completion:
 - Constructor: Complete the missing input validation checks to make tests pass.
 - `roi_filter`: Implement the logic to iterate through the input ranges, check the angle against the ROI and return a new vector with the filtered data.
 - `points_inside_footprint`: Implement the logic to count how many ranges are finite and less than or equal to `footprint_radius_`.
-- `detect_obstacle`: Implement the final comparison logic: detection is true if `num_points≥min_points_`.
+- `detect_obstacle`: Implement the final comparison logic. A detection is true if `num_points≥min_points_`.
+
+> [!NOTE]
+> This exercise demonstrates Test-Driven Development (TDD) in practice: using predefined unit tests to guide the implementation of a clear, modular, and testable design.
 
 #### Definition of success
 

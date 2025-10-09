@@ -13,6 +13,7 @@
 // limitations under the License.
 #include "module_2/laser_detector.hpp"
 
+#include <cmath>
 #include <stdexcept>
 
 namespace module_2 {
@@ -27,15 +28,14 @@ LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& fo
       roi_max_angle_{roi_max_angle} {
   // Sanity checks
 
-  // Ensure the angle increment isn't zero for calculating current angle
-  if (laser_options_.angle_increment == 0.0) {
-    throw std::runtime_error("Laser angle increment cannot be zero");
+  // Ensure angle_max is strictly greater than angle_min
+  if (laser_options_.angle_max <= laser_options_.angle_min) {
+    throw std::runtime_error("Laser angle_max must be strictly greater than angle_min");
   }
 
-  // Ensure angle options is valid
-  if (((laser_options_.angle_max - laser_options_.angle_min) / laser_options_.angle_increment) <
-      0) {
-    throw std::runtime_error("Wrong laser angle options");
+  // Ensure the angle increment is positive
+  if (laser_options_.angle_increment <= 0.0) {
+    throw std::runtime_error("Laser angle increment must be positive");
   }
 
   // Ensure min points is positive
@@ -44,8 +44,9 @@ LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& fo
   }
 
   // Ensure ROI configuration is valid
-  if (roi_min_angle_ > roi_max_angle_) {
+  if (roi_min_angle_ >= roi_max_angle_) {
     throw std::runtime_error("Invalid ROI! Maximum angle must be greater than minimum angle");
+
   }
 
   /// BEGIN EDIT ------------------------------------------------------

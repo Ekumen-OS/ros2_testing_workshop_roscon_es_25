@@ -10,6 +10,8 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
   - [GoogleTest](#googletest)
   - [Ament Integration](#ament-integration)
   - [Exercises](#exercises)
+    - [Exercise 1](#exercise-1)
+      - [Definition of success](#definition-of-success)
   - [References](#references)
 
 ## Objectives
@@ -138,6 +140,27 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
     ```
 
 ## Exercises
+
+The exercises for this module focus on transforming non-testable code into testable code and validating the core logic using the GoogleTest framework. You will apply the Single Responsibility Principle (SRP) by extracting the obstacle detection algorithm and validating its functionality with unit tests.
+
+### Exercise 1
+
+The objective of this exercise is to identify and refactor code that violates the Single Responsibility Principle (SRP) and is therefore hard to test.
+
+Begin by examining [bad_laser_detector.cpp](src/bad_laser_detector.cpp) node that processes LiDAR scans, combining publishers, subscribers, and algorithmic logic in a single callback. This coupling between ROS interfaces and computation makes the algorithm untestable in isolation, as every test would require launching ROS infrastructure.
+
+Next, review the `LaserDetector` class defined in [laser_detector.cpp](src/laser_detector.cpp), which isolates the core obstacle detection algorithm from the ROS 2 node. The task is to complete the missing parts of this class so that the algorithm becomes fully testable and all provided unit tests pass.
+
+The following components require completion:
+
+- Constructor: Complete the missing input validation checks to make tests pass.
+- `roi_filter`: Implement the logic to iterate through the input ranges, check the angle against the ROI and return a new vector with the filtered data.
+- `points_inside_footprint`: Implement the logic to count how many ranges are finite and less than or equal to `footprint_radius_`.
+- `detect_obstacle`: Implement the final comparison logic: detection is true if `num_points≥min_points_`.
+
+#### Definition of success
+
+The task is complete when you run the tests and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
 
 ## References
 

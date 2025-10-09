@@ -97,8 +97,8 @@ TEST(TestLaserDetector, TestROIFilter) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const double roi_min_angle{-0.4};
-  const double roi_max_angle{0.4};
+  const double roi_min_angle{-0.5};
+  const double roi_max_angle{0.5};
 
   // Define input data
   const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
@@ -132,17 +132,19 @@ TEST(TestLaserDetector, TestPointsInFootprint) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const double roi_min_angle{-0.4};
+  const double roi_min_angle{-0.6};
   const double roi_max_angle{0.6};
 
   // Define input data
   const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
 
   // Define expected output (points inside)
-  const int expected_output{5};
+  const int expected_output{6};
 
   // Create dut
   LaserDetector dut(laser_options, footprint_radius, min_points, roi_min_angle, roi_max_angle);
+
+  // Note: we are not applying any ROI
 
   // Calculate num points inside the footprint
   const int output = dut.points_inside_footprint(input);
@@ -164,17 +166,19 @@ TEST(TestLaserDetector, TestPointsInFootprintOutsideRange) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const double roi_min_angle{-0.4};
+  const double roi_min_angle{-0.6};
   const double roi_max_angle{0.6};
 
   // Define input data
   const std::vector input{0.05, 1.1, 1.2, 45.3, 1.4, 1.5, 1.6};
 
   // Define expected output (points inside)
-  const int expected_output{3};
+  const int expected_output{4};
 
   // Create dut
   LaserDetector dut(laser_options, footprint_radius, min_points, roi_min_angle, roi_max_angle);
+
+  // Note: we are not applying any ROI
 
   // Calculate num points inside the footprint
   const int output = dut.points_inside_footprint(input);

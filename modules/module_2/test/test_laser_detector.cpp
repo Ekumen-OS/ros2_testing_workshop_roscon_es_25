@@ -82,7 +82,7 @@ INSTANTIATE_TEST_SUITE_P(
         // Invalid min points (min_points < 0)
         InvalidConstructorParams{{-0.6, 0.6, 0.2, 0.1, 40.0}, 1.5, -5, -0.4, 0.4},
         // Invalid ROI (angle_min = angle_max)
-        InvalidConstructorParams{{-0.6, 0.6, 0.2, 0.1, 40.0}, 1.5, 5, 0.4, 0.4}, ));
+        InvalidConstructorParams{{-0.6, 0.6, 0.2, 0.1, 40.0}, 1.5, 5, 0.4, 0.4}));
 
 TEST(TestLaserDetector, TestROIFilter) {
   // Define laser options
@@ -97,8 +97,8 @@ TEST(TestLaserDetector, TestROIFilter) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const roi_min_angle{-0.4};
-  const roi_max_angle{0.4};
+  const double roi_min_angle{-0.4};
+  const double roi_max_angle{0.4};
 
   // Define input data
   const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
@@ -132,8 +132,8 @@ TEST(TestLaserDetector, TestPointsInFootprint) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const roi_min_angle{-0.4};
-  const roi_max_angle{0.6};
+  const double roi_min_angle{-0.4};
+  const double roi_max_angle{0.6};
 
   // Define input data
   const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
@@ -164,8 +164,8 @@ TEST(TestLaserDetector, TestPointsInFootprintOutsideRange) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const roi_min_angle{-0.4};
-  const roi_max_angle{0.6};
+  const double roi_min_angle{-0.4};
+  const double roi_max_angle{0.6};
 
   // Define input data
   const std::vector input{0.05, 1.1, 1.2, 45.3, 1.4, 1.5, 1.6};
@@ -196,15 +196,12 @@ TEST(TestLaserDetector, TestObstacleDetection) {
   // Define parameters
   const double footprint_radius{1.5};
   const int min_points{5};
-  const roi_min_angle{-0.4};
-  const roi_max_angle{0.6};
+  const double roi_min_angle{-0.4};
+  const double roi_max_angle{0.6};
 
   // Define input data (num points)
   const int input_obstacle{7};
   const int input_non_obstacle{2};
-
-  // Define expected output (obstacle detected)
-  const bool expected_output{true};
 
   // Create dut
   LaserDetector dut(laser_options, footprint_radius, min_points, roi_min_angle, roi_max_angle);

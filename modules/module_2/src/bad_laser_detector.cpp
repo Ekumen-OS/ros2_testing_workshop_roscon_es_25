@@ -69,8 +69,8 @@ void LaserDetectorROS::scan_callback(const sensor_msgs::msg::LaserScan::SharedPt
     }
   }
 
-  // Check if the number of points inside the footprint is lower than the limit
-  bool detection = static_cast<int>(count_inside_footprint) < min_points_;
+  // Check if the number of points inside the footprint is greater or equal than the limit
+  bool detection = static_cast<int>(count_inside_footprint) >= min_points_;
 
   // Publish if obstacle is inside the footprint
   std_msgs::msg::Bool detection_msg;

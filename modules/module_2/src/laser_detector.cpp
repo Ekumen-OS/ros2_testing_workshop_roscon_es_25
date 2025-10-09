@@ -26,28 +26,69 @@ LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& fo
       roi_min_angle_{roi_min_angle},
       roi_max_angle_{roi_max_angle} {
   // Sanity checks
+
+  // Ensure the angle increment isn't zero for calculating current angle
+  if (laser_options_.angle_increment == 0.0) {
+    throw std::runtime_error("Laser angle increment cannot be zero");
+  }
+
+  // Ensure angle options is valid
   if (((laser_options_.angle_max - laser_options_.angle_min) / laser_options_.angle_increment) <
       0) {
-    throw std::runtime_error("Wrong scan angle option");
+    throw std::runtime_error("Wrong laser angle options");
   }
+
+  // Ensure min points is positive
+  if (min_points_ <= 0) {
+    throw std::runtime_error("Min points must be positive");
+  }
+
+  // Ensure ROI configuration is valid
+  if (roi_min_angle_ > roi_max_angle_) {
+    throw std::runtime_error("Invalid ROI! Maximum angle must be greater than minimum angle");
+  }
+
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Add check for a missing configuration value and throw based on tests
+
+  /// END EDIT --------------------------------------------------------
 }
 
-void LaserDetector::roi_filter(const std::vector<double> scan) {
+std::vector<double> LaserDetector::roi_filter(const std::vector<double>& scan) {
   if (scan.empty()) {
-    return;
+    return {};
   }
-  // Implement
+
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Return a filtered scan that fits within the angle ROI provided in
+  // the constructor.
+
+  /// END EDIT --------------------------------------------------------
 }
 
-int LaserDetector::points_inside_footprint(const std::vector<double> scan) {
+int LaserDetector::points_inside_footprint(const std::vector<double>& scan) {
   if (scan.empty()) {
     return 0;
   }
-  // Implement
+
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Return the number of points that are inside of the footprint.
+  // Remember to exclude invalid data such as nans or values
+  // outside of the range limits.
+
+  /// END EDIT --------------------------------------------------------
 }
 
-bool LaserDetector::detect_obstacle(const int num_points) {
-  // Implement
+bool LaserDetector::detect_obstacle(const int& num_points) {
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Return whether the number of points inside the footprint (input)
+  // is lower than the limit (min_points_)
+
+  /// END EDIT --------------------------------------------------------
 }
 
 }  // namespace module_2

@@ -28,12 +28,11 @@ class LaserDetector {
  public:
   LaserDetector(const LaserOptions& laser_options, const double& footprint_radius,
                 const int& min_points, const double& roi_min_angle, const double& roi_max_angle);
-  void roi_filter(const std::vector<double> scan);
-  int points_inside_footprint(const std::vector<double> scan);
-  bool detect_obstacle(const int num_points);
+  std::vector<double> roi_filter(const std::vector<double>& scan);
+  int points_inside_footprint(const std::vector<double>& scan);
+  bool detect_obstacle(const int& num_points);
 
  private:
-  // Parameters
   LaserOptions laser_options_;
   double footprint_radius_{};
   int min_points_{};

@@ -1,6 +1,6 @@
 # Module 1 – Linters
 
-In this module,the focus is on **linters** in ROS 2.
+In this module, the focus is on **linters** in ROS 2.
 
 - [Module 1 – Linters](#module-1--linters)
   - [Objectives](#objectives)
@@ -136,14 +136,18 @@ For this module, the exercises to be carried out are simple, since it will mainl
 
 ### Exercise 1
 
-<!-- use ament_clang_format and ament_cpplint for this exercise -->
-
 The objective of this first exercise is to run the linters on the package C++ code, detect the problems, and correct them following the style recommendations. There are 2 ways to do this:
 
-1.  Run the linters individually one by one from the terminal: the advantage of this option is that `--reformat` can be applied on linters that support it (like `ament_clang_format`) to correct the code automatically.
+1.  Run the linters one by one from the terminal: the advantage of this option is that `--reformat` can be applied on linters that support it (like `ament_clang_format`) to correct the code automatically, but be sure to pass the configuration file (`--config <path>`) if a custom file is being used. E.g: `ament_clang_format --config .clang-format --reformat package1`.
 2.  Use `ament_lint_auto` (recommended if Ci is going to be integrated): this is essentially a CMake function that finds and adds all linters listed as `<test_depend>` in the `package.xml`. Then, when tests are run, these linters are also executed. Another advantage is that there is no need to remember individual commands.
+  
+> [!NOTE]
+> Be aware that the packages used as command-line tools are `ament_clang_format` and `ament_cpplint`, but the ones used for automatic checks with `colcon_test` are `ament_cmake_clang_format` and `ament_cmake_cpplint` (these are just wrappers adding the CMake functionality required).
 
-In our case, the second option has been chosen for simplicity and ease of use (both can be combined, first executing the linters and then reformatting directly if needed). The linters to be used are defined in the [package.xml](../package.xml), and new ones are needed, the only requisite is to tweak this configuration and add the necessary dependencies. The next step is to check that these linters run correctly.
+
+In this case, the second option has been chosen for simplicity and ease of use (both can be combined, first executing the linters and then reformatting directly if needed). The linters to be used are defined in the [package.xml](../package.xml), and if new ones are needed, the only requisite is to add the necessary test dependencies. 
+
+As seen before, the recommended linters for ROS 2 C++ projects (the most widely used) are `ament_clang_format` and `ament_cpplint`, so those are the ones to be used in this exercise. The next step is to check that these linters run correctly.
 
 To do this, first is necessary to build the package:
 
@@ -156,17 +160,16 @@ source install/setup.bash
 And then run the tests:
 
 ```bash
-colcon test --packages-select module_1
-colcon test-result --verbose
+colcon test --packages-select module_1 --event-handlers console_direct+
 ```
 
-The task for this exercise is to analyze the inconsistencies in the current code, fix them (`--reformat` can be used directly for the style ones), and see how the linter tests pass afterwards.
+The task for this exercise is to analyze the inconsistencies in the current code, fix them, and see how the linter tests pass afterwards.
 
 #### Definition of success
 
-Your task is complete when tests are run again, and the output of `colcon test-result --verbose` shows **0 errors** and **0 failures** for the linter tests associated with `module_1`.
+The task is complete when tests are run and the output of `colcon test --packages-select module_1 --event-handlers console_direct+` shows **0 errors** and **0 failures** for the linter tests associated with `module_1`.
 
-The only changes that hsould be applied are thoseapplied by reformatting with the formatter, and fixing the problems highlighted with the static analysis tools.
+The only changes that should be applied are those applied by reformatting with the formatter, and fixing the problems highlighted with the static analysis tools.
 
 ---
 
@@ -186,15 +189,7 @@ Some indications will appear. The task is to correct these indications, adding t
 
 #### Definition of success
 
-Your task is complete when the command `colcon lint --packages-select module_1` is run again and it produces **no warning output** and finishes with a **successful exit code (0)**. A clean run should look like this:
-
-```bash
-colcon lint --packages-select module_1
-Starting >>> module_1
-Finished <<< module_1 [0.5s]
-
-Summary: 1 package finished [0.7s]
-```
+The task is complete when the command `colcon lint --packages-select module_1` is run and it produces **no warning output** and finishes with a **successful exit code (0)**, so no output is produced in the terminal.
 
 <a id="references"></a>
 ## References

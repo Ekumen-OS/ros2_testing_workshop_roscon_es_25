@@ -55,6 +55,7 @@ class TestMyClass : public ::testing::Test
 public:
   static void SetUpTestCase()
   {
+    rclcpp::init(0, nullptr);
   }
 
   static void TearDownTestCase()

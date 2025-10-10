@@ -55,8 +55,10 @@ install(
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_export_dependencies(rclcpp)
-ament_export_dependencies(std_msgs)
-ament_export_dependencies(sensor_msgs)
+ament_export_dependencies(
+  rclcpp
+  sensor_msgs
+  std_msgs
+)
 
 ament_package()

@@ -140,6 +140,24 @@ TEST_F(TestMyClass, ServiceRegistration)
 
 ### Node Pipeline
 
+Node pipeline tests verify that data flows correctly through a node from input subscription to output publication. These tests simulate the node’s full behavior without involving external processes.
+
+A typical pipeline test setup includes:
+
+- A test node that publishes inputs and subscribes to outputs.
+- The DUT (Device Under Test) node instance.
+- An executor to spin both nodes.
+- A deterministic wait/spin utility.
+
+When dealing with time and synchronization in pipeline tests, **determinism is key**. The following practices help ensure tests remain reliable and repeatable:
+
+- **Drive the executor explicitly** — Instead of relying on arbitrary delays, use short loops that call `executor.spin_some()` until a specific condition is met or a timeout expires. This guarantees that callbacks are processed precisely when needed.
+- **Wait on futures for blocking operations** — For services and actions, use `executor.spin_until_future_complete(fut, timeout)` to process executor work while waiting for responses in a controlled, timeout-bound manner.
+- **Use simulated time for timer-driven logic** — Enable `use_sim_time=true` and publish `/clock` messages from the test node to advance time deterministically. Each clock tick can trigger timers without waiting in real time.
+- **Avoid arbitrary sleeps** — While short sleeps like `std::this_thread::sleep_for()` may occasionally be used, they should never replace condition-based or event-driven waits.
+
+A complete example of a pipeline test (including message publication, synchronization, and assertions) is provided in the Exercises section.
+
 ## Test Isolation
 
 When running unit tests in ROS 2, especially in large workspaces, one might encounter the **cross-talk** issue where nodes receive unintended messages from other tests.

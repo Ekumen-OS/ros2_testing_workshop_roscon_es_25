@@ -142,6 +142,33 @@ TEST_F(TestMyClass, ServiceRegistration)
 
 ## Test Isolation
 
+When running unit tests in ROS 2, especially in large workspaces, one might encounter the **cross-talk** issue where nodes receive unintended messages from other tests.
+
+By default, all ROS 2 nodes operate in domain ID 0 (`ROS_DOMAIN_ID=0`), sharing the same DDS communication space. Nodes within a domain automatically discover each other and can exchange messages, even if they belong to different packages or test executors.
+
+Since tests are run in parallel by default, nodes publishing or subscribing to identical topic names can interfere across tests. This results in flaky and nondeterministic behavior (e.g., a subscriber receiving unexpected messages) or immediate failures (e.g., when a service server attempts to instantiate a name already in use).
+
+There are two ways to solve the issue:
+
+- **Sequential Execution**: You can run tests one after another using `colcon test --executor sequential`. By running tests sequentially, even if nodes in different tests are publishing to the same topic they should not affect subsequent tests. However, this dramatically increases the total execution time for large projects.
+
+- **Domain Isolation with ROS_DOMAIN_ID (Recommended)**: This approach leverages the fact that ROS 2 relies on DDS domains, which are isolated by an integer ID. By assigning a unique `ROS_DOMAIN_ID` to each test, you strictly confine communication within that test's boundaries.
+
+The `ament_cmake_ros` package provides a convenient solution for domain isolation. It includes CMake functions that automatically assign an available domain ID to each test executor.
+
+To enable this, add the following dependency to your `package.xml`:
+
+```xml
+<test_depend>ament_cmake_ros</test_depend>
+```
+
+Then, in your `CMakeLists.txt`, replace the standard test command with the isolated version:
+
+```cmake
+find_package(ament_cmake_ros REQUIRED)
+ament_add_ros_isolated_gtest(test_my_node test/test_my_node.cpp)
+```
+
 ## Exercises
 
 ## References

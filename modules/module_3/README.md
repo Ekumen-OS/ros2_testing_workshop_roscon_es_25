@@ -13,6 +13,7 @@ This module introduces the development of **unit tests for ROS 2 nodes** and int
     - [Node Lifecycle Management](#node-lifecycle-management)
     - [Node Pipeline](#node-pipeline)
   - [Test Isolation](#test-isolation)
+  - [Alternative: The Rtest Framework](#alternative-the-rtest-framework)
   - [Exercises](#exercises)
   - [References](#references)
 
@@ -207,6 +208,14 @@ Then, replace the standard test command in `CMakeLists.txt` with the isolated ve
 find_package(ament_cmake_ros REQUIRED)
 ament_add_ros_isolated_gtest(test_my_node test/test_my_node.cpp)
 ```
+
+## Alternative: The Rtest Framework
+
+While this module focuses on standard GoogleTest-based ROS 2 testing using `rclcpp` and `ament_cmake_gtest`, an emerging framework called Rtest provides an alternative approach.
+
+Rtest offers tools to mock and introspect ROS 2 entities such as publishers, subscribers, services, timers, and actions. It allows direct message injection, timer triggering, and simulated time control—enabling precise and fully deterministic tests without spinning an executor.
+
+At this stage, Rtest remains **experimental** and has a key limitation: it can only test ROS 2 components whose source code is available in the workspace, since it relies on compile-time template substitution to mock and intercept ROS entities. This prevents testing against precompiled or system-installed packages. Despite this, Rtest shows strong potential as a unified, deterministic testing layer that could **complement the approach presented in this module**.
 
 ## Exercises
 

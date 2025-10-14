@@ -137,6 +137,7 @@ TEST_F(TestMyClass, ServiceRegistration)
 
 <!-- @todo: What about actions?? -->
 <!-- @todo: Test lifecycle management. Ping Jesus -->
+<!-- @todo: rtest?? -->
 
 ### Node Pipeline
 
@@ -193,3 +194,4 @@ ament_add_ros_isolated_gtest(test_my_node test/test_my_node.cpp)
 
 - [ROS 2 Test Isolation](https://medium.com/@yifeicheng/test-isolation-and-avoiding-cross-talk-in-ros-2-3731f54e9ccf)
 - [Test Fixtures in GoogleTest](https://google.github.io/googletest/primer.html#same-data-multiple-tests)
+- [rclcpp library Node header](https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/node.hpp)

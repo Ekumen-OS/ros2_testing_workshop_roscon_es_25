@@ -136,12 +136,11 @@ TEST_F(TestMyClass, ServiceRegistration)
 ```
 
 <!-- @todo: What about actions?? -->
-<!-- @todo: Test lifecycle management. Ping Jesus -->
 <!-- @todo: rtest?? -->
 
 ### Node Lifecycle Management
 
-Testing lifecycle transitions in this way ensures that the node’s initialization, activation, and cleanup logic are executed correctly, and that all resources (such as publishers, subscribers, and timers) are properly created and released during each transition. This guarantees predictable and reliable behavior when the node operates within a managed system.
+Lifecycle nodes define a managed execution model in which resources such as publishers, subscribers, and timers are created and destroyed as the node transitions between states. Unit tests can directly trigger and validate these state transitions using the rclcpp_lifecycle API, verifying that transitions occur correctly and that side effects happen as expected.
 
 ```cpp
 TEST_F(TestMyLifecycleNode, LifecycleTransitions)
@@ -215,4 +214,6 @@ ament_add_ros_isolated_gtest(test_my_node test/test_my_node.cpp)
 
 - [ROS 2 Test Isolation](https://medium.com/@yifeicheng/test-isolation-and-avoiding-cross-talk-in-ros-2-3731f54e9ccf)
 - [Test Fixtures in GoogleTest](https://google.github.io/googletest/primer.html#same-data-multiple-tests)
-- [rclcpp library Node header](https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/node.hpp)
+- [Rtest Unit Testing Framework](https://github.com/Beam-and-Spyrosoft/rtest/)
+- [rclcpp Node header](https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/node.hpp)
+- [rclcpp_lifecycle Node header](https://github.com/ros2/rclcpp/blob/jazzy/rclcpp_lifecycle/include/rclcpp_lifecycle/lifecycle_node.hpp)

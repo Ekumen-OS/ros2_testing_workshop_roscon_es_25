@@ -10,6 +10,7 @@ This module introduces the development of **unit tests for ROS 2 nodes** and int
     - [Parameters](#parameters)
     - [Topics](#topics)
     - [Services](#services)
+    - [Node Lifecycle Management](#node-lifecycle-management)
     - [Node Pipeline](#node-pipeline)
   - [Test Isolation](#test-isolation)
   - [Exercises](#exercises)
@@ -137,6 +138,27 @@ TEST_F(TestMyClass, ServiceRegistration)
 <!-- @todo: What about actions?? -->
 <!-- @todo: Test lifecycle management. Ping Jesus -->
 <!-- @todo: rtest?? -->
+
+### Node Lifecycle Management
+
+Testing lifecycle transitions in this way ensures that the node’s initialization, activation, and cleanup logic are executed correctly, and that all resources (such as publishers, subscribers, and timers) are properly created and released during each transition. This guarantees predictable and reliable behavior when the node operates within a managed system.
+
+```cpp
+TEST_F(TestMyLifecycleNode, LifecycleTransitions)
+{
+  auto dut = std::make_shared<MyLifecycleNode>(default_node_options);
+
+  EXPECT_EQ(dut->get_current_state().id(), lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED);
+
+  dut->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
+  EXPECT_EQ(dut->get_current_state().id(), lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE);
+
+  dut->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVATE);
+  EXPECT_EQ(dut->get_current_state().id(), lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE);
+}
+```
+
+Testing lifecycle transitions in this way ensures that the node’s initialization, activation, and cleanup logic behaves consistently, supporting predictable and reliable operation when deployed in a managed system.
 
 ### Node Pipeline
 

@@ -18,9 +18,9 @@
 
 namespace module_2 {
 
-LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& footprint_radius,
-                             const int& min_points, const double& roi_min_angle,
-                             const double& roi_max_angle)
+LaserDetector::LaserDetector(const LaserOptions& laser_options, const float& footprint_radius,
+                             const int& min_points, const float& roi_min_angle,
+                             const float& roi_max_angle)
     : laser_options_(laser_options),
       footprint_radius_{footprint_radius},
       min_points_{min_points},
@@ -55,7 +55,7 @@ LaserDetector::LaserDetector(const LaserOptions& laser_options, const double& fo
   /// END EDIT --------------------------------------------------------
 }
 
-std::vector<double> LaserDetector::roi_filter(const std::vector<double>& scan) {
+std::vector<float> LaserDetector::roi_filter(const std::vector<float>& scan) {
   if (scan.empty()) {
     return {};
   }
@@ -68,7 +68,7 @@ std::vector<double> LaserDetector::roi_filter(const std::vector<double>& scan) {
   /// END EDIT --------------------------------------------------------
 }
 
-int LaserDetector::points_inside_footprint(const std::vector<double>& scan) {
+int LaserDetector::points_inside_footprint(const std::vector<float>& scan) {
   if (scan.empty()) {
     return 0;
   }

@@ -26,18 +26,18 @@ struct LaserOptions {
 
 class LaserDetector {
  public:
-  LaserDetector(const LaserOptions& laser_options, const double& footprint_radius,
-                const int& min_points, const double& roi_min_angle, const double& roi_max_angle);
-  std::vector<double> roi_filter(const std::vector<double>& scan);
-  int points_inside_footprint(const std::vector<double>& scan);
+  LaserDetector(const LaserOptions& laser_options, const float& footprint_radius,
+                const int& min_points, const float& roi_min_angle, const float& roi_max_angle);
+  std::vector<float> roi_filter(const std::vector<float>& scan);
+  int points_inside_footprint(const std::vector<float>& scan);
   bool detect_obstacle(const int& num_points);
 
  private:
   LaserOptions laser_options_;
-  double footprint_radius_{};
+  float footprint_radius_{};
   int min_points_{};
-  double roi_min_angle_{};
-  double roi_max_angle_{};
+  float roi_min_angle_{};
+  float roi_max_angle_{};
 };
 
 }  // namespace module_2

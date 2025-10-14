@@ -101,16 +101,16 @@ TEST(TestLaserDetector, TestROIFilter) {
   const double roi_max_angle{0.5};
 
   // Define input data
-  const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
+  const std::vector<float> input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
 
   // Define expected output
-  const std::vector expected_output{1.1, 1.2, 1.3, 1.4, 1.5};
+  const std::vector<float> expected_output{1.1, 1.2, 1.3, 1.4, 1.5};
 
   // Create dut
   LaserDetector dut(laser_options, footprint_radius, min_points, roi_min_angle, roi_max_angle);
 
   // Filter ROI
-  const std::vector output = dut.roi_filter(input);
+  const std::vector<float> output = dut.roi_filter(input);
 
   // Assert
   ASSERT_EQ(output.size(), 5u);
@@ -136,7 +136,7 @@ TEST(TestLaserDetector, TestPointsInFootprint) {
   const double roi_max_angle{0.6};
 
   // Define input data
-  const std::vector input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
+  const std::vector<float> input{1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
 
   // Define expected output (points inside)
   const int expected_output{6};
@@ -170,7 +170,7 @@ TEST(TestLaserDetector, TestPointsInFootprintOutsideRange) {
   const double roi_max_angle{0.6};
 
   // Define input data
-  const std::vector input{0.05, 1.1, 1.2, 45.3, 1.4, 1.5, 1.6};
+  const std::vector<float> input{0.05, 1.1, 1.2, 45.3, 1.4, 1.5, 1.6};
 
   // Define expected output (points inside)
   const int expected_output{4};

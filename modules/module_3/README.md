@@ -21,16 +21,15 @@ By the end of this module, participants will be able to:
 
 - Implement **ROS-aware unit tests** using fixtures to manage node initialization and shutdown.
 - Validate **ROS 2 node behavior and interfaces**, including topics, services, and parameters.
-- Apply **domain isolation** to prevent node cross-communication during testing.
+- Apply **domain isolation** to prevent node cross-talks during testing.
 
 ## Motivation
 
-In the previous module, the core algorithm was successfully isolated and validated with unit tests. Now that the algorithm behaves as expected, the next step is to **build a ROS 2 node** that wraps this logic, exposing it through standard ROS interfaces like subscribers and publishers so it can interact with other components in the system.
+In the previous module, the core algorithm was successfully decoupled from ROS and validated with unit tests. Now that the algorithm behaves as expected, the next step is to **build a ROS 2 node** that wraps this logic, exposing it through standard ROS interfaces like subscribers and publishers so it can interact with other components in the system.
 
 This wrapper node requires its own validation. **ROS unit testing** ensures that the interface layer is correct: that the node subscribes to the right topic, handles the incoming message correctly, executes the core logic, and publishes the expected results.
 
-This layer of testing serves as a bridge between algorithmic validation and system-level integration. It confirms the correctness of the ROS 2 interface before proceeding to integration tests (Module 4), which focus on end-to-end behavior across multiple communicating nodes.
-By testing each node in isolation, correctness can be verified without the complexity and non-determinism of a full multi-node system.
+This layer of testing serves as a bridge between algorithmic validation and system-level integration. It confirms the correctness of the ROS 2 interface before proceeding to integration tests (Module 4). By testing each node in isolation, correctness can be verified without the complexity and non-determinism of a full multi-node system.
 
 ## ROS Unit Tests
 
@@ -88,7 +87,7 @@ TEST_F(TestMyClass, ParameterOverride)
 This approach ensures parameters are initialized correctly before the node spins, mirroring how ROS 2 parameters are passed during node construction.
 
 > [!TIP]
-> Define parameter names and default values as class constants inside your ROS 2 class e.g. `MyClass`. This centralizes parameter definitions, documents them in the header, and prevents typos or mismatches across nodes and tests.
+> Define parameter names and default values as class constants inside the ROS 2 class e.g. `MyClass`. This centralizes parameter definitions, documents them in the header, and prevents typos or mismatches across nodes and tests.
 >
 > ```cpp
 > static inline constexpr char MY_PARAM_NAME[] = "my_param";
@@ -169,19 +168,19 @@ Since tests are run in parallel by default, nodes publishing or subscribing to i
 
 There are two ways to solve the issue:
 
-- **Sequential Execution**: You can run tests one after another using `colcon test --executor sequential`. By running tests sequentially, even if nodes in different tests are publishing to the same topic they should not affect subsequent tests. However, this dramatically increases the total execution time for large projects.
+- **Sequential Execution**: Run tests one after another using `colcon test --executor sequential`. By running tests sequentially, even if nodes in different tests are publishing to the same topic they should not affect subsequent tests. However, this dramatically increases the total execution time for large projects.
 
-- **Domain Isolation with ROS_DOMAIN_ID (Recommended)**: This approach leverages the fact that ROS 2 relies on DDS domains, which are isolated by an integer ID. By assigning a unique `ROS_DOMAIN_ID` to each test, you strictly confine communication within that test's boundaries.
+- **Domain Isolation with ROS_DOMAIN_ID (Recommended)**: This approach leverages the DDS domain mechanism in ROS 2 by assigning a unique `ROS_DOMAIN_ID` to each test. This confines all communication within the test’s scope, preventing cross-talk and ensuring deterministic behavior.
 
 The `ament_cmake_ros` package provides a convenient solution for domain isolation. It includes CMake functions that automatically assign an available domain ID to each test executor.
 
-To enable this, add the following dependency to your `package.xml`:
+To enable this, add the following dependency to `package.xml`:
 
 ```xml
 <test_depend>ament_cmake_ros</test_depend>
 ```
 
-Then, in your `CMakeLists.txt`, replace the standard test command with the isolated version:
+Then, replace the standard test command in `CMakeLists.txt` with the isolated version:
 
 ```cmake
 find_package(ament_cmake_ros REQUIRED)

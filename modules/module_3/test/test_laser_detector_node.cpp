@@ -249,8 +249,9 @@ TEST_F(TestLaserDetectorNode, ObstacleDetectionIsTrue) {
   // Publish scan
   scan_pub_->publish(scan);
 
-  // Fill
+  // Wait until the node publishes an obstacle detection result.
   ASSERT_TRUE(spin_until(*executor_, [&] { return latest_detection_.has_value(); }, 500ms));
+  // Expect that the node correctly detects an obstacle based on the scan data.
   EXPECT_TRUE(latest_detection_.value().data);
 }
 

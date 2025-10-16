@@ -6,8 +6,8 @@ In this module, the focus is to explore **integration testing in ROS 2** to veri
   - [Objectives](#objectives)
   - [Motivation](#motivation)
   - [The launch\_testing Framework](#the-launch_testing-framework)
-    - [Alternatives](#alternatives)
     - [Registering the tests](#registering-the-tests)
+    - [Alternative: launch\_pytest](#alternative-launch_pytest)
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
       - [Definition of Success](#definition-of-success)
@@ -21,7 +21,7 @@ By the end of the module, participants will be able to:
 - Understand the role of integration testing in a robotics software stack.
 - Write a basic integration test using the **launch_testing framework**.
 - Create a ROS 2 launch file embedded within a Python test script.
-- Use launch_testing actions to **start nodes and verify their behavior**.
+- Use `launch_testing` actions to **start nodes and verify their behavior**.
 - Execute integration tests with colcon test and interpret the results.
 
 ## Motivation
@@ -43,42 +43,36 @@ In ROS 2, this is primarily achieved using the `launch_testing` framework, which
 
 `launch_testing` is the standard tool for writing integration tests in ROS 2. It is possible to write a Python script that both launches a set of nodes and runs tests to verify their behavior.
 
-A launch_testing script typically has two main parts:
+Although `launch_testing` test scripts are written in Python, the nodes being tested can be written in any language (C++, Python, etc.). The framework interacts with them as independent executables through the operating system, not by importing or calling their code directly. This makes integration testing language-agnostic, as it evaluates the observable behavior of each node rather than its implementation, and also enables this tool to be used in more scenarios, not only for ROS nodes.
+
+A `launch_testing` script typically has two main parts:
 
 - **generate_test_description()**: This function is the entry point. It works just like a standard ROS 2 launch file, defining which nodes to start, their parameters, and any other launch actions.
 - **A unittest.TestCase Class**: This is where the actual tests are written. These tests run after the nodes have been launched and the system is ready.
 
 Here are the key components that will be used:
 
-| Component                                       | What it does                                                                                                       | Example Usage                                                                               |
-| :---------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `launch.actions`<br>`.ExecuteProcess`           | The standard launch action to execute a command-line process, such as a ROS 2 node.                                | `ExecuteProcess(cmd=`<br>`['my_package', 'my_node'])`                                       |
-| `launch_testing.actions`<br>`.WaitForProcesses` | An action that pauses the launch until a specific process emits a certain line of output.                          | `WaitForProcesses(`<br>`process_to_wait_for=node_process,`<br>` on_output='Node is ready')` |
-| `launch_testing.actions`<br>`.ReadyToTest`      | A special action that signals to the test framework that the system setup is complete and tests can begin.         | `return LaunchDescription(`<br>`[..., ReadyToTest()])`                                      |
-| `launch_testing.asserts`<br>`.assertIn`         | An assertion helper that checks if a specific string appears in the captured output of a process.                  | `self.assertIn(`<br>`b'Node initialized',`<br>` proc_output.stdout)`                        |
-| `proc_info`,<br> `proc_output`                  | Handlers passed to the test methods that enable inspecting the exit codes and stdout/stderr of launched processes. | `def test_node_output(`<br>`self, proc_output): ...`                                        |
+| Component                                       | What it does                                                                                                                                           | Example Usage                                                                                                         |
+| :---------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `launch.actions`<br>`.ExecuteProcess`           | Launches any command-line process, such as a ROS 2 node, CLI tool, or script. It runs the given command exactly as if it were typed in a terminal;     | `ExecuteProcess(cmd=['ros2', 'run', 'my_package', 'my_node'])` `ExecuteProcess(cmd=['xacro', 'my_robot.urdf.xacro'])` |
+| `launch_testing.actions`<br>`.WaitForProcesses` | Waits for a process to emit a specific line in its standard output or error stream (this includes ROS log messages, std::cout, or print() statements). | `WaitForProcesses(`<br>`process_to_wait_for=node_process,`<br>` on_output='Node is ready')`                           |
+| `launch_testing.actions`<br>`.ReadyToTest`      | A special action that signals to the test framework that the system setup is complete and tests can begin.                                             | `return LaunchDescription(`<br>`[..., ReadyToTest()])`                                                                |
+| `launch_testing.asserts`<br>`.assertIn`         | Checks if a specific string appears in the captured output of a process. Often used to verify startup messages or logs.                                | `self.assertIn(`<br>`b'Node initialized',`<br>` proc_output.stdout)`                                                  |
+| `proc_info`,<br> `proc_output`                  | Handlers passed to the test methods that enable inspecting the exit codes and stdout/stderr of launched processes.                                     | `def test_node_output(`<br>`self, proc_output): ...`                                                                  |
 
 These are instructions used in the core `launch_testing` framework. For ROS 2 integration, `launch_ros` is used, providing support for directly launching nodes or lifecycle nodes, instead of relying in the `ExecuteProcess` action.
 
-The workflow for running integration tests is identical to running linter or unit tests. You use colcon to execute them as part of the package's test suite.
+The above tools provide simple mechanisms for checking process output and lifecycle events. However, integration tests can also use normal ROS 2 APIs inside the test cases. For example, a test can create a temporary `rclpy` node to wait for a service, subscribe to a topic, or check parameter values published by another node. This enables testing beyond console output, such as verifying that expected messages or service responses are produced.
 
-It's important to notice that even though the `launch_testing` framework is written in Python, tests can execute nodes written in any language, because they interact with them as system processes. This enforces the testing process to be language agnostic, and to test the nodes using the ROS API and external behavior, treating them as black boxes.
-
-### Alternatives
-
-While using `launch_testing` with `unittest` is the classic approach used, support for more modern approaches like using `pytest` is also available. `Pytest` is a powerful and modern third party framework (`unittest` is part of the Python standard library) that has become the most used option for Python testing in the community. It is also gaining popularity within the ROS ecosystem.
-
-That's why `launch_pytest` was created, as a bridge between the `launch_testing` and `pytest` frameworks. As `launch_testing` is a standalone testing tool, it lacks many features, such as being able to mark tests as skipped or xfail (expected to fail).
-
-In this case, `launch_testing` is going to be used in the exercise for the sake of simplicity and for learning about the core concepts, as using `launch_pytest` requires more advanced knowledge.
+When the tests are executed, `launch_testing` automatically launches all defined processes, monitors their outputs, and then runs the Python test cases after the system setup is complete. Once all assertions pass or fail, it gracefully shuts down all launched nodes.
 
 ### Registering the tests
 
-After developing the tests, it's necessary to register them in order to be executed when `colcon test` is called. One thing to be extra careful about, as it was presented in Module 3, is test isolation in ROS 2 to avoid the cross-talk between different tests being run in parallel.
+After developing the tests, they must be registered so that they are executed when `colcon test` is run. As discussed in Module 3, it’s important to pay special attention to test isolation in ROS 2 to prevent cross-talk between tests running in parallel.
 
-`ament_cmake_ros` provides the `run_test_isolated.py` special test runner to ensure the isolation with unique domain ids for each test.
+To handle this, `ament_cmake_ros` provides the special test runner `run_test_isolated.py`, which ensures isolation by assigning unique domain IDs to each test.
 
-To ease adding several integration tests, the CMake function `add_ros_isolated_launch_test` is usually defined, so the instructions needed in your CMakeLists.txt are similar to this:
+To make it easier to add multiple integration tests, the CMake function `add_ros_isolated_launch_test` is usually defined, so the instructions needed in the package's `CMakeLists.txt` are similar to this:
 
 ```cmake
 if(BUILD_TESTING)
@@ -93,7 +87,7 @@ if(BUILD_TESTING)
 endif()
 ```
 
-And in the package.xml:
+And in the `package.xml`:
 
 ```xml
 <test_depend>ament_cmake_ros</test_depend>
@@ -102,6 +96,14 @@ And in the package.xml:
 <test_depend>launch_testing</test_depend>
 <test_depend>launch_testing_ament_cmake</test_depend>
 ```
+
+### Alternative: launch_pytest
+
+While using `launch_testing` with `unittest` is the classic approach used, support for more modern approaches like using `pytest` is also available. `Pytest` is a powerful and modern third party framework (`unittest` is part of the Python standard library) that has become the most used option for Python testing in the community. It is also gaining popularity within the ROS ecosystem.
+
+The `launch_pytest` package acts as a bridge between `launch_testing` and `pytest`, enabling the use of modern pytest features such as fixtures, parameterization, and test markers (`@pytest.mark.skip`, `@pytest.mark.xfail`, etc.). Like `launch_testing`, it can launch and test ROS 2 nodes written in any language, only the test logic itself is written in Python.
+
+In this case, `launch_testing` is going to be used in the exercise for the sake of simplicity and for learning about the core concepts, as using `launch_pytest` requires more advanced knowledge.
 
 ## Exercises
 
@@ -137,6 +139,9 @@ The additions to the Python test script must:
 3. Create and publish a `LaserScan` message that will trigger the detector.
 4. Use `proc_output.assertWaitFor` to check for the "RED LIGHT" message.
 5. Shutdown `rclpy`.
+
+> [!NOTE]
+> Although this example uses output-based assertions, integration tests are not limited to log inspection. The test logic can use ROS 2 client APIs (via `rclpy`) to interact with the running system, such as subscribing to topics or waiting for a service to become available.
 
 #### Definition of Success
 The task is complete when tests are run again, and the output of `colcon test-result --verbose` shows **0 errors and 0 failures** for the tests in module_4, with the new requirements in the test script.

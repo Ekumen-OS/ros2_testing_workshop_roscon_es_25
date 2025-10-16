@@ -45,6 +45,28 @@ inline bool spin_until(rclcpp::Executor& exec, Predicate&& predicate,
   return predicate();
 }
 
+// Utility function to build a laser scan message
+inline sensor_msgs::msg::LaserScan make_scan(const std::vector<float>& ranges,
+                                             float angle_min = -1.0f, float angle_max = 1.0f,
+                                             float range_min = 0.05f, float range_max = 10.0f,
+                                             const std::string& frame_id = LASER_FRAME_ID,
+                                             rclcpp::Time stamp = rclcpp::Time(0, 0)) {
+  sensor_msgs::msg::LaserScan scan;
+  scan.header.frame_id = frame_id;
+  scan.header.stamp = stamp;
+  scan.angle_min = angle_min;
+  scan.angle_max = angle_max;
+  scan.range_min = range_min;
+  scan.range_max = range_max;
+
+  const auto n = ranges.size();
+  scan.angle_increment = (n > 1) ? (angle_max - angle_min) / static_cast<float>(n - 1) : 0.0f;
+
+  scan.ranges = ranges;
+  scan.intensities.assign(n, 0.0f);
+  return scan;
+}
+
 class TestLaserDetectorNodeConstructor : public ::testing::Test {
  public:
   static void SetUpTestCase() { rclcpp::init(0, nullptr); }
@@ -56,10 +78,17 @@ class TestLaserDetectorNodeConstructor : public ::testing::Test {
 };
 
 TEST_F(TestLaserDetectorNodeConstructor, CreatingANodeDoesNotThrow) {
+  // This test verifies that constructing the LaserDetectorNode does not throw any exceptions. It
+  // ensures that all required parameters and resources are properly declared and initialized during
+  // node creation.
   ASSERT_NO_THROW({ const LaserDetectorNode dut(default_node_options_); });
 }
 
 TEST_F(TestLaserDetectorNodeConstructor, EvaluateConstructorDeclaresParameters) {
+  // This test verifies that the LaserDetectorNode declares all expected ROS parameters during
+  // construction. Declaring parameters ensures they are visible, configurable, and retrievable via
+  // the node API or launch files.
+
   // Create laser detector node object (dut)
   const LaserDetectorNode dut(default_node_options_);
 
@@ -71,6 +100,10 @@ TEST_F(TestLaserDetectorNodeConstructor, EvaluateConstructorDeclaresParameters) 
 }
 
 TEST_F(TestLaserDetectorNodeConstructor, EvaluateConstructorReadsParameters) {
+  // This test verifies that the LaserDetectorNode correctly reads and applies parameter values
+  // provided through NodeOptions during construction. It ensures parameter overrides are properly
+  // propagated to the node’s internal parameter server and accessible via the rclcpp API
+
   // Set node parameter values via node options
   rclcpp::NodeOptions custom_node_options;
   custom_node_options.append_parameter_override("footprint_radius", 1.5);
@@ -89,6 +122,10 @@ TEST_F(TestLaserDetectorNodeConstructor, EvaluateConstructorReadsParameters) {
 }
 
 TEST_F(TestLaserDetectorNodeConstructor, EvaluateTopicInterface) {
+  // This test verifies that the LaserDetectorNode correctly registers its expected ROS topics
+  // in the graph. It ensures that both the publisher and subscriber interfaces are created
+  // with the right topic names and message types.
+
   // Create laser detector node object (dut)
   const LaserDetectorNode dut(default_node_options_);
 
@@ -98,11 +135,17 @@ TEST_F(TestLaserDetectorNodeConstructor, EvaluateTopicInterface) {
 
   // Assert topic name and types match to the expected values
   ASSERT_TRUE(topic_names_and_types.find("/obstacle_detection") != topic_names_and_types.end());
-  ASSERT_TRUE(topic_names_and_types.find("/scan") != topic_names_and_types.end());
   ASSERT_FALSE(topic_names_and_types.at("/obstacle_detection").empty());
-  ASSERT_FALSE(topic_names_and_types.at("/scan").empty());
   ASSERT_EQ("std_msgs/msg/Bool", topic_names_and_types.at("/obstacle_detection")[0]);
-  ASSERT_EQ("sensor_msgs/msg/LaserScan", topic_names_and_types.at("/scan")[0]);
+
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Add assertions to verify that the node subscribes to the correct
+  // topic name ("/scan") with the expected message type ("sensor_msgs/msg/LaserScan").
+
+  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+
+  /// END EDIT --------------------------------------------------------
 }
 
 class TestLaserDetectorNode : public ::testing::Test {
@@ -114,13 +157,13 @@ class TestLaserDetectorNode : public ::testing::Test {
  protected:
   void SetUp() override {
     // Initialize node options
-    node_options_.append_parameter_override("footprint_radius", 1.5);
-    node_options_.append_parameter_override("min_points", 5);
+    node_options_.append_parameter_override("footprint_radius", 1.3);
+    node_options_.append_parameter_override("min_points", 3);
     node_options_.append_parameter_override("roi_min_angle", -0.5);
     node_options_.append_parameter_override("roi_max_angle", 0.5);
 
-    // Create auxiliary node
-    test_node_ = rclcpp::Node::make_shared("auxiliary_node");
+    // Create auxiliary test node
+    test_node_ = rclcpp::Node::make_shared("test_node");
 
     // Publisher
     scan_pub_ =
@@ -151,12 +194,14 @@ class TestLaserDetectorNode : public ::testing::Test {
   // Node options
   rclcpp::NodeOptions node_options_;
 
-  // Auxiliary node for publishing scan msgs and subscribe to obhect detection
+  // Auxiliary test node for publishing scan msgs and subscribe to object detection
   rclcpp::Node::SharedPtr test_node_;
+
   // Publishers, Subscribers and Services
   rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr detection_sub_;
 
+  // Store last detection
   std::optional<std_msgs::msg::Bool> latest_detection_;
 
   // Executor
@@ -167,29 +212,62 @@ class TestLaserDetectorNode : public ::testing::Test {
 };
 
 TEST_F(TestLaserDetectorNode, SubscribingToLaserScanDoesNotThrow) {
-  // Create LaserScan message
-  auto msg = std::make_shared<sensor_msgs::msg::LaserScan>();
-  msg->header.frame_id = LASER_FRAME_ID;
-  msg->header.stamp = test_node_->get_clock()->now();
-  msg->angle_min = -0.6;
-  msg->angle_max = 0.6;
-  msg->angle_increment = 0.2;
-  msg->range_min = LASER_RANGE_MIN;
-  msg->range_max = LASER_RANGE_MAX;
-  msg->ranges = {1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
-  msg->intensities = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  // This test verifies that the LaserDetectorNode correctly subscribes to the
+  // scan topic and processes incoming LaserScan messages without throwing exceptions.
 
-  // Publish msg
-  scan_pub_->publish(*msg);
+  // Create LaserScan message
+  auto scan = make_scan({1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6},  // ranges
+                        -0.6,                                 // angle_min
+                        0.6,                                  // angle_max
+                        LASER_RANGE_MIN,                      // range_min
+                        LASER_RANGE_MAX,                      // range_max
+                        LASER_FRAME_ID,                       // frame_id
+                        test_node_->get_clock()->now());      // stamp
+
+  // Publish scan
+  scan_pub_->publish(scan);
 
   // Deterministic wait for at least one callback to process
   ASSERT_TRUE(spin_until(*executor_, [&] { return latest_detection_.has_value(); }, 500ms));
   // No explicit assertion needed here beyond "no throw" and a callback arrived.
 }
 
-// TEST_F(TestLaserDetectorNode, ObstacleDetectionIsTrue) {}
+TEST_F(TestLaserDetectorNode, ObstacleDetectionIsTrue) {
+  // This test verifies that the LaserDetectorNode correctly identifies an obstacle
+  // when enough points fall within the configured footprint and ROI. It ensures that
+  // the detection logic in the node produces the expected Boolean output.
 
-// TEST_F(TestLaserDetectorNode, ObstacleDetectionIsFalse) {}
+  // Create LaserScan message
+  auto scan = make_scan({1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6},  // ranges
+                        -0.6,                                 // angle_min
+                        0.6,                                  // angle_max
+                        LASER_RANGE_MIN,                      // range_min
+                        LASER_RANGE_MAX,                      // range_max
+                        LASER_FRAME_ID,                       // frame_id
+                        test_node_->get_clock()->now());
+
+  // Publish scan
+  scan_pub_->publish(scan);
+
+  // Fill
+  ASSERT_TRUE(spin_until(*executor_, [&] { return latest_detection_.has_value(); }, 500ms));
+  EXPECT_TRUE(latest_detection_.value().data);
+}
+
+TEST_F(TestLaserDetectorNode, ObstacleDetectionIsFalse) {
+  // This test verifies that the LaserDetectorNode correctly identifies when
+  // there is no obstacle in the scene.
+
+  /// BEGIN EDIT ------------------------------------------------------
+
+  // Publish a LaserScan with all ranges above the footprint radius.
+  // Use make_scan() to build the message, publish it, and wait for
+  // latest_detection_ to be received. Then, expect that it is false.
+
+  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+
+  /// END EDIT --------------------------------------------------------
+}
 
 }  // namespace test
 }  // namespace module_3

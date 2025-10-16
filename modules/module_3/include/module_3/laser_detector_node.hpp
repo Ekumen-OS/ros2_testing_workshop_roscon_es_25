@@ -13,7 +13,6 @@
 // limitations under the License.
 #pragma once
 
-#include <memory>
 #include <module_2/laser_detector.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>

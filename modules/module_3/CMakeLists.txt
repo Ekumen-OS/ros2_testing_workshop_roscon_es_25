@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(module_2 REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
@@ -25,8 +26,14 @@ ament_target_dependencies(laser_detector_node
   PUBLIC
     module_2
     rclcpp
+    rclcpp_components
     std_msgs
     sensor_msgs
+)
+rclcpp_components_register_node(
+    laser_detector_node
+    PLUGIN module_3::LaserDetectorNode
+    EXECUTABLE laser_detector_main
 )
 
 # Tests
@@ -48,8 +55,18 @@ install(
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
+install(
+  TARGETS laser_detector_main
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  # Requires lib destination to be found by ros2 run package binary.
+  RUNTIME DESTINATION lib
+)
+
 ament_export_dependencies(
   rclcpp
+  rclcpp_components
   sensor_msgs
   std_msgs
 )

@@ -5,6 +5,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 # Dependencies
 find_package(ament_cmake REQUIRED)
 find_package(module_2 REQUIRED)
@@ -14,7 +16,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 # Libraries
-add_library(laser_detector_node
+add_library(laser_detector_node SHARED
   src/laser_detector_node.cpp
 )
 target_include_directories(laser_detector_node
@@ -49,19 +51,10 @@ endif()
 install(
   TARGETS laser_detector_node
   EXPORT export_${PROJECT_NAME}
-  LIBRARY DESTINATION lib/${PROJECT_NAME}
-  ARCHIVE DESTINATION lib/${PROJECT_NAME}
-  # Requires lib destination to be found by ros2 run package binary.
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
-
-install(
-  TARGETS laser_detector_main
-  EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   # Requires lib destination to be found by ros2 run package binary.
-  RUNTIME DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 ament_export_dependencies(

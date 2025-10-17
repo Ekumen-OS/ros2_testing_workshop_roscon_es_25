@@ -244,7 +244,7 @@ TEST_F(TestLaserDetectorNode, ObstacleDetectionIsTrue) {
                         LASER_RANGE_MIN,                      // range_min
                         LASER_RANGE_MAX,                      // range_max
                         LASER_FRAME_ID,                       // frame_id
-                        test_node_->get_clock()->now());
+                        test_node_->get_clock()->now());      // stamp
 
   // Publish scan
   scan_pub_->publish(scan);

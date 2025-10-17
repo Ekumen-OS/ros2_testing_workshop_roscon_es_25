@@ -17,6 +17,8 @@ This module introduces the development of **unit tests for ROS 2 nodes** and int
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
       - [Definition of success](#definition-of-success)
+    - [Exercise 2](#exercise-2)
+      - [Definition of success](#definition-of-success-1)
   - [References](#references)
 
 ## Objectives
@@ -245,6 +247,28 @@ The task is complete when tests are run and the output shows **0 errors and 0 fa
 - Publishers and subscribers are registered under the correct topic names and message types.
 - The node processes incoming LaserScan messages without exceptions.
 - The obstacle detection logic produces correct Boolean results for both obstacle-present and obstacle-absent scenarios
+
+### Exercise 2
+
+In this exercise, the build configuration will be modified to ensure that the unit test for this package is run **in isolation**, without interference from other tests or nodes using the same topics.
+
+When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky results. ROS provides a mechanism to automatically assign unique domains to each tests, preventing this issue. Although in this module the issue does not happen, it is a good practice to do it in favor of avoiding future headeaches as the software stack grows.
+
+Tasks:
+
+- Update the [CMakeLists.txt](CMakeLists.txt) and [package.xml](package.xml) files to enable test isolation.
+- Rebuild the package and run the tests again.
+
+  ```bash
+  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+#### Definition of success
+
+The task is complete when the test run successfully and console shows `Running with ROS_DOMAIN_ID 1` which effectively indicates that the test is being isolated.
+
+> [!NOTE]
+> Refer back to the [Test Isolation](#test-isolation) section of this module to identify which package and macro are used to achieve isolation.
 
 ## References
 

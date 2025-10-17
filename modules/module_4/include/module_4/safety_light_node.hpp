@@ -30,7 +30,7 @@ class SafetyLightNode : public rclcpp::Node {
   /**
    * @brief Construct a new Safety Light Node object.
    */
-  SafetyLightNode();
+  explicit SafetyLightNode(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
  private:
   /**

@@ -15,7 +15,8 @@
 
 namespace module_4 {
 
-SafetyLightNode::SafetyLightNode() : Node("safety_light_node") {
+SafetyLightNode::SafetyLightNode(const rclcpp::NodeOptions& options)
+    : Node("safety_light_node", options) {
   safety_light_ = std::make_unique<SafetyLight>();
 
   obstacle_detection_sub_ = this->create_subscription<std_msgs::msg::Bool>(
@@ -33,12 +34,6 @@ void SafetyLightNode::detection_callback(const std_msgs::msg::Bool::SharedPtr ms
 
 }  // namespace module_4
 
-/**
- * @brief Main function to initialize and run the SafetyLightNode.
- */
-int main(int argc, char* argv[]) {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<module_4::SafetyLightNode>());
-  rclcpp::shutdown();
-  return 0;
-}
+// This macro registers the node as a component
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(module_4::SafetyLightNode)

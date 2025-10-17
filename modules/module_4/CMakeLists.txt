@@ -8,6 +8,7 @@ endif()
 # Dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 
 # Libraries
@@ -25,15 +26,23 @@ ament_target_dependencies(safety_light
     std_msgs
 )
 
-# Executables
-add_executable(safety_light_node src/safety_light_node.cpp)
+add_library(safety_light_node SHARED
+  src/safety_light_node.cpp
+)
+target_include_directories(safety_light
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
 target_link_libraries(safety_light_node
   safety_light
 )
 ament_target_dependencies(safety_light_node
   rclcpp
+  rclcpp_components
   std_msgs
 )
+rclcpp_components_register_nodes(safety_light_node "module_4::SafetyLightNode")
 
 # Tests
 if(BUILD_TESTING)
@@ -51,22 +60,19 @@ install(
 )
 
 install(
-  TARGETS safety_light
+  TARGETS 
+    safety_light
+    safety_light_node
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   ARCHIVE DESTINATION lib/${PROJECT_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-install(
-  TARGETS safety_light_node
-  EXPORT export_${PROJECT_NAME}
-  DESTINATION bin/${PROJECT_NAME}
-)
-
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   rclcpp
+  rclcpp_components
   std_msgs
 )
 

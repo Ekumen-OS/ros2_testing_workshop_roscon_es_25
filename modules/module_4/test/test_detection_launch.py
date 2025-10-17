@@ -3,7 +3,8 @@ import time
 import unittest
 
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch_ros.actions import Node, ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
 import launch_testing
 import launch_testing.actions
 import rclpy
@@ -48,17 +49,26 @@ def generate_test_description():
         output="screen",
     )
 
-    safety_light_node = Node(
-        package="module_4",
-        executable="safety_light_node",
-        name="safety_light_node",
+    # TODO: Add Module 3 node in the same container when ready
+    safety_light_container = ComposableNodeContainer(
+        name="safety_light_container",
+        namespace="",
+        package="rclcpp_components",
+        executable="component_container_mt",
+        composable_node_descriptions=[
+            ComposableNode(
+                package="module_4",
+                plugin="module_4::SafetyLightNode",
+                name="safety_light_node",
+            )
+        ],
         output="screen",
     )
 
     return LaunchDescription(
         [
             laser_detector_node,
-            safety_light_node,
+            safety_light_container,
             # This action tells launch_testing that the system is ready for testing
             launch_testing.actions.ReadyToTest(),
         ]
@@ -107,6 +117,7 @@ class TestDetectionSystem(unittest.TestCase):
 
 
 # TODO: Decide if it's a good idea to add another test with the "No obstacle" path (I think it would be either too long or too easy)
+# TODO: Decide if it's better to check with a subscriber the message published (I think it's much more complicated for the participants, since you would need to use futures and threading)
 
 
 # Post-shutdown tests

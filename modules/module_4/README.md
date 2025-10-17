@@ -21,7 +21,6 @@ By the end of the module, participants will be able to:
 - Understand the role of integration testing in a robotics software stack.
 - Write a basic integration test using the **launch_testing framework**.
 - Create a ROS 2 launch file embedded within a Python test script.
-- Use `launch_testing` actions to **start nodes and verify their behavior**.
 - Execute integration tests with colcon test and interpret the results.
 
 ## Motivation
@@ -32,10 +31,10 @@ Think of a robotic system as a team of specialists. A unit test ensures each spe
 
 The importance of integration testing in robotics includes:
 
-- **Verifying Communication**: They confirm that nodes are using the correct topic names, message types, and service definitions. A mismatch here is a common bug that unit tests won't catch.
-- **Validating System Behavior**: They enable testing a sequence of interactions. For example: "Does the camera driver node correctly publish an image that the perception node can process?"
-- **Catching Runtime Errors**: They can uncover issues related to timing, network configuration, and race conditions that only appear when multiple nodes are running concurrently.
-- **Automating System-Level Checks**: Integration tests provide an automated way to perform "sanity checks" on a multi-node application, ensuring that the core functionalities are working before deploying to a physical robot.
+- **Verifying Communication**: Ensuring that nodes use the correct topic names, message types, and service definitions. A mismatch here is a common bug that unit tests won’t catch.
+- **Validating System Behavior**: Confirming that nodes interact correctly to produce the expected outcomes — for example, verifying that a camera node publishes an image that a perception node successfully processes.
+- **Catching Runtime Errors**: Detecting issues such as timing mismatches, race conditions, or network configuration problems that only occur when multiple nodes are running concurrently.
+- **Enabling Continuous Verification**: Allowing automated, system-level checks to be executed as part of a CI pipeline, ensuring the overall robot behavior remains correct after code or configuration changes.
 
 In ROS 2, this is primarily achieved using the `launch_testing` framework, which cleverly **combines the power of ROS 2 launch files with standard Python testing libraries** like unittest. This makes possible the definition, launching, and testing of an entire multi-node system from a single, automated script.
 

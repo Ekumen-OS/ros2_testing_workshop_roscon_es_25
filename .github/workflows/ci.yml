@@ -12,9 +12,6 @@ jobs:
     container:
       image: rostooling/setup-ros-docker:ubuntu-noble-latest
     steps:
-      - name: Set up git credentials
-        run: |
-          git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
       - name: Build and run tests
         uses: ros-tooling/action-ros-ci@v0.4
         with:
@@ -25,3 +22,4 @@ jobs:
             # module_4
             # module_5
           target-ros2-distro: jazzy
+          import-token: ${{ secrets.GITHUB_TOKEN }}

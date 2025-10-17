@@ -1,0 +1,81 @@
+cmake_minimum_required(VERSION 3.8)
+project(module_4)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
+# Dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(std_msgs REQUIRED)
+
+# Libraries
+add_library(safety_light
+  src/safety_light.cpp
+)
+target_include_directories(safety_light
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+ament_target_dependencies(safety_light
+  PUBLIC
+    rclcpp
+    std_msgs
+)
+
+add_library(safety_light_node SHARED
+  src/safety_light_node.cpp
+)
+target_include_directories(safety_light
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+target_link_libraries(safety_light_node
+  safety_light
+)
+ament_target_dependencies(safety_light_node
+  rclcpp
+  rclcpp_components
+  std_msgs
+)
+rclcpp_components_register_nodes(safety_light_node "module_4::SafetyLightNode")
+
+# Tests
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_clang_format_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../.clang-format")
+  set(ament_cmake_cpplint_CONFIG_FILE "${CMAKE_SOURCE_DIR}/../CPPLINT.cfg")
+  ament_lint_auto_find_test_dependencies()
+  add_subdirectory(test)
+endif()
+
+# Installation
+install(
+  DIRECTORY include/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+  TARGETS 
+    safety_light
+    safety_light_node
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(
+  rclcpp
+  rclcpp_components
+  std_msgs
+)
+
+ament_package()

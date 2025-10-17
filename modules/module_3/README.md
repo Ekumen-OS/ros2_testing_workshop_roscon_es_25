@@ -250,9 +250,9 @@ The task is complete when tests are run and the output shows **0 errors and 0 fa
 
 ### Exercise 2
 
-In this exercise, the build configuration will be modified to ensure that the unit test for this package is run **in isolation**, without interference from other tests or nodes using the same topics.
+In this exercise, the build configuration will be modified to ensure that the unit test for this package runs **in isolation,** without interference from other tests or nodes using the same topics.
 
-When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky results. ROS provides a mechanism to automatically assign unique domains to each tests, preventing this issue. Although in this module the issue does not happen, it is a good practice to do it in favor of avoiding future headeaches as the software stack grows.
+When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky or nondeterministic results. ROS provides a mechanism to automatically assign unique domains to each test, preventing this issue. Although this problem does not occur in this module, enabling isolation is considered a good practice to avoid future headaches as the software stack grows.
 
 Tasks:
 
@@ -265,7 +265,7 @@ Tasks:
 
 #### Definition of success
 
-The task is complete when the test run successfully and console shows `Running with ROS_DOMAIN_ID 1` which effectively indicates that the test is being isolated.
+The task is complete when the tests run successfully and the console shows `Running with ROS_DOMAIN_ID X`, where `X` is an automatically assigned domain ID (its value may vary depending on how many tests are running in parallel). This confirms that the test is being executed in isolation.
 
 > [!NOTE]
 > Refer back to the [Test Isolation](#test-isolation) section of this module to identify which package and macro are used to achieve isolation.

@@ -252,7 +252,7 @@ The task is complete when tests are run and the output shows **0 errors and 0 fa
 
 In this exercise, the build configuration will be modified to ensure that the unit test for this package runs **in isolation,** without interference from other tests or nodes using the same topics.
 
-When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky or nondeterministic results. ROS provides a mechanism to automatically assign unique domains to each test, preventing this issue. Although this problem does not occur in this module, enabling isolation is considered a good practice to avoid future headaches as the software stack grows.
+When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky or nondeterministic results. ROS provides a mechanism to automatically assign unique domain IDs to each test, preventing this issue. Although this problem does not occur in this module, enabling isolation is considered a good practice to avoid future headaches as the software stack grows.
 
 Tasks:
 

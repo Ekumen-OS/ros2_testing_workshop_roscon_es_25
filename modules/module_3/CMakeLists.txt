@@ -57,6 +57,7 @@ install(
 )
 
 ament_export_dependencies(
+  module_2
   rclcpp
   rclcpp_components
   sensor_msgs

@@ -229,13 +229,23 @@ Start from the provided `LaserDetectorNode` ROS2 node implementation and unit te
 What to review:
 
 - Source: [laser_detector_node.cpp](src/laser_detector_node.cpp) — intentional defects are present.
-- Header: [laser_detector_node.hpp](include/module_3/laser_detector_node.hpp) — intentional defects are present.
 - Tests: [test_laser_detector.cpp](test/test_laser_detector.cpp) — contains `BEGIN EDIT / END EDIT` blocks and an intentional failing check.
 
 Tasks:
 
-- Run the tests with `colcon test` and examine the output to identify which parts of the node or tests are failing.
-- Review the node’s header and source files to find and correct issues such as typos, missing includes, and mismatched parameter or topic names that cause the tests to fail.
+- Build the package:
+  
+  ```bash
+  colcon build --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+- Run the tests and examine the output to identify which parts of the node or tests are failing.
+
+  ```bash
+  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+- Review the node’s source files to find and correct issues such as typos and mismatched parameter or topic names that cause the tests to fail.
 - Locate the `BEGIN EDIT / END EDIT` blocks in the test file and replace the placeholder or failing statements with the appropriate assertions. Remove the intentional failure once the expected logic is implemented.
 - Use the provided utilities (`spin_until`, `make_scan`) for deterministic execution for the missing test instead of arbitrary sleeps or background spinning threads.
 
@@ -260,6 +270,7 @@ Tasks:
 - Rebuild the package and run the tests again.
 
   ```bash
+  colcon build --packages-up-to module_3 --event-handlers console_direct+
   colcon test --packages-up-to module_3 --event-handlers console_direct+
   ```
 

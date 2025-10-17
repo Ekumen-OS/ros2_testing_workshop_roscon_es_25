@@ -53,7 +53,6 @@ install(
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  # Requires lib destination to be found by ros2 run package binary.
   RUNTIME DESTINATION bin
 )
 

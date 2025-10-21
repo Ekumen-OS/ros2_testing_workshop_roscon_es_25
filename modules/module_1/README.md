@@ -163,7 +163,7 @@ And then run the tests:
 colcon test --packages-select module_1 --event-handlers console_direct+
 ```
 
-The task for this exercise is to analyze the inconsistencies in the current code, fix them, and see how the linter tests pass afterwards.
+The task for this exercise is to analyze the inconsistencies in the current [bad_example](./src/bad_example.cpp) code, fix them, and see how the linter tests pass afterwards.
 
 #### Definition of success
 

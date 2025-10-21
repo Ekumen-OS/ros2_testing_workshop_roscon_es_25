@@ -15,6 +15,10 @@ This module introduces the development of **unit tests for ROS 2 nodes** and int
   - [Test Isolation](#test-isolation)
   - [Alternative: The Rtest Framework](#alternative-the-rtest-framework)
   - [Exercises](#exercises)
+    - [Exercise 1](#exercise-1)
+      - [Definition of success](#definition-of-success)
+    - [Exercise 2](#exercise-2)
+      - [Definition of success](#definition-of-success-1)
   - [References](#references)
 
 ## Objectives
@@ -136,9 +140,6 @@ TEST_F(TestMyClass, ServiceRegistration)
 }
 ```
 
-<!-- @todo: What about actions?? -->
-<!-- @todo: rtest?? -->
-
 ### Node Lifecycle Management
 
 Lifecycle nodes define a managed execution model in which resources such as publishers, subscribers, and timers are created and destroyed as the node transitions between states. Unit tests can directly trigger and validate these state transitions using the rclcpp_lifecycle API, verifying that transitions occur correctly and that side effects happen as expected.
@@ -218,6 +219,67 @@ Rtest offers tools to mock and introspect ROS 2 entities such as publishers, sub
 At this stage, Rtest remains **experimental** and has a key limitation: it can only test ROS 2 components whose source code is available in the workspace, since it relies on compile-time template substitution to mock and intercept ROS entities. This prevents testing against precompiled or system-installed packages. Despite this, Rtest shows strong potential as a unified, deterministic testing layer that could **complement the approach presented in this module**.
 
 ## Exercises
+
+In this module, participants will debug and complete a ROS 2 node and its corresponding unit tests, fixing intentional defects and ensuring all tests pass deterministically.
+
+### Exercise 1
+
+Start from the provided `LaserDetectorNode` ROS2 node implementation and unit tests. The goal is to identify and fix the issues that currently prevent the tests from passing, ensuring the node can be compiled, tested deterministically, and behaves as expected.
+
+What to review:
+
+- Source: [laser_detector_node.cpp](src/laser_detector_node.cpp) — intentional defects are present.
+- Tests: [test_laser_detector.cpp](test/test_laser_detector.cpp) — contains `BEGIN EDIT / END EDIT` blocks and an intentional failing check.
+
+Tasks:
+
+- Build the package:
+  
+  ```bash
+  colcon build --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+- Run the tests and examine the output to identify which parts of the node or tests are failing.
+
+  ```bash
+  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+- Review the node’s source files to find and correct issues such as typos and mismatched parameter or topic names that cause the tests to fail.
+- Locate the `BEGIN EDIT / END EDIT` blocks in the test file and replace the placeholder or failing statements with the appropriate assertions. Remove the intentional failure once the expected logic is implemented.
+- Use the provided utilities (`spin_until`, `make_scan`) for deterministic execution for the missing test instead of arbitrary sleeps or background spinning threads.
+
+#### Definition of success
+
+The task is complete when tests are run and the output shows **0 errors and 0 failures**, demonstrating that:
+
+- The node declares and retrieves parameters correctly.
+- Publishers and subscribers are registered under the correct topic names and message types.
+- The node processes incoming LaserScan messages without exceptions.
+- The obstacle detection logic produces correct Boolean results for both obstacle-present and obstacle-absent scenarios
+
+### Exercise 2
+
+In this exercise, the build configuration will be modified to ensure that the unit test for this package runs **in isolation,** without interference from other tests or nodes using the same topics.
+
+When running multiple ROS 2 tests in parallel, shared topic names can cause cross-talk between nodes, leading to flaky or nondeterministic results. ROS provides a mechanism to automatically assign unique domain IDs to each test, preventing this issue. Although this problem does not occur in this module, enabling isolation is considered a good practice to avoid future headaches as the software stack grows.
+
+Tasks:
+
+- Update the [CMakeLists.txt](CMakeLists.txt) and [package.xml](package.xml) files to enable test isolation.
+- Rebuild the package and run the tests again.
+
+  ```bash
+  colcon build --packages-up-to module_3 --event-handlers console_direct+
+  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  ```
+
+#### Definition of success
+
+The task is complete when the tests run successfully and the console shows `Running with ROS_DOMAIN_ID X`, where `X` is an automatically assigned domain ID (its value may vary depending on how many tests are running in parallel). This confirms that the test is being executed in isolation.
+
+> [!NOTE]
+> Refer back to the [Test Isolation](#test-isolation) section of this module to identify which package and macro are used to achieve isolation.
 
 ## References
 

@@ -21,7 +21,11 @@ ARG USERNAME=ros2
 ARG USER_UID=1000
 ARG USER_GID=1000
 
-# The Ubuntu 24 base image has a defualt user 'ubuntu' at UID/GID 1000.
+# Make build args available at runtime as environment variables
+ENV USERNAME=${USERNAME}
+ENV ROS_DISTRO=${ROS_DISTRO}
+
+# The Ubuntu 24 base image has a default user 'ubuntu' at UID/GID 1000.
 # We modify this user to match the host user's name.
 RUN apt-get update && apt-get install -y sudo \
     && groupmod --gid $USER_GID --new-name $USERNAME ubuntu \
@@ -29,16 +33,25 @@ RUN apt-get update && apt-get install -y sudo \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# TODO (jesus): Add rosdep commands to install dependencies from packages
+# Initialize rosdep
+RUN rosdep init || true && rosdep update || true
+
+# Create workspace and set ownership (do this as root)
+RUN mkdir -p /home/${USERNAME}/ws && chown -R ${USER_UID}:${USER_GID} /home/${USERNAME}/ws
+
+# Copy entrypoint script and make it executable
+COPY docker/ros_entrypoint.sh /usr/local/bin/ros_entrypoint.sh
+RUN sudo chmod +x /usr/local/bin/ros_entrypoint.sh
 
 # Set the new user and work directory
 USER $USERNAME
 WORKDIR /home/$USERNAME/ws
+SHELL ["/bin/bash", "-c"]
 
 # Source ROS 2 and colcon autocompletion on container startup
-SHELL ["/bin/bash", "-c"]
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
-RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc \
+    && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # Default entrypoint
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/local/bin/ros_entrypoint.sh"]
+CMD ["/bin/bash"]

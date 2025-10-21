@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# runtime-friendly defaults
+ROS_DISTRO="${ROS_DISTRO:-jazzy}"
+USERNAME="${USERNAME:-$(whoami)}"
+WORKSPACE="/home/${USERNAME}/ws"
+SRCDIR="${WORKSPACE}/src"
+
+# run rosdep if src contains packages
+if [ -d "${SRCDIR}" ] && [ "$(ls -A "${SRCDIR}" 2>/dev/null || true)" ]; then
+  echo "[entrypoint] detected packages in ${SRCDIR}"
+  echo "[entrypoint] running: sudo rosdep install --from-paths \"${SRCDIR}\" --ignore-src -r -y --rosdistro \"${ROS_DISTRO}\""
+  if ! sudo rosdep install --from-paths "${SRCDIR}" --ignore-src -r -y --rosdistro "${ROS_DISTRO}"; then
+    echo "[entrypoint] warning: rosdep install failed. You can retry manually inside the container."
+  fi
+else
+  echo "[entrypoint] no packages found in ${SRCDIR}; skipping rosdep install"
+fi
+
+# If no args were provided to the container, default to an interactive bash shell.
+# This is robust whether CMD is absolute or (accidentally) relative.
+if [ "$#" -eq 0 ]; then
+  # prefer /bin/bash absolute path
+  set -- /bin/bash
+fi
+
+exec "$@"

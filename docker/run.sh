@@ -9,7 +9,6 @@ TAG="${ROS_DISTRO}"
 CONTAINER_NAME="ros2-testing-worshop-roscon-es-25-container"
 SCRIPT_FOLDER_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 REPOSITORY_FOLDER_PATH="${SCRIPT_FOLDER_PATH}/.."
-# TODO Review this (whether to allow dynamic user name or fixed one)
 WORKSPACE_ROOT_CONTAINER="/home/${USERNAME}/ws"
 
 # Flags
@@ -22,9 +21,9 @@ function print_usage() {
   echo
   echo "Options:"
   echo "  --build                   Build the Docker image before running."
-  echo "  -n, --name      <name>    Set the image name (default: ${DEFAULT_IMAGE_NAME})"
-  echo "  -t, --tag       <tag>     Set the image tag (default: ROS distro name)"
-  echo "  -c, --container <name>    Set the container name (default: ${DEFAULT_CONTAINER_NAME})"
+  echo "  -n, --name      <name>    Set the image name (default: ${IMAGE_NAME})"
+  echo "  -t, --tag       <tag>     Set the image tag (default: ${TAG})"
+  echo "  -c, --container <name>    Set the container name (default: ${CONTAINER_NAME})"
   echo "  -h, --help                Show this help message"
   echo
   echo "Any additional arguments are passed to the container's entrypoint."
@@ -55,27 +54,30 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      ARGS+=("$1") # Forward unknown args to docker run
+      # Forward unknown args to docker run
+      ARGS+=("$1")
       shift
       ;;
   esac
 done
 
-# Check Docker permissions
+# Check for Docker permissions instead of hardcoding 'sudo'
 if ! docker info > /dev/null 2>&1; then
-  echo -e "\n\e[31mError:\e[0m Docker is not running or you don't have permission."
-  echo "Please start Docker or run this script with 'sudo'."
+  echo -e "\n\e[31mError:\e[0m Docker is not running or you don't have permission to use it."
+  echo "Please ensure the Docker daemon is running."
+  echo "To fix permission issues, you can either:"
+  echo "  1. Add your user to the 'docker' group: \e[33msudo usermod -aG docker ${USER}\e[0m (requires logout/login)"
+  echo "  2. Run this script with sudo: \e[33msudo $0\e[0m"
   exit 1
 fi
 
 # Check for NVIDIA Container Toolkit for GPU support
-if ! dpkg -l | grep -q nvidia-container-toolkit; then
-  echo -e "\n\e[33mWarning:\e[0m 'nvidia-container-toolkit' not found."
-  echo "NVIDIA GPU support will be disabled. To enable it, run:"
-  echo "sudo apt-get install nvidia-container-toolkit"
-  NVIDIA_FLAGS=""
-else
+NVIDIA_FLAGS=""
+if command -v dpkg >/dev/null 2>&1 && dpkg -l | grep -q nvidia-container-toolkit; then
   NVIDIA_FLAGS="--gpus all"
+else
+  # if dpkg isn't present (non-debian host) or toolkit not installed, we leave NVIDIA_FLAGS empty
+  echo -e "\n\e[33mWarning:\e[0m 'nvidia-container-toolkit' not detected (or dpkg unavailable). GPU support may be disabled."
 fi
 
 # Build if requested
@@ -84,7 +86,6 @@ if [ "$BUILD_FIRST" = true ]; then
   "${SCRIPT_FOLDER_PATH}/build.sh" -n "${IMAGE_NAME}" -t "${TAG}"
 fi
 
-# Check if name container is already taken
 # Check if a container with the same name already exists
 if [ "$(docker ps -a -q -f name=${CONTAINER_NAME})" ]; then
    echo -e "\n\e[31mError:\e[0m Container '\e[1m${CONTAINER_NAME}\e[0m' already exists."
@@ -117,7 +118,6 @@ docker run -it \
 xhost -
 
 # Function to be able to overwrite the image on exit
-# TODO (jesus): Check why this is not working sometimes after changes
 function onexit() {
   while true; do
     read -p "Do you want to overwrite the image called '$IMAGE_NAME' with the current changes? [y/n]: " answer

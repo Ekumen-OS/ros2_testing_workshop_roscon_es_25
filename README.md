@@ -6,6 +6,8 @@ The workshop combines theory with practical exercises so that attendees can appl
 
 ## 🚀 Motivation
 
+<!-- TODO: Review and refine this section -->
+
 ROS projects are complex. They combine algorithms, drivers, middleware, and hardware interfaces into large, interdependent systems. In such an environment, even a small code change can have unintended effects. Without tests, these effects are only discovered late (often on a robot, at a demo, or by another developer) when the cost of fixing them is highest.
 
 Automated testing addresses this by providing fast, repeatable feedback. A well-designed test suite is not just about catching bugs; it fundamentally changes how you work:
@@ -45,6 +47,7 @@ By the end of the workshop, participants will be able to:
 ## 🖥️ Technical requirements
 
 - Laptop with Linux, Docker, and an IDE (of your choice) installed.
+- At least 5GB of free disk space (for the Docker image).
 - A configured GitHub account.
 - Use of the Linux terminal and basic commands.
 - Fundamental concepts of ROS 2 and C++.
@@ -55,7 +58,7 @@ By the end of the workshop, participants will be able to:
 
 ## 📋 Workshop content
 
-<!-- TODO Revisar cuando tengamos todo preparado, añadir links a los ejercicios practicos -->
+<!-- TODO: Link here the different READMEs? Refine the contents -->
 
 > [!IMPORTANT]
 > Before the workshop, it is recommended to build and test the `Docker` image that contains everything. For this, there is a prepared [guide](./docker/README.md).
@@ -94,5 +97,6 @@ By the end of the workshop, participants will be able to:
    - Example of a minimal workflow.
 
 ## 📦 Tools and resources
+<!-- TODO: I don't think this is necessary at all, given that we are including the resources in each of the modules -->
 
 (Fill with links and resources)

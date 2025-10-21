@@ -18,6 +18,3 @@ libgtest-dev
 curl
 wget
 nano
-
-# === ROS 2 specific packages ===
-ros-jazzy-ament-lint-common

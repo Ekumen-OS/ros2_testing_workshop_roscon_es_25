@@ -1,0 +1,25 @@
+# git
+.git
+.git/
+.gitignore
+
+# build artefacts
+build/
+install/
+log/
+*.log
+*.pyc
+__pycache__/
+
+# local IDE
+.vscode/
+.idea/
+*.swp
+
+# local virtualenvs / python
+venv/
+.env/
+
+# OS files
+.DS_Store
+Thumbs.db

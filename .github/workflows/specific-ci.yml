@@ -1,0 +1,56 @@
+name: ROS 2 specific CI
+
+# Controls when the workflow will run
+on:
+  pull_request: # Run on all pull requests
+  push:
+    branches: [main] # Also run on pushes to the main branch
+
+jobs:
+  build_and_test:
+    name: Build and Test
+    # The type of virtual machine to run the job on
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Set up the ROS 2 environment cleanly
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: jazzy
+
+      # Get the list of changed files in this PR
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v47
+        with:
+          files_from_last_commit: false
+
+      # Map changed files to ROS packages using our script
+      - name: Get changed ROS packages
+        id: changed_packages
+        run: |
+          PKGS=$(python3 tools/get_changed_packages.py ${{ steps.changed_files.outputs.all_changed_files }})
+          echo "Changed packages: $PKGS"
+          echo "names=$PKGS" >> $GITHUB_OUTPUT
+
+      # Install dependencies, build, and test ONLY the changed packages
+      - name: Build and Test Changed Packages
+        if: steps.changed_packages.outputs.names != ''
+        shell: bash
+        run: |
+          # Source the ROS setup script provided by the setup-ros action
+          source /opt/ros/jazzy/setup.bash
+
+          # Install dependencies for the entire workspace
+          rosdep install --from-paths src --ignore-src -y
+
+          # Build and test only the packages that changed
+          colcon build --packages-select ${{ steps.changed_packages.outputs.names }} --symlink-install --event-handlers console_direct+
+          colcon test --packages-select ${{ steps.changed_packages.outputs.names }} --event-handlers console_direct+
+          colcon test-result --verbose

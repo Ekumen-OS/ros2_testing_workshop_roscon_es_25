@@ -1,0 +1,22 @@
+name: ROS 2 complete CI
+
+# Controls when the workflow will run
+on:
+  pull_request: # Run on all pull requests
+  push:
+    branches: [main] # Also run on pushes to the main branch
+
+jobs:
+  build_and_test_ros2:
+    runs-on: ubuntu-latest
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-noble-latest
+    steps:
+      - name: Build and run tests
+        uses: ros-tooling/action-ros-ci@v0.4
+        with:
+          package-name: |
+            module_1
+            module_2
+          target-ros2-distro: jazzy
+          import-token: ${{ secrets.GITHUB_TOKEN }}

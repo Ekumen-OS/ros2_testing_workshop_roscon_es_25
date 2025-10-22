@@ -3,6 +3,12 @@
 .git/
 .gitignore
 
+# Ignore everything under modules by default
+modules/**
+# Keep only these small files (needed by rosdep and colcon)
+!modules/**/package.xml
+!modules/**/COLCON_IGNORE
+
 # build artefacts
 build/
 install/

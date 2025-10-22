@@ -23,7 +23,6 @@ ARG USER_GID=1000
 
 # Make build args available at runtime as environment variables
 ENV USERNAME=${USERNAME}
-ENV ROS_DISTRO=${ROS_DISTRO}
 
 # The Ubuntu 24 base image has a default user 'ubuntu' at UID/GID 1000.
 # We modify this user to match the host user's name.

@@ -1,4 +1,4 @@
-# ROS 2 Testing: A Practical Survival Guide — Docker
+# Docker Instructions
 
 This container provides a reproducible environment for the "ROS 2 Testing: A Practical Survival Guide" workshop, based on the `osrf/ros:jazzy-desktop-full` image.
 
@@ -27,6 +27,15 @@ It's possible to get information about the available flags for both scripts usin
 
 Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (~/ws).
 
-After shutdown, the user will be asked if he/she wants to save the changes made inside the container to the image (performing a `docker commit` internally).
+After shutdown, the user will be asked whether to save the changes made inside the container or not to the image (performing a `docker commit` internally).
+
+If at any moment it's required to start a new session to the running container, it can be done by executing:
+
+```bash
+docker exec -it ros2-testing-workshop-roscon-es-25-container bash
+```
+
+> [!NOTE]
+> The name of the container might differ if a different name is provided in the script, so be careful about that.
 
 <!-- TODO: Add Troubleshoot section? Common problems? -->

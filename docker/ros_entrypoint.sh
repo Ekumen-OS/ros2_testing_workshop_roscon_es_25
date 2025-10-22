@@ -19,7 +19,7 @@ else
 fi
 
 # If no args were provided to the container, default to an interactive bash shell.
-# This is robust whether CMD is absolute or (accidentally) relative.
+# This is robust whether CMD is absolute or relative.
 if [ "$#" -eq 0 ]; then
   # prefer /bin/bash absolute path
   set -- /bin/bash

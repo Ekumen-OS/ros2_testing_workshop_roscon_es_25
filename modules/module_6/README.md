@@ -57,7 +57,10 @@ For ROS 2, the community has created a set of pre-made "actions" that make setti
 There are plenty of other choices to host the CI workflow available, it always depends on the specific use case on hand. Some of the most popular ones are Jenkins, AWS, Gitlab CI/CD, Bitbucket pipelines...
 
 > [!NOTE]
-> Note that ament_cmake and colcon commands in CI behave exactly like local runs, so the developer could always debug possible failures locally first, before relying on CI. It's even possible to run the CI workflows locally or on self-hosted runners to verify its behavior before pushing into Github.
+>
+> - The same GitHub Actions workflow can also be executed on **self-hosted runners**, allowing the CI pipeline to run on an organization’s own infrastructure instead of GitHub’s servers.
+>
+> - Note that `ament_cmake` and `colcon` commands in CI behave exactly like local runs, so the developer could always **debug possible failures locally first**, before relying on CI.
 
 ### Anatomy of a ROS 2 Workflow File
 

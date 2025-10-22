@@ -1,6 +1,6 @@
 # Module 5 – End-to-End Testing
 
-In this final testing module, the goal is to explore End-to-End (E2E) testing. This is the highest level of testing, designed to verify that the entire robotic system can successfully perform a complete "mission" or task from start to finish, just as it would in the real world.
+In this module, the goal is to explore End-to-End (E2E) testing. This is the highest level of testing, designed to verify that the entire robotic system can successfully perform a complete "mission" or task from start to finish, just as it would in the real world.
 
 - [Module 5 – End-to-End Testing](#module-5--end-to-end-testing)
   - [Objectives](#objectives)
@@ -31,6 +31,8 @@ While integration tests (Module 4) confirm that a subset of nodes can collaborat
 Its purpose is to validate the robot's ability to meet a high-level requirement, such as "Given a map, navigate to the kitchen" or "Inspect all waypoints in the warehouse".
 
 The importance of E2E testing in robotics includes:
+
+<!-- TODO: Review this, and see if it matches more with field debugging -->
 
 - **Validating the "Mission"**: It's the only test level that answers the question: "Does the robot actually achieve its goal?"
 - **Testing Against Reality**: By using data recorded from the real world (or a high-fidelity simulator), rosbags provide a "ground truth" scenario. This makes possible to test complex, emergent behaviors and edge cases that are impossible to script in a simple integration test.

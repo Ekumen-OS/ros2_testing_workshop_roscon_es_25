@@ -1,6 +1,6 @@
 # Docker Instructions
 
-This container provides a reproducible environment for the "ROS 2 Testing: A Practical Survival Guide" workshop, based on the `osrf/ros:jazzy-desktop-full` image.
+This container provides a reproducible environment for the "ROS 2 Testing: A Practical Survival Guide" workshop, based on the `ros:jazzy-ros-core` image.
 
 It includes development tools, linters, Google Test/Mock, and all the necessary utilities to follow the exercises (using rosdep to install all the dependencies).
 

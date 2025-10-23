@@ -94,6 +94,20 @@ if [ "$(docker ps -a -q -f name=${CONTAINER_NAME})" ]; then
    exit 1
 fi
 
+# Ensure local build artifact folders (build/, install/, log/) exist
+# and are writable by the current user.
+mkdir -p "${REPOSITORY_FOLDER_PATH}"/{build,install,log}
+# If they were previously created by Docker as root, adjust ownership.
+for dir in build install log; do
+  folder="${REPOSITORY_FOLDER_PATH}/${dir}"
+  # Get current owner UID
+  owner_uid=$(stat -c "%u" "$folder" 2>/dev/null || echo "")
+  if [ "$owner_uid" = "0" ]; then
+    echo "Fixing ownership of $dir (was root-owned)..."
+    sudo chown -R "$(id -u):$(id -g)" "$folder"
+  fi
+done
+
 # Allow GUI applications
 xhost +
 
@@ -109,6 +123,9 @@ docker run -it \
   --device /dev/dri:/dev/dri \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v ${REPOSITORY_FOLDER_PATH}/modules:${WORKSPACE_ROOT_CONTAINER}/src/ \
+  -v ${REPOSITORY_FOLDER_PATH}/build:${WORKSPACE_ROOT_CONTAINER}/build/ \
+  -v ${REPOSITORY_FOLDER_PATH}/install:${WORKSPACE_ROOT_CONTAINER}/install/ \
+  -v ${REPOSITORY_FOLDER_PATH}/log:${WORKSPACE_ROOT_CONTAINER}/log/ \
   -v ${HOME}/.ssh:/home/${USERNAME}/.ssh \
   -w ${WORKSPACE_ROOT_CONTAINER} \
   "${IMAGE_NAME}:${TAG}" \

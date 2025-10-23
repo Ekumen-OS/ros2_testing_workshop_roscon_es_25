@@ -28,7 +28,7 @@ The benefits are clear, but they don’t come for free. Automated testing requir
 
 - **Maintenance cost**. Tests evolve with the code. When APIs change, the tests must adapt. Outdated tests can become misleading if not maintained.
 
-Despite these costs, the **return on investment is substantial**. Projects that embrace testing enjoy shorter debugging times, more reliable deployments, and greater confidence in every release. For robotics — where failures can have physical consequences — this confidence is not optional; it’s essential.
+Despite these costs, the **return on investment is substantial**. Projects that embrace testing enjoy shorter debugging times, more reliable deployments, and greater confidence in every release. For robotics, where failures can have physical consequences, this confidence is not optional; it’s essential.
 
 ## 🎯 Learning objectives
 
@@ -51,7 +51,7 @@ By the end of the workshop, participants will be able to:
 
 ## 📋 Workshop structure
 
-This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2** — from code quality fundamentals to complete Continuous Integration pipelines.
+This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from code quality fundamentals to complete Continuous Integration pipelines.
 
 Each module combines conceptual material with practical exercises that apply the ideas directly to real ROS 2 code. All exercises are designed to be executed in a consistent environment using the provided Docker setup.
 
@@ -84,4 +84,4 @@ Each module combines conceptual material with practical exercises that apply the
 
 ---
 
-For detailed explanations and references, see the individual module READMEs in the [modules/](./modules) directory.
+For detailed explanations and references, see the individual module READMEs in the [modules](./modules) directory.

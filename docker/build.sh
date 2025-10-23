@@ -17,9 +17,9 @@ function print_usage() {
   echo "Builds the Docker image for the ROS 2 workshop."
   echo
   echo "Options:"
-  echo "  -n, --name      <name>    Set the image name (default: ${DEFAULT_IMAGE_NAME})"
-  echo "  -t, --tag       <tag>     Set the image tag (default: ROS distro name)"
-  echo "  -p, --platform  <platform> Set the target platform (default: ${DEFAULT_PLATFORM})"
+  echo "  -n, --name      <name>    Set the image name (default: ${IMAGE_NAME})"
+  echo "  -t, --tag       <tag>     Set the image tag (default: ${TAG})"
+  echo "  -p, --platform  <platform> Set the target platform (default: ${PLATFORM})"
   echo "  -h, --help                Show this help message"
 }
 

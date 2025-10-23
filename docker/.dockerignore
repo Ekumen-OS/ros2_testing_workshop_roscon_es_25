@@ -1,0 +1,31 @@
+# git
+.git
+.git/
+.gitignore
+
+# Ignore everything under modules by default
+modules/**
+# Keep only these small files (needed by rosdep and colcon)
+!modules/**/package.xml
+!modules/**/COLCON_IGNORE
+
+# build artefacts
+build/
+install/
+log/
+*.log
+*.pyc
+__pycache__/
+
+# local IDE
+.vscode/
+.idea/
+*.swp
+
+# local virtualenvs / python
+venv/
+.env/
+
+# OS files
+.DS_Store
+Thumbs.db

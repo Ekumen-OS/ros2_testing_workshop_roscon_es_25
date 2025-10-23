@@ -42,15 +42,5 @@ jobs:
       # Install dependencies, build, and test ONLY the changed packages
       - name: Build and Test Changed Packages
         if: steps.changed_packages.outputs.names != ''
-        shell: bash
         run: |
-          # Source the ROS setup script provided by the setup-ros action
-          source /opt/ros/jazzy/setup.bash
-
-          # Install dependencies for the entire workspace
-          rosdep install --from-paths src --ignore-src -y
-
-          # Build and test only the packages that changed
-          colcon build --packages-select ${{ steps.changed_packages.outputs.names }} --symlink-install --event-handlers console_direct+
-          colcon test --packages-select ${{ steps.changed_packages.outputs.names }} --event-handlers console_direct+
-          colcon test-result --verbose
+          tools/run_ci_build.sh ${{ steps.changed_packages.outputs.names }}

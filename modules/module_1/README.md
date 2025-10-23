@@ -83,7 +83,7 @@ The official docs also provide an official guide on the defined guidelines for e
 ### Frequent Conflicts and Incompatibilities
 
 - **ament_uncrustify vs ament_clang_format**:
-  It's not feasible to use both with their default configurations, because `ament_uncrustify --format` can produce changes that cause `ament_clang_format` to complain, and vice versa.
+  It's not feasible to use both with their default configurations, because `ament_uncrustify --format` can produce changes that cause `ament_clang_format` to complain, and vice versa. To avoid this problem, `clang-format` can be suppressed for sections of your code, just using `//clang-format off/on` in the code, putting the 'off' at the start of the ignored code and 'on' where it ends.
 - **Overlapping warnings**:
   Tools like cppcheck and others (clang-tidy or LLVM analysis) can produce similar warnings. Using them together without filtering can generate a lot of "noise" that ends up being ignored.
 - **False positives**:
@@ -121,14 +121,15 @@ colcon lint
 
 ---
 
-
 ### ROS 2 doctor
 
-Checks the ROS 2 installation, verifying paths, environment variables, and the general state of the workspace. Simply run the following command in a terminal:
+This command is part of the ROS 2 CLI and it's used to check the ROS 2 installation, verifying paths, environment variables, and the general state of the workspace. Simply run the following command in a terminal:
 
 ```bash
 ros2 doctor
 ```
+
+It helps detecting common configuration or runtime issues, such as unreachable nodes, network problems (like mismatched `ROS_DOMAIN_ID`)... For a complete report, the `-r` flag can be added. To verify communication between the nodes on your network, the `--network` flag can be used.
 
 ## Exercises
 

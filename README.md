@@ -1,102 +1,87 @@
 # ROS 2 Testing: A Practical Survival Guide
 
-This workshop aims to introduce the **best practices for designing, testing, and maintaining ROS 2 nodes in C++**, ensuring code quality, ease of maintenance, and confidence in deployments.
+This workshop introduces the **best practices for designing, testing, and maintaining ROS 2 nodes in C++** to ensure code quality, maintainability, and confidence in deployments.
 
-The workshop combines theory with practical exercises so that attendees can apply the concepts directly in their own workflow.
+It combines theory with hands-on exercises so that participants can directly apply the concepts in their own workflow.
 
 ## 🚀 Motivation
 
-<!-- TODO: Review and refine this section -->
-
 ROS projects are complex. They combine algorithms, drivers, middleware, and hardware interfaces into large, interdependent systems. In such an environment, even a small code change can have unintended effects. Without tests, these effects are only discovered late (often on a robot, at a demo, or by another developer) when the cost of fixing them is highest.
 
-Automated testing addresses this by providing fast, repeatable feedback. A well-designed test suite is not just about catching bugs; it fundamentally changes how you work:
+Automated testing addresses this by providing fast, repeatable feedback. A well-designed test suite does much more than just catching bugs:
 
-- **Confidence in change**. Tests let you make incremental updates and refactor with reduced fear of breaking something hidden. This gives you this wonderful freedom from change fear!
+- **Confidence in change**. Safely refactor and evolve your code without fear of breaking hidden functionality.
 
-- **Better design**. Writing testable code naturally leads to cleaner separation between core logic and ROS interfaces. This pays off in long-term maintainability.
+- **Better design**. Writing testable code naturally leads to cleaner separation between logic and ROS interfaces, improving long-term maintainability.
 
-- **Bug prevention**. Regression tests ensure that once a bug is fixed, it stays fixed. They also make it easier to prove to reviewers that a patch solves the problem.
+- **Bug prevention**. Regression tests ensure that once a bug is fixed, it stays fixed.
 
-- **Living documentation**. Tests encode the expected behavior of your code. They serve as executable documentation that guides both current and future contributors.
+- **Living documentation**. Tests describe expected behavior and serve as executable documentation for future contributors.
 
-- **Collaboration at scale**. In a distributed, open-source ecosystem like ROS, tests enable many developers to work together without stepping on each other’s toes. They reduce guesswork for newcomers and ease the burden on maintainers.
+- **Collaboration at scale**. In a distributed, open-source ecosystem like ROS, tests enable many developers to work together without stepping on each other’s toes.
 
 - **Continuous Integration synergy**. Automated tests unlock the full value of CI, catching regressions early and ensuring compatibility across the evolving ROS ecosystem.
 
 The benefits are clear, but they don’t come for free. Automated testing requires deliberate investment in two main areas:
 
-- **Development cost**. Writing a test takes time, and making it automatic is not always trivial. Special care is needed if tests involve hardware or external environments. The general strategy is to simulate, mock, or reduce the scope of the test to keep it reliable and repeatable.
+- **Development cost**. Writing a test takes time, and making it automatic is not always trivial. Special care is needed if tests involve hardware or external environments.
 
-- **Maintenance cost**. Tests evolve with the code. When APIs change or components are redesigned, tests may break not because of a bug but because they need to be updated. In some cases, old regression tests must be retired if they no longer reflect the current design.
+- **Maintenance cost**. Tests evolve with the code. When APIs change, the tests must adapt. Outdated tests can become misleading if not maintained.
 
-Despite these costs, the return on investment is substantial. Tests reduce debugging time, increase software quality, and provide long-term stability in a fast-moving ecosystem. In practice, the time you spend writing and maintaining tests is far less than the time you save by avoiding regressions, broken builds, and late-night bug hunts on hardware.
+Despite these costs, the **return on investment is substantial**. Projects that embrace testing enjoy shorter debugging times, more reliable deployments, and greater confidence in every release. For robotics, where failures can have physical consequences, this confidence is not optional; it’s essential.
 
 ## 🎯 Learning objectives
 
 By the end of the workshop, participants will be able to:
 
-- Configure static analysis in their ROS 2 projects to enforce quality standards.
-- Design ROS 2 nodes so that the main logic is **independently testable** from the ROS interfaces.
-- Create and run **unit tests** in C++ using `ament_cmake_gtest` and `ament_cmake_gmock`.
-- Implement **ROS 2 interface tests** (publishers, subscribers, parameters, services).
-- Perform **integration tests** between multiple nodes.
-- Know how to perform **end-to-end tests** with `rosbag` and simulation.
-- Integrate all these steps into a **Continuous Integration** workflow with GitHub Actions.
+- Understand the role of testing in the ROS 2 software lifecycle.
+- Differentiate between unit, integration, and end-to-end tests.
+- Apply good design practices that make ROS 2 nodes easier to test and maintain.
+- Use automated tools to enforce code quality and prevent regressions.
+- Integrate all these practices into a continuous integration pipeline.
 
 ## 🖥️ Technical requirements
 
 - Laptop with Linux, Docker, and an IDE (of your choice) installed.
-- At least 5GB of free disk space (for the Docker image).
+- At least **1.5GB** of free disk space (for the Docker image).
 - A configured GitHub account.
-- Use of the Linux terminal and basic commands.
-- Fundamental concepts of ROS 2 and C++.
+- Basic command-line skills and familiarity with ROS 2 and C++.
 
-👉 It is recommended to first review the following official tutorials on how to work with ROS 2:
+👉 It is recommended to review the official [ROS 2 Basic Tutorials](https://docs.ros.org/en/jazzy/Tutorials.html) beforehand.
 
-- [ROS 2 Basic Tutorials](https://docs.ros.org/en/jazzy/Tutorials.html)
+## 📋 Workshop structure
 
-## 📋 Workshop content
+This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from code quality fundamentals to complete Continuous Integration pipelines.
 
-<!-- TODO: Link here the different READMEs? Refine the contents -->
+Each module combines conceptual material with practical exercises that apply the ideas directly to real ROS 2 code. All exercises are designed to be executed in a consistent environment using the provided Docker setup.
 
 > [!IMPORTANT]
-> Before the workshop, it is recommended to build and test the `Docker` image that contains everything. For this, there is a prepared [guide](./docker/README.md).
+> Before starting, build the Docker environment provided for this workshop. It includes all dependencies and tools required for the exercises. Follow the detailed instructions in the [Docker README](./docker/README.md).
 
-1. **Linters**
+1. **[Module 1 – Linters](modules/module_1/README.md)**
 
-   - Introduction to the different linters and tools available, configuration of `ament_lint_auto` to integrate with CI.
-   - Practical example with `colcon lint`.
+   Understand how automated linters and static analysis tools enforce consistency, readability, and safety across ROS 2 codebases.  
 
-2. **Unit Testing**
+2. **[Module 2 – Unit Testing](modules/module_2/README.md)**
 
-   - Principles for decoupling logic and ROS 2 communication.
-   - Use of **Dependency Injection** for publishers, subscribers, and services.
-   - Configuration of `ament_cmake_gtest` and `ament_cmake_gmock`.
-   - Example: testing an algorithm in isolation.
+   Learn how to design testable code by separating algorithmic logic from ROS interfaces, applying SOLID principles, and using Google Test and Mock effectively.  
 
-3. **ROS 2 Unit Testing**
+3. **[Module 3 – ROS Unit Testing](modules/module_3/README.md)**
 
-   - How to test publishers/subscribers/services/parameters.
-   - Using `ament_add_ros_isolated_gtest` to avoid interference between tests.
-   - Practical exercise: testing a simple node.
+   Explore how to validate ROS 2 nodes through interface-level tests that verify topics, parameters, and services while ensuring deterministic isolation.  
 
-4. **Integration Testing**
+4. **[Module 4 – Integration Testing](modules/module_4/README.md)**
 
-   - Validate communication and behavior between multiple nodes.
-   - Example: interaction between a producer and a consumer node.
+   Discover how to verify multi-node interactions using the `launch_testing` framework and ensure end-to-end communication correctness.
 
-5. **End-to-End Testing**
+5. **[Module 5 – End-to-End Testing](modules/module_5/README.md)**
 
-   - Complete system validation with `rosbag` and simulation environments.
-   - Examples of testing pipelines.
-   - Theoretical content only.
+   Examine system-level testing strategies with rosbag playback and simulation environments to validate full robot behavior.  
 
-6. **Continuous Integration**
-   - Add static analysis and tests to a GitHub Actions workflow.
-   - Example of a minimal workflow.
+6. **[Module 6 – Continuous Integration](modules/module_6/README.md)**
 
-## 📦 Tools and resources
-<!-- TODO: I don't think this is necessary at all, given that we are including the resources in each of the modules -->
+   Learn how to automate builds, linters, and tests with GitHub Actions to maintain code quality and enforce review standards.
 
-(Fill with links and resources)
+---
+
+For detailed explanations and references, see the individual module READMEs in the [modules](./modules) directory.

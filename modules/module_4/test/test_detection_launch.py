@@ -42,33 +42,35 @@ def generate_test_description():
     This function finds and prepares the laser_detector and safety_light nodes.
     """
     # Prepare the nodes for execution using the Node action
-    laser_detector_node = Node(
-        package="module_3",
-        executable="laser_detector_node",
-        name="laser_detector_node",
-        output="screen",
-    )
-
-    # TODO: Add Module 3 node in the same container when ready
-    safety_light_container = ComposableNodeContainer(
+    composable_nodes_container = ComposableNodeContainer(
         name="safety_light_container",
         namespace="",
         package="rclcpp_components",
         executable="component_container_mt",
         composable_node_descriptions=[
             ComposableNode(
+                package="module_3",
+                plugin="module_3::LaserDetectorNode",
+                name="laser_detector_node",
+                parameters=[
+                    {"footprint_radius": 0.2},  # meters
+                    {"min_points": 1},  # require only 1 point to trigger
+                    {"roi_min_angle": -1.57},  # -90 degrees
+                    {"roi_max_angle": 1.57},  # +90 degrees
+                ],
+            ),
+            ComposableNode(
                 package="module_4",
                 plugin="module_4::SafetyLightNode",
                 name="safety_light_node",
-            )
+            ),
         ],
         output="screen",
     )
 
     return LaunchDescription(
         [
-            laser_detector_node,
-            safety_light_container,
+            composable_nodes_container,
             # This action tells launch_testing that the system is ready for testing
             launch_testing.actions.ReadyToTest(),
         ]
@@ -112,12 +114,8 @@ class TestDetectionSystem(unittest.TestCase):
         #
         # 3. Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
         #
+        assert False  # Replace this 'pass' statement with your test logic
         # ====================== END EDIT ==================================
-        pass  # Replace this 'pass' statement with your test logic
-
-
-# TODO: Decide if it's a good idea to add another test with the "No obstacle" path (I think it would be either too long or too easy)
-# TODO: Decide if it's better to check with a subscriber the message published (I think it's much more complicated for the participants, since you would need to use futures and threading)
 
 
 # Post-shutdown tests

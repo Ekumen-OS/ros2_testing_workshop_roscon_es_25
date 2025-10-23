@@ -20,7 +20,7 @@ SafetyLightNode::SafetyLightNode(const rclcpp::NodeOptions& options)
   safety_light_ = std::make_unique<SafetyLight>();
 
   obstacle_detection_sub_ = this->create_subscription<std_msgs::msg::Bool>(
-      "/obstacle_detected", 10,
+      "/obstacle_detection", 10,
       std::bind(&SafetyLightNode::detection_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(this->get_logger(), "Safety Light node has been initialized.");

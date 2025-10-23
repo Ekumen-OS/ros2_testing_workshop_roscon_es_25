@@ -49,6 +49,11 @@ A `launch_testing` script typically has two main parts:
 - **generate_test_description()**: This function is the entry point. It works just like a standard ROS 2 launch file, defining which nodes to start, their parameters, and any other launch actions.
 - **A unittest.TestCase Class**: This is where the actual tests are written. These tests run after the nodes have been launched and the system is ready.
 
+The discovery process orchestrated by the framework itself does the rest of the work, identifying which tests to run.
+
+> [!NOTE]
+> `unittest` creates an instance of the class for each `test_` method that it finds inside it, so it's usually a good practice to share resources using a class method to initialize and shutdown `rclpy` for example. For more information about `unittest`, see the [official docs](https://docs.python.org/3/library/unittest.html).
+
 Here are the key components that will be used:
 
 | Component                                       | What it does                                                                                                                                           | Example Usage                                                                                                         |
@@ -108,25 +113,21 @@ In this case, `launch_testing` is going to be used in the exercise for the sake 
 
 ### Exercise 1
 
-The objective is to write an integration test that launches 2 nodes (the `laser_detector` from previous module and a new `safety_light` node) and verifies that an action in the first node triggers a reaction in the second node. This is the most common and powerful way to test integration with ROS 2 nodes.
+The objective is to write an integration test that launches 2 nodes (the `laser_detector` from previous module and a new `safety_light` node) and verifies that an event in the first node triggers a reaction in the second one. This is the most common and powerful way to test integration with ROS 2 nodes.
 
 The package already contains the [safety_light_node.cpp](./src/safety_light_node.cpp). The task is to complete the Python test script [test/test_detection_launch.py](./test/test_detection_launch.py). This test will use `rclpy` to create a temporary subscriber within the test itself to listen for messages from the C++ node.
 
-First, build and source the workspace to ensure the talker node is available:
-
-<!-- TODO Add info about building Module 3 -->
+First, build and source the workspace to ensure the `safety_light` node is available:
 
 ```bash
 cd ~/ws
-colcon build --packages-select module_4
-source install/setup.bash
+colcon build --packages-up-to module_4
 ```
 
 Now, run the tests. This will fail because the test script is incomplete:
 
 ```bash
-colcon test --packages-select module_4
-colcon test-result --verbose
+colcon test --packages-up-to module_4 --event-handlers console_direct+
 ```
 
 The incomplete test script already handles launching the nodes. You need to fill in the logic inside the `unittest.TestCase` to verify its behavior.
@@ -143,7 +144,7 @@ The additions to the Python test script must:
 > Although this example uses output-based assertions, integration tests are not limited to log inspection. The test logic can use ROS 2 client APIs (via `rclpy`) to interact with the running system, such as subscribing to topics or waiting for a service to become available.
 
 #### Definition of Success
-The task is complete when tests are run again, and the output of `colcon test-result --verbose` shows **0 errors and 0 failures** for the tests in module_4, with the new requirements in the test script.
+The task is complete when tests are run again, and the output of `colcon test-result --verbose` shows **0 errors and 0 failures** for the tests in module 4, with the new requirements in the test script.
 
 ## References
 

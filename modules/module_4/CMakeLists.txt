@@ -44,7 +44,11 @@ ament_target_dependencies(safety_light_node
   rclcpp_components
   std_msgs
 )
-rclcpp_components_register_nodes(safety_light_node "module_4::SafetyLightNode")
+rclcpp_components_register_nodes(
+  safety_light_node
+  PLUGIN module_4::SafetyLightNode
+  EXECUTABLE safety_light_main
+)
 
 # Tests
 if(BUILD_TESTING)

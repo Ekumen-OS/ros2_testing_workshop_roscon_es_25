@@ -21,14 +21,14 @@ namespace module_3 {
 LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
     : rclcpp::Node("laser_detector_node", options) {
   // Declare parameters
-  this->declare_parameter("fotprint_radius", 1.0);
+  this->declare_parameter("footprint_radius", 1.0);
   this->declare_parameter("min_points", 20);
   this->declare_parameter("roi_min_angle", 0.0);
   this->declare_parameter("roi_max_angle", 2.0 * M_PI);
 
   // Get parameters
   footprint_radius_ = this->get_parameter("footprint_radius").as_double();
-  min_points_ = this->get_parameter("min_point").as_int();
+  min_points_ = this->get_parameter("min_points").as_int();
   roi_min_angle_ = this->get_parameter("roi_min_angle").as_double();
   roi_max_angle_ = this->get_parameter("roi_max_angle").as_double();
 
@@ -52,7 +52,7 @@ LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
 
   // Subscribers
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-      "scans", rclcpp::SensorDataQoS(),
+      "scan", rclcpp::SensorDataQoS(),
       std::bind(&LaserDetectorNode::scan_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(this->get_logger(), "LaserDetectorNode initialized");

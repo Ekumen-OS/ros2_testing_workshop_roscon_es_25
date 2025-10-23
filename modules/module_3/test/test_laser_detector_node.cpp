@@ -143,7 +143,9 @@ TEST_F(TestLaserDetectorNodeConstructor, EvaluateTopicInterface) {
   // Add assertions to verify that the node subscribes to the correct
   // topic name ("/scan") with the expected message type ("sensor_msgs/msg/LaserScan").
 
-  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+  ASSERT_TRUE(topic_names_and_types.find("/scan") != topic_names_and_types.end());
+  ASSERT_FALSE(topic_names_and_types.at("/scan").empty());
+  ASSERT_EQ("sensor_msgs/msg/LaserScan", topic_names_and_types.at("/scan")[0]);
 
   /// END EDIT --------------------------------------------------------
 }
@@ -265,7 +267,21 @@ TEST_F(TestLaserDetectorNode, ObstacleDetectionIsFalse) {
   // Use make_scan() to build the message, publish it, and wait for
   // latest_detection_ to be received. Then, expect that it is false.
 
-  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+  // Create LaserScan message
+  auto scan = make_scan({1.5, 1.5, 1.5, 1.2, 1.5, 1.5, 1.5},  // ranges
+                        -0.6,                                 // angle_min
+                        0.6,                                  // angle_max
+                        LASER_RANGE_MIN,                      // range_min
+                        LASER_RANGE_MAX,                      // range_max
+                        LASER_FRAME_ID,                       // frame_id
+                        test_node_->get_clock()->now());
+
+  // Publish scan
+  scan_pub_->publish(scan);
+
+  // Assert
+  ASSERT_TRUE(spin_until(*executor_, [&] { return latest_detection_.has_value(); }, 500ms));
+  EXPECT_FALSE(latest_detection_.value().data);
 
   /// END EDIT --------------------------------------------------------
 }

@@ -13,6 +13,7 @@ In this module, the goal is to explore End-to-End (E2E) testing. This is the hig
     - [Using Pre-recorded Rosbags](#using-pre-recorded-rosbags)
     - [Using Simulation Data](#using-simulation-data)
   - [Automated End-to-End Testing](#automated-end-to-end-testing)
+    - [Replay\_testing](#replay_testing)
   - [References](#references)
 
 ## Objectives
@@ -109,15 +110,17 @@ This is perfect for debugging, or for a final "sanity check" before merging a ma
 
 A typical manual test session looks like this:
  
-1. Launch the System: Start the core nodes of the robot. This might be in a simulator like `Gazebo`, or it might be just the processing stack. You would also launch visualization tools like `RViz`.
+1. Launch the System: Start the core nodes of the robot, along with visualization tools like `Rviz` to be able to monitor the progress.
 2. Provide Input: Instead of launching the drivers (like the camera or lidar node), use `ros2 bag play`. This feeds the recorded data (for example, `/scan`, `/camera/image_raw`) into the system.
 3. Observe and Verify: The engineer watches the output:
     - In `RViz`: "Does the robot's navigation visualization show it reaching the goal?"
-    - In `Gazebo`: "Does the simulated robot arm move to the correct object?"
     - In the terminal: "Did the mission control node log 'MISSION_COMPLETE'?"
 4. Analyze: If it fails, now it's possible to debug the running nodes, knowing the input data is identical every single time.
 
 This workflow is incredibly powerful but has one major drawback: it's not automated. It relies on a human to launch, observe, and judge success.
+
+> [!NOTE]
+> There will be cases where the rosbag won't be enough or where it's necessary to test other features in a known environment. In these cases, starting a simulator like `Gazebo` along with playing the rosbag is a good idea, but it's not common.
 
 ### Using Simulation Data
 
@@ -126,7 +129,7 @@ While rosbags are invaluable for reproducing real-world scenarios, simulation-ba
 This is really useful specially for testing certain features:
 
 - Test dynamic conditions such as moving obstacles or lightning changes.
-- Paramterize worlds and robot configurations to explore edge cases.
+- Parameterize worlds and robot configurations to explore edge cases.
 - Ideal for CI, since there is the possibility of running simulations in headless mode on a server (using `--headless-rendering` flag in `Gazebo` for example).
 
 Example workflow:
@@ -160,7 +163,9 @@ This creates a fully self-contained test that can be run on a server with `colco
 
 It's important to highlight that using both the simulator and the rosbag can be misleading. One might think: "If I'm already using a simulation, why would I need a rosbag?" And this is true in some cases, but there are special cases when you might want to combine both, for example, with a probllematic trajectory pre-recorded that needs to be tested again but without assuming risks in the real world.
 
-Polymath Robotics [replay_testing](https://github.com/PolymathRobotics/replay_testing) tool provides a conveniend wrapper for End-to-End testing with rosbags. It automates coventions like:
+### Replay_testing
+
+Polymath Robotics `replay_testing` tool provides a convenient wrapper for End-to-End testing with rosbags. It automates conventions like:
 
 - Launching the system and a rosbag together.
 - Synchronizing `/clock` and simulated time.
@@ -172,4 +177,5 @@ This makes it an excellent starting point for teams who want automated mission p
 
 - [ROS 2 Documentation: ros2 bag CLI](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html)
 - [ROS 2 rosbag2 GitHub Repository](https://github.com/ros2/rosbag2)
+- [replay_testing Polymath Robotics](https://github.com/PolymathRobotics/replay_testing)
 - [Example of system tests in Nav2](https://github.com/ros-navigation/navigation2/blob/main/nav2_system_tests/src/system/README.md)

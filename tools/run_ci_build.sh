@@ -6,7 +6,7 @@ if [ $# -eq 0 ]; then
   exit 0
 fi
 
-echo "🔧 Building and testing changed ROS 2 packages: $@"
+echo "Building and testing changed ROS 2 packages: $@"
 
 # Source ROS environment
 source /opt/ros/jazzy/setup.bash

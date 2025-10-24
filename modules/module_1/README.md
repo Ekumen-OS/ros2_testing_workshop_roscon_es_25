@@ -200,3 +200,4 @@ The task is complete when the command `colcon lint --packages-select module_1` i
 - [ament_lint repo](https://github.com/ament/ament_lint/tree/jazzy) (all the available linters for ROS 2 packages)
 - [ament_lint CLI utilities](https://docs.ros.org/en/jazzy/Tutorials/Advanced/Ament-Lint-For-Clean-Code.html)
 - [practical example in video](https://www.youtube.com/watch?v=2gIyu09UEC8)
+- [ROS 2 doctor](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Getting-Started-With-Ros2doctor.html)

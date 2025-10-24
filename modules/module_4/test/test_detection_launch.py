@@ -103,7 +103,8 @@ class TestDetectionSystem(unittest.TestCase):
     def setUpClass(cls):
         """Initialize rclpy and create a node once for all tests."""
         # ===================== BEGIN EDIT =================================
-
+        rclpy.init()
+        cls.node = rclpy.create_node("test_node")
         # ====================== END EDIT ==================================
         pass
 
@@ -111,7 +112,8 @@ class TestDetectionSystem(unittest.TestCase):
     def tearDownClass(cls):
         """Shutdown rclpy and destroy the node after all tests are done."""
         # ===================== BEGIN EDIT =================================
-
+        cls.node.destroy_node()
+        rclpy.shutdown()
         # ====================== END EDIT ==================================
         pass
 
@@ -120,26 +122,25 @@ class TestDetectionSystem(unittest.TestCase):
         Tests that a close laser scan reading triggers the 'RED LIGHT' status.
         """
         # ===================== BEGIN EDIT =================================
-        #
-        # 1. Create a publisher to the /scan topic.
-        #
-        # 2. Wait for the subscriber to be ready (THIS IS THE CRITICAL PART!)
-        #    - Create a loop that checks `self.scan_publisher.get_subscription_count()`
-        #    - Use a timeout (for example 10 seconds) to prevent an infinite loop.
-        #    - Inside the loop, spin the node (`rclpy.spin_once`)
-        #    - After the loop, use `self.assertGreater` to fail the test if
-        #      no subscriber appeared.
-        #
-        # 3. Create and publish a LaserScan message that will trigger the detector.
-        #    Use the helper function above.
-        #
-        # 4. Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
-        #    - Give it a timeout (for example, 5 seconds).
-        #
-        # 5. (Optional but good practice) Add a try/except block around
-        #    `assertWaitFor` to provide a clearer failure message if it times out.
-        #
-        assert False  # Replace this 'assert' with the necessary code for the test
+        # Create a publisher to the /scan topic.
+        scan_publisher = self.node.create_publisher(LaserScan, "scan", 10)
+
+        # Create a LaserScan message using the helper function.
+        scan_msg = create_triggering_scan_msg()
+
+        # Add a small delay to ensure the publisher is ready
+        time.sleep(0.5)
+
+        # Publish the message.
+        scan_publisher.publish(scan_msg)
+
+        # Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
+        # This will check the output of all launched processes.
+        proc_output.assertWaitFor(
+            "STATUS: RED LIGHT - OBSTACLE DETECTED!",
+            process=None,
+            timeout=5,
+        )
         # ====================== END EDIT ==================================
 
 

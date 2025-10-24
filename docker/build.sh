@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# TODO Review names
 # Default values for configuration
 IMAGE_NAME="ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"

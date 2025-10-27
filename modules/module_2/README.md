@@ -79,7 +79,19 @@ A few core concepts are especially useful:
   - `EXPECT_*` records a failure but allows the test to continue.
   - `ASSERT_*` aborts the test immediately on failure.
 
-    Use `EXPECT_*` for checks that can accumulate, and `ASSERT_*` when later steps would be meaningless if the check fails.
+    Consider testing that a function returns a `std::vector<int>` with the right length and expected contents:
+
+    ```cpp
+    std::vector<int> vec = get_vector();
+    // If the length is wrong, further checks (indexing) would be invalid -> abort test
+    ASSERT_EQ(3u, vec.size());   // stop the test immediately if size != 3
+    // Now it is safe to check contents; these can be EXPECT so we see all mismatches at once
+    EXPECT_EQ(10, vec[0]);
+    EXPECT_EQ(20, vec[1]);
+    EXPECT_EQ(30, vec[2]);
+    ```
+
+    Use `ASSERT_*` for preconditions that must hold for remaining assertions to make sense (avoid crashes and meaningless failures). Use `EXPECT_*` for value checks where continuing to run the test to collect multiple failures is useful
 
 - **Fixtures**: allows code to be reused across multiple tests. Define a test class deriving from `::testing::Test` and use `TEST_F` instead of `TEST`.
 - **Parameterized tests**: The same test logic can be executed against multiple input values with `TEST_P`. This reduces duplication and is especially helpful when validating algorithms across many corner cases

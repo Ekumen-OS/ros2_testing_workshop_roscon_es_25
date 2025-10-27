@@ -27,4 +27,4 @@ rosdep install --from-paths modules --ignore-src -y
 colcon build --packages-up-to "$@" --symlink-install --event-handlers console_direct+
 
 # Test
-colcon test --packages-up-to "$@" --event-handlers console_direct+
+colcon test --packages-up-to "$@" --event-handlers console_direct+ --return-code-on-test-failure

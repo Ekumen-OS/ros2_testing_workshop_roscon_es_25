@@ -7,7 +7,7 @@ In this module, the focus is to explore **integration testing in ROS 2** to veri
   - [Motivation](#motivation)
   - [The launch\_testing Framework](#the-launch_testing-framework)
     - [Registering the tests](#registering-the-tests)
-    - [Avoiding falky tests](#avoiding-falky-tests)
+    - [Avoiding flaky tests](#avoiding-flaky-tests)
     - [Alternative: launch\_pytest](#alternative-launch_pytest)
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
@@ -102,7 +102,7 @@ And in the `package.xml`:
 <test_depend>launch_testing_ament_cmake</test_depend>
 ```
 
-### Avoiding falky tests
+### Avoiding flaky tests
 
 The most common mistake in integration testing is writing a **flaky test**. A flaky test is one that passes sometimes and fails other times, even when no code has changed. This is almost always caused by a race condition.
 

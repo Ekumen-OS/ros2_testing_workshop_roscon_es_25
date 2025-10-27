@@ -33,12 +33,9 @@ Its purpose is to validate the robot's ability to meet a high-level requirement,
 
 The importance of E2E testing in robotics includes:
 
-<!-- TODO: Review this, and see if it matches more with field debugging -->
-
 - **Validating the "Mission"**: It's the only test level that answers the question: "Does the robot actually achieve its goal?"
 - **Testing Against Reality**: By using data recorded from the real world (or a high-fidelity simulator), rosbags provide a "ground truth" scenario. This makes possible to test complex, emergent behaviors and edge cases that are impossible to script in a simple integration test.
 - **Ultimate Regression-Proofing**: An E2E test is the ultimate safety net. If a change in any package (perception, control, navigation) breaks the robot's ability to complete its mission, a good E2E test will catch it.
-- **Debugging Complex Failures**: When a robot fails in the field, a rosbag of that failure is invaluable. It can be replayed in a simulator over and over until the root cause (for example, a race condition, a state machine logic error) is found.
 
 ## The rosbag Toolset
 
@@ -104,7 +101,7 @@ This command acts like a "data simulator", providing a perfectly repeatable stre
 
 This is the most common and intuitive form of E2E testing. It involves a human operator launching the system, providing a scenario (usually via a rosbag), and visual or log-based verification of the result.
 
-This is perfect for debugging, or for a final "sanity check" before merging a major feature.
+This is perfect for a final "sanity check" before merging a major feature.
 
 ### Using Pre-recorded Rosbags
 
@@ -115,7 +112,6 @@ A typical manual test session looks like this:
 3. Observe and Verify: The engineer watches the output:
     - In `RViz`: "Does the robot's navigation visualization show it reaching the goal?"
     - In the terminal: "Did the mission control node log 'MISSION_COMPLETE'?"
-4. Analyze: If it fails, now it's possible to debug the running nodes, knowing the input data is identical every single time.
 
 This workflow is incredibly powerful but has one major drawback: it's not automated. It relies on a human to launch, observe, and judge success.
 

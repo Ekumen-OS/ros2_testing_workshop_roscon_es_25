@@ -6,11 +6,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=jazzy
 
 # Copy requirement files and install dependencies (ignore comments and empty lines)
-COPY docker/requirements.txt .
+COPY docker/apt_packages.txt .
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y $(grep -vE '^\s*#' requirements.txt | grep -vE '^\s*$') && \
+    apt-get install --no-install-recommends -y $(grep -vE '^\s*#' apt_packages.txt | grep -vE '^\s*$') && \
     rm -rf /var/lib/apt/lists/*
-RUN rm requirements.txt
+RUN rm apt_packages.txt
 
 # Some dependencies need to be installed with pip instead of apt
 RUN apt-get update && apt-get install -y --no-install-recommends python3-pip && \

@@ -7,6 +7,7 @@ In this module, the focus is to explore **integration testing in ROS 2** to veri
   - [Motivation](#motivation)
   - [The launch\_testing Framework](#the-launch_testing-framework)
     - [Registering the tests](#registering-the-tests)
+    - [Avoiding falky tests](#avoiding-falky-tests)
     - [Alternative: launch\_pytest](#alternative-launch_pytest)
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
@@ -101,6 +102,28 @@ And in the `package.xml`:
 <test_depend>launch_testing_ament_cmake</test_depend>
 ```
 
+### Avoiding falky tests
+
+The most common mistake in integration testing is writing a **flaky test**. A flaky test is one that passes sometimes and fails other times, even when no code has changed. This is almost always caused by a race condition.
+
+Flaky (Bad) Test Logic:
+
+1. Launch nodes.
+2. Immediately publish a message (for example, on `/scan`).
+3. Check for an expected result (for example, a log message).
+
+**Why it fails**: The nodes in `generate_test_description` are launched, but they are not guaranteed to be ready or subscribed to their topics by the time the test case runs. The `ReadyToTest()` action only means the launch process is complete. If the test publishes its message before the node is subscribed, the message is dropped, and the test fails.
+
+Reliable (Good) Test Logic:
+
+1. Launch nodes.
+2. In the test case, create the publisher.
+3. Wait for the system to be ready. A simple, robust way is to wait until the publisher sees that a subscriber is connected.
+4. Once the subscription has been confirmed, then publish the message.
+5. Check for the expected result.
+
+This event-driven approach is deterministic and eliminates the race condition.
+
 ### Alternative: launch_pytest
 
 While using `launch_testing` with `unittest` is the classic approach used, support for more modern approaches like using `pytest` is also available. `Pytest` is a powerful and modern third party framework (`unittest` is part of the Python standard library) that has become the most used option for Python testing in the community. It is also gaining popularity within the ROS ecosystem.
@@ -130,7 +153,7 @@ Now, run the tests. This will fail because the test script is incomplete:
 colcon test --packages-up-to module_4 --event-handlers console_direct+
 ```
 
-The incomplete test script already handles launching the nodes. You need to fill in the logic inside the `unittest.TestCase` to verify its behavior.
+The incomplete test script already handles launching the nodes. Fill in the logic inside the `unittest.TestCase` to verify its behavior.
 
 The additions to the Python test script must:
 

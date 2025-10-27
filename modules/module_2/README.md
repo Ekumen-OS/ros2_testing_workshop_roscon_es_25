@@ -142,15 +142,13 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
 
 ## How to Write Tests
 
-Writing good unit tests is as much about structure as it is about logic. Two key concepts guide this process: **Test-Driven Development (TDD)** and the **Arrange-Act-Assert (AAA)** pattern.
-
-**Test-Driven Development (TDD)** is an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
-
-The **AAA** pattern provides a simple mental model for structuring each test.
+A good unit test is clear, concise, and focused. The best way to achieve this is by following the Arrange-Act-Assert (AAA) pattern, which provides a simple mental model for structuring each test:
 
 - **Arrange**: prepare the environment, inputs, and objects needed for the test.
 - **Act**: execute the function or behavior being tested.
 - **Assert**: verify that the observed result matches the expected outcome.
+
+One popular workflow that uses the **AAA** pattern is **Test-Driven Development (TDD)**. This is an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
 
 Following this structure makes tests easy to read, maintain, and reason about. Each test should describe one behavior clearly, without hidden dependencies or side effects.
 

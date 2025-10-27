@@ -148,9 +148,11 @@ A good unit test is clear, concise, and focused. The best way to achieve this is
 - **Act**: execute the function or behavior being tested.
 - **Assert**: verify that the observed result matches the expected outcome.
 
-One popular workflow that uses the **AAA** pattern is **Test-Driven Development (TDD)**. This is an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
+Following this pattern leads to tests that are consistent, self-explanatory, and easy to debug when they fail.
 
-Following this structure makes tests easy to read, maintain, and reason about. Each test should describe one behavior clearly, without hidden dependencies or side effects.
+Beyond how tests are written, it’s also important to consider when they are written. This leads to a popular development workflow known as **Test-Driven Development (TDD)**. TDD follows an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
+
+While TDD helps drive better design decisions and encourages modular, testable architectures, the same testing principles can be applied in traditional “test-after” workflows. The key takeaway is that **testability should guide design**, regardless of whether tests come before or after the code.
 
 ## Exercises
 

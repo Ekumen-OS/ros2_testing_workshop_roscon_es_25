@@ -11,6 +11,7 @@ In this module, the focus is on **code quality and static analysis** in ROS 2.
     - [Frequent Conflicts and Incompatibilities](#frequent-conflicts-and-incompatibilities)
     - [Recommendations](#recommendations)
     - [Beyond Static Analysis: Runtime Sanitizers](#beyond-static-analysis-runtime-sanitizers)
+  - [Pre-commit hooks](#pre-commit-hooks)
   - [Other Useful Tools](#other-useful-tools)
     - [Colcon lint](#colcon-lint)
     - [ROS 2 doctor](#ros-2-doctor)
@@ -128,6 +129,37 @@ Unlike the tools above (which analyze code without running it), sanitizers are s
 
 While configuring them is beyond the scope of this module, it's crucial to know they exist. They are the ultimate tools for finding those bugs that only appear randomly. They can be enabled in the colcon build by passing compiler flags.
 
+## Pre-commit hooks
+
+After exploring the main tools that ensure code quality in ROS 2, let’s look at a lightweight way to integrate them seamlessly into everyday development: **pre-commit hooks**.
+
+[Pre-commit](https://pre-commit.com) hooks are a **local, optional step** that run before a Git commit is finalized. Their main goal is to provide **immediate feedback** and automatically correct simple issues such as code formatting or basic linting on the **staged files only**. This keeps the commit history clean and avoids unnecessary “fix formatting” commits, while also speeding up the remote CI process.
+
+Typical hooks include formatters like `clang-format`, linters such as `clang-tidy`, and scripts that check file headers or trailing whitespace. These checks are intentionally fast so they don’t interrupt development flow.
+
+Developers can still bypass the hooks when needed by running `git commit --no-verify`.
+
+To enable pre-commit in a repository:
+
+1. Add a `.pre-commit-config.yaml` listing the desired hooks.
+2. Run once to install:
+
+    ```bash
+    pip install pre-commit
+    pre-commit install
+    ```
+
+3. Each `git commit` will now automatically trigger the configured checks. To run all hooks manually:
+
+    ```bash
+    pre-commit run --all-files
+    ```
+
+Pre-commit hooks are best suited for **fast, local hygiene checks**. They complement full workspace analyses done by `colcon test` and `ament_lint_auto`, which can also be run locally or in CI (introduced in Module 6).
+
+> [!NOTE]
+> This workshop does not use pre-commit for static analysis or linters, since those checks are demonstrated through `ament_lint_auto` and `colcon test`.  
+
 ## Other Useful Tools
 
 ### Colcon lint
@@ -221,6 +253,7 @@ The task is complete when the command `colcon lint --packages-select module_1` i
 ## References
 
 - [ROS 2 code style guide](https://docs.ros.org/en/jazzy/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html)
+- [Pre-commit](https://pre-commit.com)
 - [ament_lint_auto docs](https://github.com/ament/ament_lint/blob/jazzy/ament_lint_auto/doc/index.rst)
 - [ament_lint repo](https://github.com/ament/ament_lint/tree/jazzy) (all the available linters for ROS 2 packages)
 - [ament_lint CLI utilities](https://docs.ros.org/en/jazzy/Tutorials/Advanced/Ament-Lint-For-Clean-Code.html)

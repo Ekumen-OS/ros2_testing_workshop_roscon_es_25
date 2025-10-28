@@ -51,7 +51,7 @@ By the end of the workshop, participants will be able to:
 
 ## 📋 Workshop structure
 
-This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from code quality fundamentals to complete Continuous Integration pipelines.
+This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from static analysis fundamentals to complete Continuous Integration pipelines.
 
 Each module combines conceptual material with practical exercises that apply the ideas directly to real ROS 2 code. All exercises are designed to be executed in a consistent environment using the provided Docker setup.
 

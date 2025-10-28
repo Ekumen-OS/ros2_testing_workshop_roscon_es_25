@@ -48,6 +48,11 @@ Integrating CI into the workflow is essential because it:
 
 For projects hosted on GitHub, the easiest and most popular way to implement CI is with **GitHub Actions**.
 
+> [!TIP]
+> **Use Pre-commit Hooks to Optimize Your Workflow**
+>
+> While **CI is the mandatory quality gate** for merging, it's often faster for developers to catch simple style errors **locally** before they push. Tools like **pre-commit hooks** (as discussed in Module 1) run fast checks like formatting locally, saving the developer time waiting for the CI pipeline to run just to fail on a style inconsistency. They complement the CI by ensuring your commits are clean and focused on functional changes.
+
 ### Introduction to GitHub Actions
 
 GitHub Actions is a CI/CD platform built directly into GitHub. Automation workflows are defined in a **YAML file** in a special directory in the repository: `.github/workflows/`. GitHub automatically detects these files and runs them based on a set of custom-defined rules or triggers, such as when code is pushed, a pull request is opened, or a scheduled job is due.

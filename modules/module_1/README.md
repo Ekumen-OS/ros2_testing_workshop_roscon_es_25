@@ -1,14 +1,17 @@
-# Module 1 – Linters
+# Module 1 – Static Analysis Tools
 
-In this module, the focus is on **linters** in ROS 2.
+In this module, the focus is on **static analysis** in ROS 2.
 
-- [Module 1 – Linters](#module-1--linters)
+- [Module 1 – Static Analysis Tools](#module-1--static-analysis-tools)
   - [Objectives](#objectives)
   - [Motivation](#motivation)
-  - [Comparison of Linters in ROS 2](#comparison-of-linters-in-ros-2)
+  - [Static Analysis Toolkit](#static-analysis-toolkit)
+    - [Tools Comparison in ROS 2](#tools-comparison-in-ros-2)
     - [Configuration](#configuration)
     - [Frequent Conflicts and Incompatibilities](#frequent-conflicts-and-incompatibilities)
     - [Recommendations](#recommendations)
+    - [Beyond Static Analysis: Runtime Sanitizers](#beyond-static-analysis-runtime-sanitizers)
+  - [Pre-commit hooks](#pre-commit-hooks)
   - [Other Useful Tools](#other-useful-tools)
     - [Colcon lint](#colcon-lint)
     - [ROS 2 doctor](#ros-2-doctor)
@@ -30,16 +33,26 @@ By the end of the module, participants will be able to:
 
 ## Motivation
 
-Linters are automated tools that **analyze source code** to flag programming errors, bugs, style inconsistencies, and suspicious constructs. Think of them as a grammar and spell checker for the code. They don't check if logic is correct, but they ensure the code adheres to a set of predefined rules, making it **more readable, consistent, and less prone to common errors**. These linters can be integrated with IDEs to automatically provide feedback and reformat code on save for example, maintaining the quality during active development as well.
+In robotics, a "small bug" isn't a webpage glitch, it's a robot crashing into a wall or a really expensive arm vibrating itself to pieces. Code quality isn't optional, it's fundamental to safety and reliability.
 
-Their importance in maintaining high-quality software cannot be underestimated:
+Using automated tools is the only scalable way to maintain high-quality software in a complex robotics project. They act as the team's automated quality-assurance engineer, working 24/7.
 
-- **Enforce Consistency**: In any project, especially collaborative ones, a consistent coding style is crucial for readability. Linters automatically enforce these style guides, ensuring everyone writes code that looks and feels the same.
+The benefits they bring are numerous:
+
+- **Enforce Consistency**: In any project, especially collaborative ones, a consistent coding style is crucial for readability. These tools automatically enforce these style guides, ensuring everyone writes code that looks and feels the same.
 - **Prevent Bugs**: Static analysis tools can detect potential issues, such as memory leaks, uninitialized variables, or dangerous code patterns, long before the code is ever run. This saves significant time in debugging.
 - **Improve Maintainability**: Clean, standardized code is easier for current and future developers to understand, modify, and extend.
-- **Automate Code Reviews**: Linters automate the tedious part of code reviews related to style and simple errors, allowing human reviewers to focus on more important aspects like architecture and logic.
+- **Automate Code Reviews**: These tools automate the tedious part of code reviews related to style and simple errors, allowing human reviewers to focus on more important aspects like architecture and logic.
 
-In the ROS 2 ecosystem, integrating these tools is made simple through the ament build system. **Rather than having to configure each linter manually**, the ROS 2 community provides a collection of packages, typically prefixed with `ament_`, that wrap well-known C++ and Python linters. For example:
+## Static Analysis Toolkit
+
+It's common to group all the different tools used with the same purpose, but actually there are 3 categories inside the **static analysis toolkit**:
+
+- **Formatters**: fix the code's style. For example: `clang-format`, `uncrustify`,
+- **Linters**: check the code for style violations and simple problematic patterns, such as variable naming. For example: `cpplint`, `flake8`.
+- **Static Analyzers**: find potential bugs and complex errors without running the code, such as null pointer dereferences, memory leaks or undefined behavior. For example: `cppcheck`, `clang-tidy`.
+
+In the ROS 2 ecosystem, integrating these tools is simple through the ament build system. **Rather than having to configure each tool manually**, the ROS 2 community provides a collection of packages, typically prefixed with `ament_`, that wrap well-known C++ and Python tools. For example:
 
 - `ament_clang_format` wraps the popular `clang-format` tool for code formatting.
 - `ament_cppcheck` integrates the static analyzer `cppcheck`.
@@ -49,18 +62,20 @@ The main package that can be considered the "engine" of these packages is called
 
 These ament packages provide a standardized way to add, configure, and execute these checks as part of the normal development workflow using tools like `colcon`. This seamless integration makes it easy to maintain high code quality and is a fundamental part of building **robust, production-ready ROS 2 applications**.
 
-## Comparison of Linters in ROS 2
+### Tools Comparison in ROS 2
 
-In C++ ROS 2 projects, it's common to combine formatters (for style) with static analysis tools (to detect errors). The following table explains the most used options:
+In C++ ROS 2 projects, it's common to combine formatters (for style) with static analysis tools (to detect simple errors). 
 
-| Tool / Linter          | What it does / Type of check                                          | Main advantages                                                                                              | Limitations / Risks                                                                                                            | Integration comments                                                           |
-| ---------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| **ament_uncrustify**   | Formats code (spaces, indentation, braces, line breaks)               | Highly configurable; can be adapted to fine-grained style rules                                              | If used with another formatter (e.g., clang-format), conflicts can arise—each might adjust something the other "didn't expect" | Part of the set of linters that `ament_lint_auto` can activate                 |
-| **ament_clang_format** | Formatting based on the Clang / LLVM AST                              | Less "cryptic" configuration, widely used in the C++ community                                               | Its style can clash with uncrustify configurations if both are used                                                            | Many IDEs natively support clang-format, useful in CI                          |
-| **ament_cppcheck**     | Static analysis of C++ code (looks for risky patterns, common errors) | Detects warnings that the compiler and formatter do not see                                                  | Does not fix the code, only reports; can generate false positives if the rules are not adjusted                                | Integrates with `ament_lint` as a code analysis tool                           |
-| **ament_cpplint**      | Style checker based on Google's C++ style guide                       | Good reinforcement of "conventional" style                                                                   | Does not correct the code automatically                                                                                        | Can be complemented by clang-format by formatting the code first               |
-| **ament_clang_tidy**   | Advanced, compiler-based static analysis                              | Very powerful; detects complex bugs, performance issues, and modern C++ best practices. Highly configurable. | Can be slow to run and requires more complex configuration (.clang-tidy file).                                                 | An excellent choice for projects requiring the highest level of code scrutiny. |
-| **ament_xmllint**      | Checks XML files (`package.xml`, launch files) for syntax errors      | Ensures configuration files are valid, preventing runtime parsing errors                                     | Doesn't validate the content's meaning (e.g., if a dependency exists), only the XML structure                                  | Essential for CI to validate package manifests and launch files                |
+The following table explains the most used options:
+
+| Tool                   | What it does / Tool Type                                              | Main advantages                                                                                              | Limitations / Risks                                                                                                                    | Integration comments                                                           |
+| ---------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **ament_uncrustify**   | Formats code (spaces, indentation, braces, line breaks)               | Highly configurable; can be adapted to fine-grained style rules                                              | If used with another formatter (for example, clang-format), conflicts can arise, each might adjust something the other "didn't expect" | Part of the set of linters that `ament_lint_auto` can activate                 |
+| **ament_clang_format** | Formatting based on the Clang / LLVM AST                              | Less "cryptic" configuration, widely used in the C++ community                                               | Its style can clash with uncrustify configurations if both are used                                                                    | Many IDEs natively support clang-format, useful in CI                          |
+| **ament_cpplint**      | Style checker based on Google's C++ style guide                       | Good reinforcement of "conventional" style                                                                   | Does not correct the code automatically                                                                                                | Can be complemented by clang-format by formatting the code first               |
+| **ament_cppcheck**     | Static analysis of C++ code (looks for risky patterns, common errors) | Detects warnings that the compiler and formatter do not see                                                  | Does not fix the code, only reports; can generate false positives if the rules are not adjusted                                        | Integrates with `ament_lint` as a code analysis tool                           |
+| **ament_clang_tidy**   | Advanced, compiler-based static analysis                              | Very powerful; detects complex bugs, performance issues, and modern C++ best practices. Highly configurable. | Can be slow to run and requires more complex configuration (.clang-tidy file).                                                         | An excellent choice for projects requiring the highest level of code scrutiny. |
+| **ament_xmllint**      | Checks XML files (`package.xml`, launch files) for syntax errors      | Ensures configuration files are valid, preventing runtime parsing errors                                     | Doesn't validate the content's meaning (for example, if a dependency exists), only the XML structure                                   | Essential for CI to validate package manifests and launch files                |
 
 ---
 
@@ -83,7 +98,7 @@ The official docs also provide an official guide on the defined guidelines for e
 ### Frequent Conflicts and Incompatibilities
 
 - **ament_uncrustify vs ament_clang_format**:
-  It's not feasible to use both with their default configurations, because `ament_uncrustify --format` can produce changes that cause `ament_clang_format` to complain, and vice versa. To avoid this problem, `clang-format` can be suppressed for sections of your code, just using `//clang-format off/on` in the code, putting the 'off' at the start of the ignored code and 'on' where it ends.
+  It's not feasible to use both with their default configurations, because `ament_uncrustify --format` can produce changes that cause `ament_clang_format` to complain, and vice versa. To avoid this problem, `clang-format` can be suppressed for sections of the code, just using `//clang-format off/on` in the code, putting the 'off' at the start of the ignored code and 'on' where it ends.
 - **Overlapping warnings**:
   Tools like cppcheck and others (clang-tidy or LLVM analysis) can produce similar warnings. Using them together without filtering can generate a lot of "noise" that ends up being ignored.
 - **False positives**:
@@ -98,10 +113,52 @@ The official docs also provide an official guide on the defined guidelines for e
 
 Taking into account the information above, plus experiences seen from some users, here are some recommendations:
 
-1. **Choose a single main formatter** for the practical exercises:
+1. **Choose a single main formatter** for the codebase:
    - **`ament_clang_format`** is recommended as the default option. It's simpler to configure, widely compatible with modern tools, and has a lower risk of unexpected conflicts.
-2. **Activate `ament_cpplint`** as an additional analysis tool to detect logical errors that are not caught by the compiler or the formatter.
-3. If an extra style layer is required, **`ament_cppcheck`** can be added, but it is not completely necessary if clang-format is already in use.
+2. **Activate `ament_cpplint`** as an additional analysis tool to detect simple errors that are not caught by the compiler or the formatter.
+3. If an extra style layer is required, **`ament_cppcheck`** can be added, but it is not completely necessary in many cases.
+
+### Beyond Static Analysis: Runtime Sanitizers
+
+There's one more class of tools that are critical for C++ developers: **sanitizers**.
+
+Unlike the tools above (which analyze code without running it), sanitizers are special flags used when compiling the code. They find bugs while tests are running.
+
+- **AddressSanitizer (ASan)**: Finds memory errors. It will immediately crash the test and tell the exact line where a buffer overflow was found (reading/writing off the end of an array) or memory was used after freeing it (use-after-free).
+- **ThreadSanitizer (TSan)**: Finds race conditions. If two threads access the same memory at the same time (and one is writing), TSan will crash the test and report it. This is invaluable for debugging multi-threaded nodes.
+
+While configuring them is beyond the scope of this module, it's crucial to know they exist. They are the ultimate tools for finding those bugs that only appear randomly. They can be enabled in the colcon build by passing compiler flags.
+
+## Pre-commit hooks
+
+After exploring the main tools that ensure code quality in ROS 2, let’s look at a lightweight way to integrate them seamlessly into everyday development: **pre-commit hooks**.
+
+[Pre-commit](https://pre-commit.com) hooks are a **local, optional step** that run before a Git commit is finalized. Their main goal is to provide **immediate feedback** and automatically correct simple issues such as code formatting or basic linting on the **staged files only**. This keeps the commit history clean and avoids unnecessary “fix formatting” commits, while also speeding up the remote CI process.
+
+Typical hooks include formatters like `clang-format`, linters such as `clang-tidy`, and scripts that check file headers or trailing whitespace. These checks are intentionally fast so they don’t interrupt development flow.
+
+Developers can still bypass the hooks when needed by running `git commit --no-verify`.
+
+To enable pre-commit in a repository:
+
+1. Add a `.pre-commit-config.yaml` listing the desired hooks.
+2. Run once to install:
+
+    ```bash
+    pip install pre-commit
+    pre-commit install
+    ```
+
+3. Each `git commit` will now automatically trigger the configured checks. To run all hooks manually:
+
+    ```bash
+    pre-commit run --all-files (or -a directly)
+    ```
+
+Pre-commit hooks are best suited for **fast, local hygiene checks**. They complement full workspace analysis done by `colcon test` and `ament_lint_auto`, which can also be run locally or in CI (introduced in Module 6).
+
+> [!NOTE]
+> This workshop does not use pre-commit for static analysis or linters, since those checks are demonstrated through `ament_lint_auto` and `colcon test`.  
 
 ## Other Useful Tools
 
@@ -129,7 +186,7 @@ This command is part of the ROS 2 CLI and it's used to check the ROS 2 installat
 ros2 doctor
 ```
 
-It helps detecting common configuration or runtime issues, such as unreachable nodes, network problems (like mismatched `ROS_DOMAIN_ID`)... For a complete report, the `-r` flag can be added. To verify communication between the nodes on your network, the `--network` flag can be used.
+It helps detecting common configuration or runtime issues, such as unreachable nodes, network problems (like mismatched `ROS_DOMAIN_ID`)... For a complete report, the `-r` flag can be added. To verify communication between the nodes on the network, the `--network` flag can be used.
 
 ## Exercises
 
@@ -196,6 +253,7 @@ The task is complete when the command `colcon lint --packages-select module_1` i
 ## References
 
 - [ROS 2 code style guide](https://docs.ros.org/en/jazzy/The-ROS2-Project/Contributing/Code-Style-Language-Versions.html)
+- [Pre-commit](https://pre-commit.com)
 - [ament_lint_auto docs](https://github.com/ament/ament_lint/blob/jazzy/ament_lint_auto/doc/index.rst)
 - [ament_lint repo](https://github.com/ament/ament_lint/tree/jazzy) (all the available linters for ROS 2 packages)
 - [ament_lint CLI utilities](https://docs.ros.org/en/jazzy/Tutorials/Advanced/Ament-Lint-For-Clean-Code.html)

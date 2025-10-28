@@ -3,7 +3,7 @@ import time
 import unittest
 
 from launch import LaunchDescription
-from launch_ros.actions import Node, ComposableNodeContainer
+from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 import launch_testing
 import launch_testing.actions
@@ -109,12 +109,23 @@ class TestDetectionSystem(unittest.TestCase):
         #
         # 1. Create a publisher to the /scan topic.
         #
-        # 2. Create and publish a LaserScan message that will trigger the detector.
-        #    Use the helper function.
+        # 2. Wait for the subscriber to be ready (THIS IS THE CRITICAL PART!)
+        #    - Create a loop that checks `self.scan_publisher.get_subscription_count()`
+        #    - Use a timeout (for example 10 seconds) to prevent an infinite loop.
+        #    - Inside the loop, spin the node (`rclpy.spin_once`)
+        #    - After the loop, use `self.assertGreater` to fail the test if
+        #      no subscriber appeared.
         #
-        # 3. Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
+        # 3. Create and publish a LaserScan message that will trigger the detector.
+        #    Use the helper function above.
         #
-        assert False  # Replace this 'pass' statement with your test logic
+        # 4. Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
+        #    - Give it a timeout (for example, 5 seconds).
+        #
+        # 5. (Optional but good practice) Add a try/except block around
+        #    `assertWaitFor` to provide a clearer failure message if it times out.
+        #
+        assert False  # Replace this 'assert' with the necessary code for the test
         # ====================== END EDIT ==================================
 
 

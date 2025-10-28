@@ -79,7 +79,19 @@ A few core concepts are especially useful:
   - `EXPECT_*` records a failure but allows the test to continue.
   - `ASSERT_*` aborts the test immediately on failure.
 
-    Use `EXPECT_*` for checks that can accumulate, and `ASSERT_*` when later steps would be meaningless if the check fails.
+    Consider testing that a function returns a `std::vector<int>` with the right length and expected contents:
+
+    ```cpp
+    std::vector<int> vec = get_vector();
+    // If the length is wrong, further checks (indexing) would be invalid -> abort test
+    ASSERT_EQ(3u, vec.size());   // stop the test immediately if size != 3
+    // Now it is safe to check contents; these can be EXPECT so we see all mismatches at once
+    EXPECT_EQ(10, vec[0]);
+    EXPECT_EQ(20, vec[1]);
+    EXPECT_EQ(30, vec[2]);
+    ```
+
+    Use `ASSERT_*` for preconditions that must hold for remaining assertions to make sense (avoid crashes and meaningless failures). Use `EXPECT_*` for value checks where continuing to run the test to collect multiple failures is useful
 
 - **Fixtures**: allows code to be reused across multiple tests. Define a test class deriving from `::testing::Test` and use `TEST_F` instead of `TEST`.
 - **Parameterized tests**: The same test logic can be executed against multiple input values with `TEST_P`. This reduces duplication and is especially helpful when validating algorithms across many corner cases
@@ -142,17 +154,17 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
 
 ## How to Write Tests
 
-Writing good unit tests is as much about structure as it is about logic. Two key concepts guide this process: **Test-Driven Development (TDD)** and the **Arrange-Act-Assert (AAA)** pattern.
-
-**Test-Driven Development (TDD)** is an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
-
-The **AAA** pattern provides a simple mental model for structuring each test.
+A good unit test is clear, concise, and focused. The best way to achieve this is by following the Arrange-Act-Assert (AAA) pattern, which provides a simple mental model for structuring each test:
 
 - **Arrange**: prepare the environment, inputs, and objects needed for the test.
 - **Act**: execute the function or behavior being tested.
 - **Assert**: verify that the observed result matches the expected outcome.
 
-Following this structure makes tests easy to read, maintain, and reason about. Each test should describe one behavior clearly, without hidden dependencies or side effects.
+Following this pattern leads to tests that are consistent, self-explanatory, and easy to debug when they fail.
+
+Beyond how tests are written, it’s also important to consider when they are written. This leads to a popular development workflow known as **Test-Driven Development (TDD)**. TDD follows an iterative approach where tests are written before the actual code. Each cycle begins by defining a small, failing test that expresses a desired behavior. The minimal code needed to make the test pass is then implemented, followed by a short refactoring step to clean up or generalize the design. This rhythm of red → green → refactor encourages clear requirements, modular code, and continuous verification.
+
+While TDD helps drive better design decisions and encourages modular, testable architectures, the same testing principles can be applied in traditional “test-after” workflows. The key takeaway is that **testability should guide design**, regardless of whether tests come before or after the code.
 
 ## Exercises
 

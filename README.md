@@ -51,16 +51,16 @@ By the end of the workshop, participants will be able to:
 
 ## 📋 Workshop structure
 
-This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from code quality fundamentals to complete Continuous Integration pipelines.
+This workshop is organized into six modules that progressively develop the participant’s understanding of **testing in ROS 2**, from static analysis fundamentals to complete Continuous Integration pipelines.
 
 Each module combines conceptual material with practical exercises that apply the ideas directly to real ROS 2 code. All exercises are designed to be executed in a consistent environment using the provided Docker setup.
 
 > [!IMPORTANT]
 > Before starting, build the Docker environment provided for this workshop. It includes all dependencies and tools required for the exercises. Follow the detailed instructions in the [Docker README](./docker/README.md).
 
-1. **[Module 1 – Linters](modules/module_1/README.md)**
+1. **[Module 1 – Static Analysis Tools](modules/module_1/README.md)**
 
-   Understand how automated linters and static analysis tools enforce consistency, readability, and safety across ROS 2 codebases.  
+   Understand how automated formatters, linters and static analyzers enforce consistency, readability, and safety across ROS 2 codebases.  
 
 2. **[Module 2 – Unit Testing](modules/module_2/README.md)**
 

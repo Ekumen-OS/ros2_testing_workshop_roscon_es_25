@@ -58,9 +58,9 @@ Each module combines conceptual material with practical exercises that apply the
 > [!IMPORTANT]
 > Before starting, build the Docker environment provided for this workshop. It includes all dependencies and tools required for the exercises. Follow the detailed instructions in the [Docker README](./docker/README.md).
 
-1. **[Module 1 – Code Quality and Static Analysis](modules/module_1/README.md)**
+1. **[Module 1 – Static Analysis Tools](modules/module_1/README.md)**
 
-   Understand how automated formatters, linters and static analysis tools enforce consistency, readability, and safety across ROS 2 codebases.  
+   Understand how automated formatters, linters and static analyzers enforce consistency, readability, and safety across ROS 2 codebases.  
 
 2. **[Module 2 – Unit Testing](modules/module_2/README.md)**
 

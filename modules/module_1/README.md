@@ -1,11 +1,11 @@
-# Module 1 – Code Quality and Static Analysis
+# Module 1 – Static Analysis Tools
 
-In this module, the focus is on **code quality and static analysis** in ROS 2.
+In this module, the focus is on **static analysis** in ROS 2.
 
-- [Module 1 – Code Quality and Static Analysis](#module-1--code-quality-and-static-analysis)
+- [Module 1 – Static Analysis Tools](#module-1--static-analysis-tools)
   - [Objectives](#objectives)
   - [Motivation](#motivation)
-  - [Code quality Toolkit](#code-quality-toolkit)
+  - [Static Analysis Toolkit](#static-analysis-toolkit)
     - [Tools Comparison in ROS 2](#tools-comparison-in-ros-2)
     - [Configuration](#configuration)
     - [Frequent Conflicts and Incompatibilities](#frequent-conflicts-and-incompatibilities)
@@ -44,9 +44,9 @@ The benefits they bring are numerous:
 - **Improve Maintainability**: Clean, standardized code is easier for current and future developers to understand, modify, and extend.
 - **Automate Code Reviews**: These tools automate the tedious part of code reviews related to style and simple errors, allowing human reviewers to focus on more important aspects like architecture and logic.
 
-## Code quality Toolkit
+## Static Analysis Toolkit
 
-It's common to group all the different tools used with the same purpose, but actually there are 3 categories inside the **code quality toolkit**:
+It's common to group all the different tools used with the same purpose, but actually there are 3 categories inside the **static analysis toolkit**:
 
 - **Formatters**: fix the code's style. For example: `clang-format`, `uncrustify`,
 - **Linters**: check the code for style violations and simple problematic patterns, such as variable naming. For example: `cpplint`, `flake8`.

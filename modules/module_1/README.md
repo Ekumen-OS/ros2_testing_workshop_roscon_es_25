@@ -152,10 +152,10 @@ To enable pre-commit in a repository:
 3. Each `git commit` will now automatically trigger the configured checks. To run all hooks manually:
 
     ```bash
-    pre-commit run --all-files
+    pre-commit run --all-files (or -a directly)
     ```
 
-Pre-commit hooks are best suited for **fast, local hygiene checks**. They complement full workspace analyses done by `colcon test` and `ament_lint_auto`, which can also be run locally or in CI (introduced in Module 6).
+Pre-commit hooks are best suited for **fast, local hygiene checks**. They complement full workspace analysis done by `colcon test` and `ament_lint_auto`, which can also be run locally or in CI (introduced in Module 6).
 
 > [!NOTE]
 > This workshop does not use pre-commit for static analysis or linters, since those checks are demonstrated through `ament_lint_auto` and `colcon test`.  

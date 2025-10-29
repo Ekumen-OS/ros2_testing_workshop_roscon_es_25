@@ -10,5 +10,4 @@ python3-vcstool
 curl
 wget
 nano
-vim
 sudo

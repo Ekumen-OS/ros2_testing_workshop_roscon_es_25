@@ -113,6 +113,7 @@ xhost +
 
 # Run the container
 docker run -it \
+  --user=$(id -u):$(id -g) \
   --net=host \
   ${NVIDIA_FLAGS} \
   --name "${CONTAINER_NAME}" \

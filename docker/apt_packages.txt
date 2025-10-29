@@ -18,3 +18,4 @@ libgtest-dev
 curl
 wget
 nano
+sudo

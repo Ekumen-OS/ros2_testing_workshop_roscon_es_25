@@ -62,9 +62,6 @@ fi
 echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
 docker build \
   --platform "${PLATFORM}" \
-  --build-arg USERNAME="$(whoami)" \
-  --build-arg USER_UID="$(id -u)" \
-  --build-arg USER_GID="$(id -g)" \
   -f "${DOCKERFILE_PATH}" \
   -t "${IMAGE_NAME}:${TAG}" \
   "${CONTEXT_FOLDER_PATH}"

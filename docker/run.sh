@@ -3,7 +3,7 @@ set -e
 
 # Configuration
 USERNAME=$(whoami)
-IMAGE_NAME="ros2-testing-workshop-roscon-es-25"
+IMAGE_NAME="ekumenlabs/ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"
 TAG="${ROS_DISTRO}"
 CONTAINER_NAME="ros2-testing-worshop-roscon-es-25-container"

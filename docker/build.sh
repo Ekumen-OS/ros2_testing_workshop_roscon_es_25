@@ -2,7 +2,7 @@
 set -e
 
 # Default values for configuration
-IMAGE_NAME="ros2-testing-workshop-roscon-es-25"
+IMAGE_NAME="ekumenlabs/ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"
 PLATFORM="linux/amd64"
 TAG="${ROS_DISTRO}"

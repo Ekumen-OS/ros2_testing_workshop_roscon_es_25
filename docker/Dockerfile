@@ -20,41 +20,49 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-pip && 
 # Initialize rosdep as root. Then regular users can rosdep update
 RUN rosdep init
 
-# Take ownership of the existing non-root user (ID 1000)
-ARG USERNAME=ros2
-ARG USER_UID=1000
-ARG USER_GID=1000
+ARG USER=developer
+ARG GROUP=roscon
 
-# The Ubuntu 24 base image has a default user 'ubuntu' at UID/GID 1000.
-# We modify this user to match the host user's name.
-RUN apt-get update && apt-get install -y sudo \
-    && groupmod --gid $USER_GID --new-name $USERNAME ubuntu \
-    && usermod --uid $USER_UID --gid $USER_GID --login $USERNAME --home /home/$USERNAME --move-home ubuntu \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN deluser ubuntu
+
+RUN addgroup --gid 1001 $GROUP \
+    && adduser --uid 1001 --ingroup $GROUP --home /home/$USER --shell /bin/bash --disabled-password --gecos "" $USER \
+    && adduser $USER sudo \
+    && echo "$USER ALL=NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+    && chmod 0440 /etc/sudoers.d/$USER
+
+COPY docker/fixuid_config.yml /etc/fixuid/config.yml
+RUN /bin/bash -c '\
+     ARCH=`uname -m` && if [ "$ARCH" == "aarch64" ]; then FIXUID_ARCH="arm64"; else FIXUID_ARCH="amd64"; fi \
+  && curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.6.0/fixuid-0.6.0-linux-$FIXUID_ARCH.tar.gz | tar -C /usr/local/bin -xzf - \
+  && chmod 4755 /usr/local/bin/fixuid \
+  && cd /etc/fixuid \
+  && sed -i "s/_USER_/$USER/" config.yml \
+  && sed -i "s/_GROUP_/$GROUP/" config.yml'
 
 # Worspace and work directory
-ENV WS=/home/${USERNAME}/ws
-RUN mkdir -p ${WS} && chown -R ${USER_UID}:${USER_GID} ${WS}
+ENV WS=/home/${USER}/ws
+RUN mkdir -p ${WS} && chown -R ${USER}:${GROUP} ${WS}
 WORKDIR ${WS}
 
 # Copy only package manifests first so this layer is cacheable even if source changes
 # The .dockerignore file excludes all source code so this layer stays small
 # and only rebuilds when manifests change.
-COPY --chown=${USERNAME}:${USERNAME} modules/ ${WS}/src/
+COPY --chown=${USER}:${GROUP} modules/ ${WS}/src/
 
 # Set the new user
-USER $USERNAME
+USER $USER:$GROUP
 
 # Install dependencies via rosdep
 SHELL ["/bin/bash", "-c"]
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     rosdep update && \
+    sudo apt-get update && \
     rosdep install --from-paths src --ignore-src -r -y
 
 # Source ROS 2 and colcon autocompletion on container startup
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc \
     && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+ENTRYPOINT ["fixuid", "-q", "/ros_entrypoint.sh"]
 CMD ["bash"]

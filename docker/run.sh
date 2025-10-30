@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-USERNAME=$(whoami)
+USERNAME=developer
 IMAGE_NAME="ekumenlabs/ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"
 TAG="${ROS_DISTRO}"
@@ -113,6 +113,7 @@ xhost +
 
 # Run the container
 docker run -it \
+  --user=$(id -u):$(id -g) \
   --net=host \
   ${NVIDIA_FLAGS} \
   --name "${CONTAINER_NAME}" \

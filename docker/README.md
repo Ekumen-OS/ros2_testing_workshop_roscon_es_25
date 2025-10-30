@@ -6,6 +6,20 @@ It includes development tools, linters, Google Test/Mock, and all the necessary 
 
 ## 🚀 Building the Image and Running the Container
 
+You can either build the **image locally** or pull it directly from **DockerHub**.
+
+### Pull from DockerHub (recommended)
+
+The prebuilt image is available at:
+
+```bash
+docker pull ekumenlabs/ros2-testing-workshop-roscon-es-25:jazzy
+```
+
+This is the easiest and fastest option.
+
+### Build the Image Locally
+
 To build the image, use the [build.sh](./build.sh) script provided in this repository:
 
 ```bash
@@ -25,11 +39,13 @@ It's possible to get information about the available flags for both scripts usin
 ./docker/run.sh --help
 ```
 
-Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (~/ws).
+## 📦 Container Usage
 
-After shutdown, the user will be asked whether to save the changes made inside the container or not to the image (performing a `docker commit` internally).
+Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (`~/ws`).
 
-If at any moment it's required to start a new session to the running container, it can be done by executing:
+After exiting the container, you’ll be asked whether you want to save your changes back to the image (internally performing a `docker commit`).
+
+If you need to reconnect to a running container:
 
 ```bash
 docker exec -it ros2-testing-workshop-roscon-es-25-container bash

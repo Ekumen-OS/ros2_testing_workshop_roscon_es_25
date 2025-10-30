@@ -179,7 +179,7 @@ You can clearly explain why the file is or isn’t testable and identify the mai
 
 ### Exercise 2
 
-Review the `LaserDetector` class in [laser_detector.cpp](src/laser_detector.cpp), which isolates the core obstacle detection algorithm from the ROS 2 node. The task is to complete the missing parts of this class so that the algorithm becomes fully testable and all provided unit tests pass.
+Review the `LaserDetector` class in [laser_detector.cpp](src/laser_detector.cpp), a refactored version of the node implemented in [bad_laser_detector.cpp](src/bad_laser_detector.cpp). This class isolates the core obstacle detection algorithm from the ROS 2 interfaces. The task is to complete the missing parts of this class so that the algorithm becomes fully testable and all provided unit tests pass.
 
 The following components require completion:
 

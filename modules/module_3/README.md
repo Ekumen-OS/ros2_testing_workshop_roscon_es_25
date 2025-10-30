@@ -229,7 +229,7 @@ Start from the provided `LaserDetectorNode` ROS2 node implementation and unit te
 What to review:
 
 - Source: [laser_detector_node.cpp](src/laser_detector_node.cpp) — intentional defects are present.
-- Tests: [test_laser_detector.cpp](test/test_laser_detector.cpp) — contains `BEGIN EDIT / END EDIT` blocks and an intentional failing check.
+- Tests: [test_laser_detector_node.cpp](test/test_laser_detector_node.cpp) — contains `BEGIN EDIT / END EDIT` blocks and an intentional failing check.
 
 Tasks:
 
@@ -242,7 +242,7 @@ Tasks:
 - Run the tests and examine the output to identify which parts of the node or tests are failing.
 
   ```bash
-  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  colcon test --packages-select module_3 --event-handlers console_direct+
   ```
 
 - Review the node’s source files to find and correct issues such as typos and mismatched parameter or topic names that cause the tests to fail.
@@ -271,7 +271,7 @@ Tasks:
 
   ```bash
   colcon build --packages-up-to module_3 --event-handlers console_direct+
-  colcon test --packages-up-to module_3 --event-handlers console_direct+
+  colcon test --packages-select module_3 --event-handlers console_direct+
   ```
 
 #### Definition of success

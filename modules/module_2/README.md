@@ -1,6 +1,6 @@
 # Module 2 – Unit Testing
 
-In this module, the focus is on **unit tests** in ROS 2, with an emphasis on designing testable code and validating core algorithms using gtest and gmock.
+In this module, the focus is on **unit tests** in ROS 2, with an emphasis on designing testable code and validating core algorithms using `gtest` and `gmock`.
 
 - [Module 2 – Unit Testing](#module-2--unit-testing)
   - [Objectives](#objectives)

@@ -7,15 +7,11 @@ python3-rosdep
 python3-vcstool
 
 # === Linters and formatters ===
-clang-format
 python3-pytest
-uncrustify
-
-# === Google Test (for C++ unit tests) ===
-libgtest-dev
 
 # === Quality of life tools ===
 curl
 wget
 nano
+vim
 sudo

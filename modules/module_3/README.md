@@ -187,7 +187,10 @@ While this module focuses on standard GoogleTest-based ROS 2 testing using `rclc
 
 Rtest offers tools to mock and introspect ROS 2 entities such as publishers, subscribers, services, timers, and actions. It allows direct message injection, timer triggering, and simulated time control—enabling precise and fully deterministic tests without spinning an executor.
 
-At this stage, Rtest remains **experimental** and has a key limitation: it can only test ROS 2 components whose source code is available in the workspace, since it relies on compile-time template substitution to mock and intercept ROS entities. This prevents testing against precompiled or system-installed packages. Despite this, Rtest shows strong potential as a unified, deterministic testing layer that could **complement the approach presented in this module**.
+At this stage, Rtest remains **experimental** and has a key **limitation**: it can only test ROS 2 components whose source code is available in the workspace, since it relies on compile-time template substitution to mock and intercept ROS entities. This prevents testing against precompiled or system-installed packages. Despite this, Rtest shows strong potential as a unified, deterministic testing layer that could **complement the approach presented in this module**.
+
+> [!NOTE]
+> This limitation does not apply to **message** packages (e.g. `std_msgs`), as they contain only type definitions and no source logic to intercept. Such packages can be used normally even when installed from precompiled binaries.
 
 ## Test Isolation
 

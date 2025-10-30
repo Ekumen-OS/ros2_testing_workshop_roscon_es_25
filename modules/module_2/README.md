@@ -191,7 +191,7 @@ Inspect the tests in [test_laser_detector.cpp](test/test_laser_detector.cpp) to 
 
 ```bash
 cd ~/ws
-colcon build --packages-up-to module_2
+colcon build --packages-up-to module_2 --event-handlers console_direct+
 source install/setup.bash
 ```
 

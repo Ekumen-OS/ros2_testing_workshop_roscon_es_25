@@ -59,13 +59,23 @@ std::vector<float> LaserDetector::roi_filter(const std::vector<float>& scan) {
   if (scan.empty()) {
     return {};
   }
+  // Return a filtered scan that fits within the angle ROI (Region of Interest)
+  // provided in the constructor.
 
-  /// BEGIN EDIT ------------------------------------------------------
+  std::vector<float> scan_out;
+  scan_out.reserve(scan.size());  // upper bound
 
-  // Return a filtered scan that fits within the angle ROI provided in
-  // the constructor.
+  float current_angle = laser_options_.angle_min;
+  for (size_t i = 0; i < scan.size(); i++) {
+    // Keep only beams whose angle lies within the ROI (inclusive)
+    if (current_angle >= roi_min_angle_ && current_angle <= roi_max_angle_) {
+      scan_out.push_back(scan[i]);
+    }
+    // Update angle
+    current_angle += laser_options_.angle_increment;
+  }
 
-  /// END EDIT --------------------------------------------------------
+  return scan_out;
 }
 
 int LaserDetector::points_inside_footprint(const std::vector<float>& scan) {

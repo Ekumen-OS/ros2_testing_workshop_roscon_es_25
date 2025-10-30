@@ -237,6 +237,13 @@ TEST_F(TestLaserDetectorNode, ObstacleDetectionIsTrue) {
   // when enough points fall within the configured footprint and ROI. It ensures that
   // the detection logic in the node produces the expected Boolean output.
 
+  // ROI angles are set higher (e.g. +-0.6) than the scan limits (+-0.5) so
+  // there is no ROI filter being applied.
+  //
+  // min_points is set to 3 and footprint_radius to 1.3
+  //
+  // To detect an obstacle we need 3 or more ranges to be <= 1.3
+
   // Create LaserScan message
   auto scan = make_scan({1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6},  // ranges
                         -0.6,                                 // angle_min
@@ -264,6 +271,13 @@ TEST_F(TestLaserDetectorNode, ObstacleDetectionIsFalse) {
   // Publish a LaserScan with all ranges above the footprint radius.
   // Use make_scan() to build the message, publish it, and wait for
   // latest_detection_ to be received. Then, expect that it is false.
+
+  // Suggestion: define ROI angles higher (e.g. +-0.6) than the scan
+  // limits (+-0.5) so there is no ROI filter and logic is easier to test
+  //
+  // min_points is set to 3 and footprint_radius to 1.3
+  //
+  // To NOT detect an obstacle we can't have less than 3 ranges <= 1.3
 
   EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
 

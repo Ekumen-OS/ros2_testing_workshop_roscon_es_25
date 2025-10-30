@@ -10,6 +10,7 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
   - [Ament Integration](#ament-integration)
   - [How to Write Tests](#how-to-write-tests)
   - [Exercises](#exercises)
+    - [What is a Laser Scan?](#what-is-a-laser-scan)
     - [Exercise 1](#exercise-1)
       - [Definition of success](#definition-of-success)
     - [Exercise 2](#exercise-2)
@@ -160,6 +161,20 @@ While TDD helps drive better design decisions and encourages modular, testable a
 ## Exercises
 
 The exercises in this module focus on identifying code that is hard to test, then completing and verifying a refactored, testable implementation with the GoogleTest framework.
+
+### What is a Laser Scan?
+
+A Laser Scanner (LiDAR) provides a **2D** view of the robot’s surroundings by measuring **distances** to nearby obstacles across a range of **angles**.
+
+The data is often used for tasks such as **mapping**, **localization**, **obstacle detection**, and **collision avoidance**. In the upcoming exercises, this scan data is used to build and test a simple laser detector that identifies when obstacles appear within a predefined region around the robot.
+
+In ROS 2, these readings are published as a [sensor_msgs/msg/LaserScan](https://docs.ros.org/en/ros2_packages/jazzy/api/sensor_msgs/msg/LaserScan.html) message, which contains:
+
+- `ranges`: a vector of distance values, one per beam. Values like `+inf` indicate no object was detected (free space up to max range), while values near zero or `NaN` often indicate an invalid reading.
+- `angle_min`, `angle_max`, and `angle_increment`: define the angular coverage and spacing between beams.
+- `range_min` and `range_max`: valid measurement bounds of the sensor.
+
+Each element in `ranges` therefore corresponds to a specific direction and distance measurement, forming the basis for algorithms that filter regions of interest or detect obstacles within a defined footprint.
 
 ### Exercise 1
 

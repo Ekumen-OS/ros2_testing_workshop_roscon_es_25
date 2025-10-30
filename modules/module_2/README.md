@@ -6,13 +6,14 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
   - [Objectives](#objectives)
   - [Motivation](#motivation)
   - [Testable Design](#testable-design)
-    - [Example](#example)
   - [GoogleTest](#googletest)
   - [Ament Integration](#ament-integration)
   - [How to Write Tests](#how-to-write-tests)
   - [Exercises](#exercises)
     - [Exercise 1](#exercise-1)
       - [Definition of success](#definition-of-success)
+    - [Exercise 2](#exercise-2)
+      - [Definition of success](#definition-of-success-1)
   - [References](#references)
 
 ## Objectives
@@ -51,21 +52,11 @@ In ROS 2, **SRP** and **DIP** are the most relevant. Separating algorithmic logi
 
 A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, ensures portability across ROS versions, and makes the algorithm easier to test and maintain over time.
 
-### Example
+> [!NOTE]  
+> Complete [Exercise 1](#exercise-1) before continuing with the next section.
+>
+> The exercise provides a practical example of how tightly coupled code that mixes computation, state, and ROS interfaces becomes difficult to test in isolation.
 
-How could the filtering logic be tested in the example below? The callback mixes computation, state, logging, and publishing: does this follow the Single Responsibility Principle (SRP)?
-
-```cpp
-void callback(const std_msgs::msg::Float64 & msg) {
-  double value = msg.data;
-
-  double filtered = 0.9 * prev_ + 0.1 * value;
-  prev_ = filtered;
-
-  RCLCPP_INFO(this->get_logger(), "Filtered = %f", filtered);
-  publisher_->publish(std_msgs::msg::Float64{filtered});
-}
-```
 
 ## GoogleTest
 
@@ -168,29 +159,54 @@ While TDD helps drive better design decisions and encourages modular, testable a
 
 ## Exercises
 
-The exercises for this module focus on transforming non-testable code into testable code and validating the core logic using the GoogleTest framework.
+The exercises in this module focus on identifying code that is hard to test, then completing and verifying a refactored, testable implementation with the GoogleTest framework.
 
 ### Exercise 1
 
-The objective of this exercise is to identify and refactor code that violates the Single Responsibility Principle (SRP) and is therefore hard to test.
+Begin by examining [bad_laser_detector.cpp](src/bad_laser_detector.cpp), a node that processes LiDAR scans while also handling ROS 2 communication. Take a moment to understand what the node does and how its logic is structured.
 
-Begin by examining [bad_laser_detector.cpp](src/bad_laser_detector.cpp) node that processes LiDAR scans, combining publishers, subscribers, and algorithmic logic in a single callback. This coupling between ROS interfaces and computation makes the algorithm untestable in isolation, as every test would require launching ROS infrastructure.
+As the code is reviewed, consider the following questions:
 
-Next, review the `LaserDetector` class defined in [laser_detector.cpp](src/laser_detector.cpp), which isolates the core obstacle detection algorithm from the ROS 2 node. The task is to complete the missing parts of this class so that the algorithm becomes fully testable and all provided unit tests pass.
+- Can the core detection logic be tested without running a ROS system?
+- What parts of the code make testing easier or harder?
+- How might you restructure it so that the functionality could be tested independently from ROS interfaces?
+
+Do not make any changes yet, this exercise is purely about inspection and reasoning about testability.
+
+#### Definition of success
+
+You can clearly explain why the file is or isn’t testable and identify the main obstacles that make unit testing hard.
+
+### Exercise 2
+
+Review the `LaserDetector` class in [laser_detector.cpp](src/laser_detector.cpp), which isolates the core obstacle detection algorithm from the ROS 2 node. The task is to complete the missing parts of this class so that the algorithm becomes fully testable and all provided unit tests pass.
 
 The following components require completion:
 
 - Constructor: Complete the missing input validation checks to make tests pass.
-- `roi_filter`: Implement the logic to iterate through the input ranges, check the angle against the ROI and return a new vector with the filtered data.
 - `points_inside_footprint`: Implement the logic to count how many ranges are finite and less than or equal to `footprint_radius_`.
 - `detect_obstacle`: Implement the final comparison logic. A detection is true if `num_points≥min_points_`.
+
+Inspect the tests in [test_laser_detector.cpp](test/test_laser_detector.cpp) to understand the expected behavior. Progress can be verified incrementally by rebuilding and running the tests after each step. To rebuild the package:
+
+```bash
+cd ~/ws
+colcon build --packages-up-to module_2
+source install/setup.bash
+```
+
+Then run the tests:
+
+```bash
+colcon test --packages-select module_2 --event-handlers console_direct+
+```
 
 > [!NOTE]
 > This exercise demonstrates Test-Driven Development (TDD) in practice: using predefined unit tests to guide the implementation of a clear, modular, and testable design.
 
 #### Definition of success
 
-The task is complete when tests are run and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
+The task is complete when **tests are run** and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
 
 ## References
 

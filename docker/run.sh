@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-USERNAME=$(whoami)
+USERNAME=developer
 IMAGE_NAME="ekumenlabs/ros2-testing-workshop-roscon-es-25"
 ROS_DISTRO="jazzy"
 TAG="${ROS_DISTRO}"

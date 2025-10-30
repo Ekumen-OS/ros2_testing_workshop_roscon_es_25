@@ -41,11 +41,11 @@ It's possible to get information about the available flags for both scripts usin
 
 ## 📦 Container Usage
 
-Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (`~/ws`).
+Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (~/ws).
 
-After exiting the container, you’ll be asked whether you want to save your changes back to the image (internally performing a `docker commit`).
+After shutdown, the user will be asked whether to save the changes made inside the container or not to the image (performing a `docker commit` internally).
 
-If you need to reconnect to a running container:
+If at any moment it's required to start a new session to the running container, it can be done by executing:
 
 ```bash
 docker exec -it ros2-testing-workshop-roscon-es-25-container bash
@@ -53,5 +53,3 @@ docker exec -it ros2-testing-workshop-roscon-es-25-container bash
 
 > [!NOTE]
 > The name of the container might differ if a different name is provided in the script, so be careful about that.
-
-<!-- TODO: Add Troubleshoot section? Common problems? -->

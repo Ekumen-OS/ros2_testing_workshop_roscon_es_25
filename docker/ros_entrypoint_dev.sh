@@ -3,7 +3,7 @@ set -euo pipefail
 
 # runtime-friendly defaults
 ROS_DISTRO="${ROS_DISTRO:-jazzy}"
-USERNAME="${USERNAME:-$(whoami)}"
+USERNAME="${USERNAME:-developer}"
 WORKSPACE="/home/${USERNAME}/ws"
 SRCDIR="${WORKSPACE}/src"
 

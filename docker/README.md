@@ -43,7 +43,7 @@ It's possible to get information about the available flags for both scripts usin
 
 Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (`~/ws`).
 
-After shutdown, the user will be asked whether to save the changes made inside the container or not to the image (performing a `docker commit` internally).
+After exiting the container, you’ll be asked whether you want to save your changes back to the image (internally performing a `docker commit`).
 
 If you need to open another terminal connected to the same container, use the helper script [join.sh](./join.sh):
 

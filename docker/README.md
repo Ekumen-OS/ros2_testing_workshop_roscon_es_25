@@ -41,15 +41,14 @@ It's possible to get information about the available flags for both scripts usin
 
 ## 📦 Container Usage
 
-Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (~/ws).
+Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (`~/ws`).
 
 After shutdown, the user will be asked whether to save the changes made inside the container or not to the image (performing a `docker commit` internally).
 
-If at any moment it's required to start a new session to the running container, it can be done by executing:
+If you need to open another terminal connected to the same container, use the helper script [join.sh](./join.sh):
 
 ```bash
-docker exec -it ros2-testing-workshop-roscon-es-25-container bash
+./docker/join.sh
 ```
 
-> [!NOTE]
-> The name of the container might differ if a different name is provided in the script, so be careful about that.
+By default, this opens an interactive **bash** session inside the running container named `ros2-testing-workshop-roscon-es-25-container`. You can specify a different container name and command, use the `-h` flag for details.

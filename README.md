@@ -82,11 +82,8 @@ Each module combines conceptual material with practical exercises that apply the
 
    Learn how to automate builds, linters, and tests with GitHub Actions to maintain code quality and enforce review standards.
 
----
-
-For detailed explanations and references, see the individual module READMEs in the [modules](./modules) directory.
-
----
+> [!NOTE]
+> Each module listed above links directly to its own README in the [modules](modules/) directory, which includes the explanations and exercises.
 
 ## ✍️ Authors
 

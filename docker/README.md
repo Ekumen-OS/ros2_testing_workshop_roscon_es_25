@@ -43,12 +43,12 @@ It's possible to get information about the available flags for both scripts usin
 
 Once the container is started, the entrypoint is located at the root of the ROS 2 workspace (`~/ws`).
 
-After exiting the container, you’ll be asked whether you want to save your changes back to the image (internally performing a `docker commit`).
+After exiting the container,  the user will be asked whether to save the changes back to the image (internally performing a `docker commit`).
 
-If you need to open another terminal connected to the same container, use the helper script [join.sh](./join.sh):
+To open another terminal connected to the same container, use the helper script [join.sh](./join.sh):
 
 ```bash
 ./docker/join.sh
 ```
 
-By default, this opens an interactive **bash** session inside the running container named `ros2-testing-workshop-roscon-es-25-container`. You can specify a different container name and command, use the `-h` flag for details.
+By default, the script opens an interactive **bash** session inside the running container named `ros2-testing-workshop-roscon-es-25-container`. A different container name or command can be specified; use the `-h` flag for details.

@@ -243,7 +243,7 @@ source install/setup.bash
 colcon lint --packages-select module_1
 ```
 
-Some indications will appear. The task is to correct these indications, adding the missing dependencies and ficing the style inconsistencies.
+Some indications will appear. The task is to correct these indications, adding the missing dependencies and fixing the style inconsistencies.
 
 #### Definition of success
 

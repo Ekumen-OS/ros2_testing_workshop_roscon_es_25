@@ -1,6 +1,6 @@
 # ROS 2 Testing: A Practical Survival Guide
 
-This workshop introduces the **best practices for designing, testing, and maintaining ROS 2 nodes in C++** to ensure code quality, maintainability, and confidence in deployments.
+This workshop, developed for ROSCon Spain 2025, introduces the **best practices for designing, testing, and maintaining ROS 2 nodes in C++** to ensure code quality, maintainability, and confidence in deployments.
 
 It combines theory with hands-on exercises so that participants can directly apply the concepts in their own workflow.
 
@@ -82,6 +82,10 @@ Each module combines conceptual material with practical exercises that apply the
 
    Learn how to automate builds, linters, and tests with GitHub Actions to maintain code quality and enforce review standards.
 
----
+> [!NOTE]
+> Each module listed above links directly to its own README in the [modules](modules/) directory, which includes the explanations and exercises.
 
-For detailed explanations and references, see the individual module READMEs in the [modules](./modules) directory.
+## ✍️ Authors
+
+* **Jesús Silva Utrera** - [@JesusSilvaUtrera](https://github.com/JesusSilvaUtrera)
+* **Xavier Ruiz Vilda** - [@xaru8145](https://github.com/xaru8145)

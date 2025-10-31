@@ -87,5 +87,5 @@ Each module combines conceptual material with practical exercises that apply the
 
 ## ✍️ Authors
 
-* **[Jesús Silva Utrera]** - [@JesusSilvaUtrera](https://github.com/JesusSilvaUtrera)
-* **[Xavier Ruiz Vilda]** - [@xaru8145](https://github.com/xaru8145)
+* **Jesús Silva Utrera** - [@JesusSilvaUtrera](https://github.com/JesusSilvaUtrera)
+* **Xavier Ruiz Vilda** - [@xaru8145](https://github.com/xaru8145)

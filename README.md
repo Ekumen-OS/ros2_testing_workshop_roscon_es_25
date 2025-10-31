@@ -1,6 +1,6 @@
 # ROS 2 Testing: A Practical Survival Guide
 
-This workshop, prepared for ROSCon España 2025, introduces the **best practices for designing, testing, and maintaining ROS 2 nodes in C++** to ensure code quality, maintainability, and confidence in deployments.
+This workshop, developed for ROSCon Spain 2025, introduces the **best practices for designing, testing, and maintaining ROS 2 nodes in C++** to ensure code quality, maintainability, and confidence in deployments.
 
 It combines theory with hands-on exercises so that participants can directly apply the concepts in their own workflow.
 

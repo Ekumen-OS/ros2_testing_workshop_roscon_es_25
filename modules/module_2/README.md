@@ -54,10 +54,9 @@ In ROS 2, **SRP** and **DIP** are the most relevant. Separating algorithmic logi
 A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, ensures portability across ROS versions, and makes the algorithm easier to test and maintain over time.
 
 > [!NOTE]  
-> Complete [Exercise 1](#exercise-1) before continuing with the next section.
+> It is recommended to complete [Exercise 1](#exercise-1) before continuing with the next section.
 >
 > The exercise provides a practical example of how tightly coupled code that mixes computation, state, and ROS interfaces becomes difficult to test in isolation.
-
 
 ## GoogleTest
 

@@ -4,6 +4,8 @@ This workshop, developed for ROSCon Spain 2025, introduces the **best practices 
 
 It combines theory with hands-on exercises so that participants can directly apply the concepts in their own workflow.
 
+📑 The slides are available at [roscon_es_25_workshop_slides.pdf](roscon_es_25_workshop_slides.pdf)
+
 ## 🚀 Motivation
 
 ROS projects are complex. They combine algorithms, drivers, middleware, and hardware interfaces into large, interdependent systems. In such an environment, even a small code change can have unintended effects. Without tests, these effects are only discovered late (often on a robot, at a demo, or by another developer) when the cost of fixing them is highest.

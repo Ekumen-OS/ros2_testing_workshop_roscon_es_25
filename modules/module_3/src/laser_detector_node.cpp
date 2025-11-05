@@ -21,8 +21,8 @@ namespace module_3 {
 LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
     : rclcpp::Node("laser_detector_node", options) {
   // Declare parameters
-  this->declare_parameter("fotprint_radius", 1.0);
-  this->declare_parameter("min_points", 20);
+  this->declare_parameter("footprint_radius", 1.0);
+  this->declare_parameter("min_point", 20);
   this->declare_parameter("roi_min_angle", 0.0);
   this->declare_parameter("roi_max_angle", 2.0 * M_PI);
 

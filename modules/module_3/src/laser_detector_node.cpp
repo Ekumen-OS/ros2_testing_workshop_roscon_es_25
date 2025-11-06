@@ -48,7 +48,7 @@ LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
   }
 
   // Publishers
-  obstacle_pub_ = this->create_publisher<std_msgs::msg::Bool>("obstacle_detections", 10);
+  obstacle_pub_ = this->create_publisher<std_msgs::msg::Bool>("obstacle_detection", 10);
 
   // Subscribers
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(

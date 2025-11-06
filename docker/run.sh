@@ -86,15 +86,6 @@ if ! docker info > /dev/null 2>&1; then
   exit 1
 fi
 
-# Check for NVIDIA Container Toolkit for GPU support
-NVIDIA_FLAGS=""
-if command -v dpkg >/dev/null 2>&1 && dpkg -l | grep -q nvidia-container-toolkit; then
-  NVIDIA_FLAGS="--gpus all"
-else
-  # if dpkg isn't present (non-debian host) or toolkit not installed, we leave NVIDIA_FLAGS empty
-  echo -e "\n\e[33mWarning:\e[0m 'nvidia-container-toolkit' not detected (or dpkg unavailable). GPU support may be disabled."
-fi
-
 # Build if requested
 if [ "$BUILD_FIRST" = true ]; then
   echo "Building image first as requested..."
@@ -123,21 +114,12 @@ for dir in build install log; do
   fi
 done
 
-# Allow GUI applications
-xhost +
-
 # Run the container
 docker run -it \
   --user=$(id -u):$(id -g) \
   --net=host \
   ${NVIDIA_FLAGS} \
   --name "${CONTAINER_NAME}" \
-  -e DISPLAY=$DISPLAY \
-  -e QT_X11_NO_MITSHM=1 \
-  -e XDG_RUNTIME_DIR=/tmp/runtime-${USER} \
-  -e NVIDIA_DRIVER_CAPABILITIES=all \
-  --device /dev/dri:/dev/dri \
-  -v /tmp/.X11-unix:/tmp/.X11-unix \
   -v ${REPOSITORY_FOLDER_PATH}/modules:${WORKSPACE_ROOT_CONTAINER}/src/ \
   -v ${REPOSITORY_FOLDER_PATH}/build:${WORKSPACE_ROOT_CONTAINER}/build/ \
   -v ${REPOSITORY_FOLDER_PATH}/install:${WORKSPACE_ROOT_CONTAINER}/install/ \
@@ -146,9 +128,6 @@ docker run -it \
   -w ${WORKSPACE_ROOT_CONTAINER} \
   "${IMAGE_NAME}:${TAG}" \
   "${ARGS[@]}"
-
-# Disallow GUI applications after container exits
-xhost -
 
 # Function to be able to overwrite the image on exit
 function onexit() {

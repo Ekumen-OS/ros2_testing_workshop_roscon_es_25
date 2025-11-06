@@ -41,11 +41,5 @@ if [[ ${#ARGS[@]} -eq 0 ]]; then
   ARGS=("bash")
 fi
 
-# Allow GUI applications
-xhost +
-
 # Join a running container
 docker exec -it "$CONTAINER_NAME" "${ARGS[@]}"
-
-# Disallow GUI applications after container exits
-xhost -

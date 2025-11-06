@@ -187,7 +187,17 @@ TEST(TestLaserDetector, TestPointsInFootprintOutsideRange) {
   EXPECT_EQ(output, expected_output);
 }
 
-TEST(TestLaserDetector, TestObstacleDetection) {
+struct ObstacleDetectionParams {
+  int points{};
+  bool detection{};
+};
+
+class TestObstacleDetection : public ::testing::TestWithParam<std::pair<int, bool>> {};
+
+TEST_P(TestObstacleDetection, DetectObstacleThresholds) {
+  // Get params
+  const auto& [points, detection] = GetParam();
+
   // Define laser options
   const LaserOptions laser_options{
       -0.6,  // angle_min
@@ -203,19 +213,21 @@ TEST(TestLaserDetector, TestObstacleDetection) {
   const double roi_min_angle{-0.4};
   const double roi_max_angle{0.6};
 
-  // Define input data (num points)
-  const int input_obstacle{7};
-  const int input_non_obstacle{2};
-
   // Create dut
   LaserDetector dut(laser_options, footprint_radius, min_points, roi_min_angle, roi_max_angle);
 
-  // Detect obstacle
-  EXPECT_TRUE(dut.detect_obstacle(input_obstacle));
-
-  // Detect non-obstacle
-  EXPECT_FALSE(dut.detect_obstacle(input_non_obstacle));
+  // Assert obstacle detection
+  EXPECT_EQ(dut.detect_obstacle(points), detection);
 }
+
+INSTANTIATE_TEST_SUITE_P(ObstacleThresholdCases, TestObstacleDetection,
+                         ::testing::Values(
+                             // below threshold
+                             std::pair{2, false},
+                             // exactly at min_points (boundary)
+                             std::pair{5, true},
+                             // above threshold
+                             std::pair{7, true}));
 
 }  // namespace test
 }  // namespace module_2

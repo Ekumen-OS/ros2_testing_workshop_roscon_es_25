@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(ament_cmake_gtest REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 
-ament_add_gtest(test_laser_detector_node
+ament_add_ros_isolated_gtest(test_laser_detector_node
   test_laser_detector_node.cpp
 )
 target_link_libraries(test_laser_detector_node

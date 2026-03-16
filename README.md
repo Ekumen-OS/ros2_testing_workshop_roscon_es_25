@@ -63,7 +63,7 @@ Providing this document as context to an AI assistant helps it generate code and
 
 **Example prompt**:
 
-> I am developing a ROS 2 project. Act as a Senior Robotics Engineer. Before generating any code or tests, read ros2_testing_best_practices.md and strictly follow its guidelines regarding testable design, the testing pyramid, and deterministic execution.
+> I am developing a ROS 2 project. Act as a Senior Robotics Engineer. Before generating any code or tests, read AI_TESTING_GUIDE.md and strictly follow its guidelines regarding testable design, the testing pyramid, and deterministic execution.
 
 ## 📋 Workshop structure
 

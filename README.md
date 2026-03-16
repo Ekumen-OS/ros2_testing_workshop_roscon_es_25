@@ -6,7 +6,7 @@ It combines theory with hands-on exercises so that participants can directly app
 
 📑 The slides are available at [roscon_es_25_workshop_slides.pdf](roscon_es_25_workshop_slides.pdf)
 
-🤖 **AI-Ready**: Use our best practices guide to prime your AI coding assistant (Claude, GPT, Cursor) for this workshop. See section [AI Assistants](#-ai-assistants).
+🤖 **AI-Ready**: Use our [AI Testing Guide](/AI_TESTING_GUIDE.md) to ensure your AI coding assistant follows **professional testing standards and testable design** in your own ROS 2 projects. See section [AI Assistants](#-ai-assistants) for more detail.
 
 ## 🚀 Motivation
 
@@ -57,9 +57,7 @@ By the end of the workshop, participants will be able to:
 
 If you use AI coding assistants (ChatGPT, GitHub Copilot, Claude, Cursor, etc.), you can provide them with the engineering practices taught in this workshop to ensure generated code is testable and robust.
 
-See: **ros2_testing_best_practices.md**
-
-TODO(xaru8145): link and write file.
+See **[AI_TESTING_GUIDE.md](AI_TESTING_GUIDE.md)**
 
 Providing this document as context to an AI assistant helps it generate code and tests that follow these engineering practices.
 

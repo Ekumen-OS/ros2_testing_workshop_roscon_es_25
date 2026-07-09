@@ -6,6 +6,8 @@ It combines theory with hands-on exercises so that participants can directly app
 
 📑 The slides are available at [roscon_es_25_workshop_slides.pdf](roscon_es_25_workshop_slides.pdf)
 
+🤖 **AI-Ready**: Use our [AI Testing Guide](/AI_TESTING_GUIDE.md) to ensure your AI coding assistant follows **professional testing standards and testable design** in your own ROS 2 projects. See section [AI Assistants](#-ai-assistants) for more detail.
+
 ## 🚀 Motivation
 
 ROS projects are complex. They combine algorithms, drivers, middleware, and hardware interfaces into large, interdependent systems. In such an environment, even a small code change can have unintended effects. Without tests, these effects are only discovered late (often on a robot, at a demo, or by another developer) when the cost of fixing them is highest.
@@ -50,6 +52,18 @@ By the end of the workshop, participants will be able to:
 - Basic command-line skills and familiarity with ROS 2 and C++.
 
 👉 It is recommended to review the official [ROS 2 Basic Tutorials](https://docs.ros.org/en/jazzy/Tutorials.html) beforehand.
+
+## 🤖 AI Assistants
+
+If you use AI coding assistants (ChatGPT, GitHub Copilot, Claude, Cursor, etc.), you can provide them with the engineering practices taught in this workshop to ensure generated code is testable and robust.
+
+See **[AI_TESTING_GUIDE.md](AI_TESTING_GUIDE.md)**
+
+Providing this document as context to an AI assistant helps it generate code and tests that follow these engineering practices.
+
+**Example prompt**:
+
+> I am developing a ROS 2 project. Act as a Senior Robotics Engineer. Before generating any code or tests, read AI_TESTING_GUIDE.md and strictly follow its guidelines regarding testable design, the testing pyramid, and deterministic execution.
 
 ## 📋 Workshop structure
 

@@ -8,7 +8,7 @@ To enable professional-grade testing, algorithmic logic must be decoupled from t
 
 Follow these relevant SOLID principles:
 
-- **Single Responsibility (SRP)**: Build ROS 2 Nodes to have a single responsibility. Separate application logic into its own class or library, keeping ROS 2 nodes focused solely on communication.
+- **Single Responsibility (SRP)**: Build ROS 2 nodes to have a single responsibility. Separate application logic into its own class or library, and keep ROS 2 nodes as thin wrappers responsible only for communication between ROS interfaces and the core application logic.
 
 - **Dependency Injection (DI)**: Inject dependencies and configurations into the logic class constructor rather than creating them internally. This enables the use of mocks to isolate functionality during testing.
 
@@ -24,9 +24,9 @@ Maintain a balanced testing pyramid to ensure high-quality software:
 
 - **ROS Unit/Component Tests**: Validate node interfaces (topics, services, parameters) in isolation using test fixtures to manage the `rclcpp` lifecycle.
 
-- **Integration Tests**: Verify multi-node interactions and communication behavior using the launch_testing framework.
+- **Integration Tests**: Verify multi-node interactions and communication behavior using the `launch_testing` framework.
 
-- **End-to-End (E2E)**: Validate full robot behavior and "mission" success using `rosbag2` replay or simulation.
+- **End-to-End (E2E)**: Validate complete system behavior in realistic environments, such as simulation or on target hardware.
 
 ## Determinism and Reliability
 
@@ -36,16 +36,18 @@ Maintain a balanced testing pyramid to ensure high-quality software:
 
 - **Test Isolation**: Always use `ament_add_ros_isolated_gtest` to prevent cross-talk between parallel tests on the same network by assigning unique domain IDs.
 
+## Local Development
+
+- **Pre-commit Hooks**: Use pre-commit hooks to automatically run formatting, linters, and other fast checks before committing code. This helps catch issues early and reduces CI failures.
+
 ## Continuous Integration
 
 The CI pipeline (e.g., **GitHub Action**s) serves as an enforceable quality gate.
 
-1. **Local Pre-commit**: Use fast local checks to catch style errors before pushing.
+1. **Build**: Run colcon build to ensure the package and its dependencies compile correctly.
 
-2. **Build**: Run colcon build to ensure the package and its dependencies compile correctly.
+2. **Test and Lint**: Execute colcon test. This triggers both the Static Analysis and the functional tests (Unit, ROS Unit, Integration).
 
-3. **Test and Lint**: Execute colcon test. This triggers both the Static Analysis and the functional tests (Unit, ROS Unit, Integration).
+3. **Verification**: Use `colcon test-result --verbose` to interpret results.
 
-4. **Verification**: Use `colcon test-result --verbos`e to interpret results.
-
-5. **Enforcement**: Configure branch protection rules to require these status checks pass before code can be merged.
+4. **Enforcement**: Configure branch protection rules to require these status checks pass before code can be merged.

@@ -7,6 +7,7 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
   - [Motivation](#motivation)
   - [Testable Design](#testable-design)
   - [GoogleTest](#googletest)
+  - [GoogleMock](#googlemock)
   - [Ament Integration](#ament-integration)
   - [How to Write Tests](#how-to-write-tests)
   - [Exercises](#exercises)
@@ -15,6 +16,8 @@ In this module, the focus is on **unit tests** in ROS 2, with an emphasis on des
       - [Definition of success](#definition-of-success)
     - [Exercise 2](#exercise-2)
       - [Definition of success](#definition-of-success-1)
+    - [Exercise 3](#exercise-3)
+      - [Definition of success](#definition-of-success-2)
   - [References](#references)
 
 ## Objectives
@@ -53,7 +56,7 @@ In ROS 2, **SRP** and **DIP** are the most relevant. Separating algorithmic logi
 
 A recommended practice is to implement core algorithms using ROS-agnostic libraries such as `Eigen` for linear algebra or `PCL` for point cloud processing. This reduces coupling to ROS distribution APIs, ensures portability across ROS versions, and makes the algorithm easier to test and maintain over time.
 
-> [!NOTE]  
+> [!NOTE]
 > It is recommended to complete [Exercise 1](#exercise-1) before continuing with the next section.
 >
 > The exercise provides a practical example of how tightly coupled code that mixes computation, state, and ROS interfaces becomes difficult to test in isolation.
@@ -89,8 +92,6 @@ A few core concepts are especially useful:
 
 See [Macros](https://google.github.io/googletest/reference/testing.html) and [Assertions](https://google.github.io/googletest/reference/assertions.html) in the official documentation for a more in-depth explanation.
 
-In addition to `gtest`, the same framework also provides [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, which is a library for creating mock objects. Mocks are fake implementations of classes that behave in controlled ways, defined by the test. This is particularly useful in robotics, where real data often comes from sensors or hardware that is not always available during testing. By mocking a sensor interface, it is possible to test how an algorithm reacts to predefined inputs without requiring hardware.
-
 Minimal example:
 
 ```cpp
@@ -105,6 +106,67 @@ TEST(TestBasicMath, Addition)
 > [!NOTE]
 > GoogleTest provides a default `main()`. A custom main is only necessary if special initialization is required before running tests.
 
+## GoogleMock
+
+Unit tests should not depend on hardware. However, robotics code often relies on physical devices (cameras, LiDARs, motors, IMUs or proprietary drivers) that are not always available, which makes tests hard to run in CI and hard to reproduce.
+
+The solution is to make the code depend on an **abstract interface** instead of a concrete driver, and to inject it from the outside (**Dependency Injection**), following the [Testable Design](#testable-design) principles:
+
+1. Create an abstract interface for the device.
+2. Make the class depend on that interface, receiving it in its constructor.
+3. Make the real driver implement that interface.
+
+```cpp
+class CameraInterface
+{
+public:
+  virtual ~CameraInterface() = default;
+  virtual Frame get_frame() = 0;
+};
+
+class FrameProcessor
+{
+public:
+  explicit FrameProcessor(std::shared_ptr<CameraInterface> camera);
+  bool process();
+};
+```
+
+In production, the real driver is injected. In unit tests, it is replaced by a **mock**: a fake implementation whose behavior is defined by the test. [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, ships with GoogleTest and provides the tools to create them:
+
+- **`MOCK_METHOD`**: declares a mocked method in a class deriving from the interface, with the form `MOCK_METHOD(ReturnType, MethodName, (Args...), (Specs...))`.
+- **`EXPECT_CALL`**: sets the expectation that a method will be called. It must be set **before** the code under test runs, and it is verified automatically when the mock is destroyed.
+- **Actions and cardinalities**: `.WillOnce(Return(value))` defines what a call returns, and `.Times(n)` how many calls are expected.
+
+See [gMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) and the [gMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) in the official documentation for a more in-depth explanation.
+
+Minimal example:
+
+```cpp
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+class MockCamera : public CameraInterface
+{
+public:
+  MOCK_METHOD(Frame, get_frame, (), (override));
+};
+
+TEST(TestFrameProcessor, ProcessFrame)
+{
+  auto camera = std::make_shared<MockCamera>();
+  FrameProcessor dut(camera);
+
+  const Frame fake_frame{};
+  EXPECT_CALL(*camera, get_frame()).WillOnce(::testing::Return(fake_frame));
+
+  EXPECT_TRUE(dut.process());
+}
+```
+
+> [!NOTE]
+> Mock only what depends on hardware or external systems. Pure logic, such as the `LaserDetector` algorithm, should be tested with its real implementation.
+
 ## Ament Integration
 
 ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build and run with `colcon test`. The integration has three pieces: `package.xml`, `CMakeLists.txt`, and how tests are executed.
@@ -114,7 +176,7 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
     ```xml
     <test_depend>ament_cmake_gtest</test_depend>
     <!-- add ament_cmake_gmock only if using gmock -->
-    <test_depend>ament_cmake_gmock</test_depend> 
+    <test_depend>ament_cmake_gmock</test_depend>
     ```
 
 - Add to `CMakeLists.txt`:
@@ -129,7 +191,10 @@ ROS 2 wraps GoogleTest/GoogleMock with lightweight CMake helpers so tests build 
       # Link against external libraries
       ament_target_dependencies(test_module_2_algorithm Eigen3)
 
-      # Same for mocks
+      # Same for tests using mocks
+      find_package(ament_cmake_gmock REQUIRED)
+      ament_add_gmock(test_module_2_monitor test/test_monitor.cpp)
+      target_link_libraries(test_module_2_monitor monitor)
     endif()
     ```
 
@@ -159,7 +224,7 @@ While TDD helps drive better design decisions and encourages modular, testable a
 
 ## Exercises
 
-The exercises in this module focus on identifying code that is hard to test, then completing and verifying a refactored, testable implementation with the GoogleTest framework.
+The exercises in this module focus on identifying code that is hard to test, then completing and verifying a refactored, testable implementation with the GoogleTest framework, and finally testing it without the robot hardware using GoogleMock.
 
 ### What is a Laser Scan?
 
@@ -222,11 +287,37 @@ colcon test --packages-select module_2 --event-handlers console_direct+
 
 The task is complete when **tests are run** and the output shows **0 errors** and **0 failures** for the `TestLaserDetector` suite defined in [test_laser_detector.cpp](test/test_laser_detector.cpp).
 
+> [!NOTE]
+> Failures in `test_safety_monitor` are expected at this point, they are addressed in [Exercise 3](#exercise-3).
+
+### Exercise 3
+
+The `LaserDetector` algorithm needs scans from a real laser scanner. The `SafetyMonitor` class in [safety_monitor.cpp](src/safety_monitor.cpp) reads them through the driver interface defined in [laser_scanner_interface.hpp](include/module_2/laser_scanner_interface.hpp), which is injected in its constructor, and uses the `LaserDetector` to tell whether the path is clear. Since no scanner is available, the tests replace the driver with a mock.
+
+> [!IMPORTANT]
+> `SafetyMonitor` uses the `LaserDetector`, so complete [Exercise 2](#exercise-2) first.
+
+Review [test_safety_monitor.cpp](test/test_safety_monitor.cpp), where the `MockLaserScanner` is defined and injected in the `TestSafetyMonitor` fixture. The `ObstacleDetected` test is a complete example that can be used as a reference. The following components require completion:
+
+- `PathClear` test: make the mock return a scan without obstacles and expect the path to be clear.
+- `EmptyScanIsNotClear` test: make the mock return an empty scan, simulating a driver failure, and expect the path not to be clear.
+- `SafetyMonitor::is_path_clear`: the previous test fails, revealing a safety bug. Implement the missing fail-safe check to make it pass.
+
+Rebuild the package and run the tests as in [Exercise 2](#exercise-2).
+
+> [!NOTE]
+> Simulating hardware failures on demand, like the empty scan above, is one of the main benefits of mocks, since they are hard and risky to reproduce with real hardware.
+
+#### Definition of success
+
+The task is complete when **tests are run** and the output shows **0 errors** and **0 failures** for the `TestSafetyMonitorConstructor` and `TestSafetyMonitor` suites defined in [test_safety_monitor.cpp](test/test_safety_monitor.cpp).
+
 ## References
 
 - [SOLID principles](https://en.wikipedia.org/wiki/SOLID)
 - [Writing Basic Tests with C++ with GTest](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Testing/Cpp.html)
-- [Google Test Repo](https://github.com/google/googletestl)
+- [Google Test Repo](https://github.com/google/googletest)
 - [Google Test Macros](https://google.github.io/googletest/reference/testing.html)
 - [Google Test Assertions](https://google.github.io/googletest/reference/assertions.html)
 - [Google Mock Basics](https://google.github.io/googletest/gmock_for_dummies.html)
+- [Google Mock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html)

@@ -52,6 +52,19 @@ target_include_directories(laser_detector
     "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
 )
 
+add_library(safety_monitor
+  src/safety_monitor.cpp
+)
+target_include_directories(safety_monitor
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+target_link_libraries(safety_monitor
+  PUBLIC
+    laser_detector
+)
+
 # Tests
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -63,7 +76,7 @@ endif()
 
 # Installation
 install(
-  TARGETS laser_detector
+  TARGETS laser_detector safety_monitor
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   ARCHIVE DESTINATION lib/${PROJECT_NAME}

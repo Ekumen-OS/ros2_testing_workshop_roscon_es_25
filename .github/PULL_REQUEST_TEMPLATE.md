@@ -23,6 +23,7 @@ Steps to reproduce / test the changes:
 - [ ] I have signed my commits (`git commit -s`) or added Signed-off-by to existing commits.
 - [ ] I added/updated tests (if applicable)
 - [ ] I updated documentation (if applicable)
+- [ ] If exercises or their tests changed, I verified them on the `solutions` branch (tests are skipped on `main`)
 
 ## Related issues
 

@@ -4,7 +4,19 @@ name: ROS 2 specific CI
 on:
   pull_request: # Run on all pull requests
   push:
-    branches: [main] # Also run on pushes to the main branch
+    branches: [main, solutions] # Also run on pushes to the main and solutions branches
+
+# The workshop's main branch holds the unsolved exercises, so its tests are
+# expected to fail. Tests are only skipped when both conditions are met:
+#   - Running in the workshop repository (forks always run the tests).
+#   - Targeting main: the base branch of a pull request (base_ref),
+#     or the pushed branch (ref_name).
+# The full test suite runs everywhere else (e.g. the solutions branch,
+# or a fork with the exercises solved).
+env:
+  SKIP_TESTS: >-
+    ${{ github.repository == 'Ekumen-OS/ros2_testing_workshop_roscon_es_25'
+    && (github.base_ref || github.ref_name) == 'main' }}
 
 jobs:
   build_and_test:

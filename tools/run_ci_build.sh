@@ -26,5 +26,9 @@ rosdep install --from-paths modules --ignore-src -y
 # Build
 colcon build --packages-up-to "$@" --symlink-install --event-handlers console_direct+
 
-# Test
+# Test (can be disabled by setting SKIP_TESTS=true)
+if [ "${SKIP_TESTS}" = "true" ]; then
+  echo "SKIP_TESTS is set, skipping tests."
+  exit 0
+fi
 colcon test --packages-up-to "$@" --event-handlers console_direct+ --return-code-on-test-failure

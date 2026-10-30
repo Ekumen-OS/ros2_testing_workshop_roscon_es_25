@@ -1,0 +1,5 @@
+# Allow fixing missing or mismatched sign-offs with a remediation commit
+# instead of rewriting history (e.g. squash merges authored with the GitHub
+# noreply email). See https://github.com/dcoapp/app#remediation-commit
+allowRemediationCommits:
+  individual: true

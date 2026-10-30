@@ -10,6 +10,7 @@ In this final module, the focus will be on **how to automate the building, linti
     - [Anatomy of a ROS 2 Workflow File](#anatomy-of-a-ros-2-workflow-file)
     - [Viewing CI Results](#viewing-ci-results)
     - [Enforcing CI with branch protection rules](#enforcing-ci-with-branch-protection-rules)
+    - [Testing the CI in your own fork](#testing-the-ci-in-your-own-fork)
   - [References](#references)
 
 ## Objectives
@@ -128,6 +129,31 @@ By setting up a protection rule for the `main` branch, status checks are require
 The required checks can be configured in the GitHub repository under `Settings -> Branches -> Add branch ruleset`.
 
 This simple setting is a cornerstone of maintaining a healthy, high-quality codebase in a team environment.
+
+### Testing the CI in your own fork
+
+This repository already includes two workflows: [complete-ci.yml](../../.github/workflows/complete-ci.yml), which builds and tests all the packages, and [specific-ci.yml](../../.github/workflows/specific-ci.yml), which only builds and tests the packages changed by a pull request.
+
+Since the `main` branch of the workshop contains the **unsolved exercises**, its tests are expected to fail. For this reason, in the workshop repository both workflows only **build** the code when targeting `main`, and the full test suite runs on the [`solutions`](https://github.com/Ekumen-OS/ros2_testing_workshop_roscon_es_25/tree/solutions) branch. In any fork, the condition doesn't apply and the tests always run, so the CI can be used to validate the solutions to the exercises:
+
+1. [Fork the repository](https://github.com/Ekumen-OS/ros2_testing_workshop_roscon_es_25/fork) and enable GitHub Actions in the `Actions` tab of the fork (they are disabled by default on forks).
+2. Create a new branch and solve the exercises of the modules there (or start from the `solutions` branch to see what a green run looks like).
+3. Push the branch and open a pull request **against the `main` branch of the fork**, not against the workshop repository.
+4. Check the results of both workflows in the pull request. If an exercise is not solved correctly yet, the corresponding linter or test will fail, showing which `colcon` command failed in the logs. Note that `complete-ci` tests all the modules, so it will only turn green once every exercise is solved, while `specific-ci` only tests the packages changed in the pull request.
+
+> [!TIP]
+> Try breaking one of the solved exercises on purpose (e.g., removing a check in `module_2`) and push the change to the same pull request. The CI should turn red, and `specific-ci` should only rebuild and test the affected package.
+
+The CI is not the only way to check the solutions: tests are never skipped locally, so the same checks can be run inside the workshop container before pushing:
+
+```bash
+colcon build
+colcon test --event-handlers console_direct+
+colcon test-result --verbose
+```
+
+> [!NOTE]
+> **For workshop maintainers**: since tests are skipped for the workshop `main` branch, changes to the exercises or their tests must be verified against the solved code. Merge the branch into one based on `solutions` and open a pull request against `solutions`, where the full test suite runs.
 
 ## References
 

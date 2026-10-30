@@ -13,10 +13,18 @@
 # limitations under the License.
 
 find_package(ament_cmake_gtest REQUIRED)
+find_package(ament_cmake_gmock REQUIRED)
 
 ament_add_gtest(test_laser_detector
   test_laser_detector.cpp
 )
 target_link_libraries(test_laser_detector
   laser_detector
+)
+
+ament_add_gmock(test_safety_monitor
+  test_safety_monitor.cpp
+)
+target_link_libraries(test_safety_monitor
+  safety_monitor
 )

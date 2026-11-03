@@ -135,8 +135,9 @@ public:
 In production, the real driver is injected. In unit tests, it is replaced by a **mock**: a fake implementation whose behavior is defined by the test. [GoogleMock](https://google.github.io/googletest/gmock_for_dummies.html), or `gmock`, ships with GoogleTest and provides the tools to create them:
 
 - **`MOCK_METHOD`**: declares a mocked method in a class deriving from the interface, with the form `MOCK_METHOD(ReturnType, MethodName, (Args...), (Specs...))`.
-- **`EXPECT_CALL`**: sets the expectation that a method will be called. It must be set **before** the code under test runs, and it is verified automatically when the mock is destroyed.
-- **Actions and cardinalities**: `.WillOnce(Return(value))` defines what a call returns, and `.Times(n)` how many calls are expected.
+- **`EXPECT_CALL`**: sets the expectation that a method will be called, and checks it: the test fails if the method is called more or fewer times than expected. It must be set **before** the code under test runs, and it is verified automatically when the mock is destroyed.
+- **Actions and cardinalities**: `.WillOnce(Return(value))` expects one call and defines what it returns. Chaining several `WillOnce` returns the values in order, and `.Times(n)` or `.WillRepeatedly(action)` allow more calls.
+- **`StrictMock`**: by default, a call without a matching `EXPECT_CALL` only prints a warning and returns a default value (e.g., an empty vector). Declaring the mock as `::testing::StrictMock<MockT>` turns those calls into failures.
 
 See [gMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html) and the [gMock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html) in the official documentation for a more in-depth explanation.
 
@@ -297,7 +298,7 @@ The `LaserDetector` algorithm needs scans from a real laser scanner. The `Safety
 > [!IMPORTANT]
 > `SafetyMonitor` uses the `LaserDetector`, so complete [Exercise 2](#exercise-2) first.
 
-Review [test_safety_monitor.cpp](test/test_safety_monitor.cpp), where the `MockLaserScanner` is defined and injected in the `TestSafetyMonitor` fixture. The `ObstacleDetected` test is a complete example that can be used as a reference. The following components require completion:
+Review [test_safety_monitor.cpp](test/test_safety_monitor.cpp), where the `MockLaserScanner` is defined and injected in the `TestSafetyMonitor` fixture as a `StrictMock`. The `ObstacleDetected` test is a complete example that can be used as a reference. The following components require completion:
 
 - `PathClear` test: make the mock return a scan without obstacles and expect the path to be clear.
 - `EmptyScanIsNotClear` test: make the mock return an empty scan, simulating a driver failure, and expect the path not to be clear.
@@ -321,3 +322,4 @@ The task is complete when **tests are run** and the output shows **0 errors** an
 - [Google Test Assertions](https://google.github.io/googletest/reference/assertions.html)
 - [Google Mock Basics](https://google.github.io/googletest/gmock_for_dummies.html)
 - [Google Mock Cheat Sheet](https://google.github.io/googletest/gmock_cheat_sheet.html)
+- [Google Mock Cookbook](https://google.github.io/googletest/gmock_cook_book.html)

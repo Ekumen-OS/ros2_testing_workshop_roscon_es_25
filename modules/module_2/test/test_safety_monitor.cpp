@@ -27,6 +27,7 @@ namespace module_2 {
 namespace test {
 
 using ::testing::Return;
+using ::testing::StrictMock;
 
 // Mock of the laser scanner driver
 class MockLaserScanner : public LaserScannerInterface {
@@ -60,8 +61,10 @@ TEST(TestSafetyMonitorConstructor, NullScannerThrows) {
 
 class TestSafetyMonitor : public ::testing::Test {
  protected:
-  // Mock injected into the dut instead of the real driver
-  std::shared_ptr<MockLaserScanner> scanner_{std::make_shared<MockLaserScanner>()};
+  // Mock injected into the dut instead of the real driver. StrictMock makes
+  // any call without a matching EXPECT_CALL fail the test.
+  std::shared_ptr<StrictMock<MockLaserScanner>> scanner_{
+      std::make_shared<StrictMock<MockLaserScanner>>()};
   SafetyMonitor dut_{scanner_, make_detector()};
 };
 

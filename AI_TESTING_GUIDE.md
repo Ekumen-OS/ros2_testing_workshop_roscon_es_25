@@ -22,6 +22,8 @@ Maintain a balanced testing pyramid to ensure high-quality software:
 
 - **Unit Tests (Majority)**: Target the ROS-independent logic class using GoogleTest (`gtest`) and the **Arrange-Act-Assert (AAA)** pattern. Aim for 90-100% coverage on core algorithms. These must be ROS-agnostic, fast, and deterministic.
 
+- **Mocking**: Hide hardware drivers behind abstract interfaces injected through the constructor, and replace them with GoogleMock (`gmock`) mocks in unit tests. Mock only hardware and external systems; test pure logic with its real implementation.
+
 - **ROS Unit/Component Tests**: Validate node interfaces (topics, services, parameters) in isolation using test fixtures to manage the `rclcpp` lifecycle.
 
 - **Integration Tests**: Verify multi-node interactions and communication behavior using the `launch_testing` framework.

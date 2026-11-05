@@ -6,7 +6,7 @@ It combines theory with hands-on exercises so that participants can directly app
 
 📑 The slides are available at [roscon_es_25_workshop_slides.pdf](roscon_es_25_workshop_slides.pdf)
 
-🤖 **AI-Ready**: Use our [AI Testing Guide](/AI_TESTING_GUIDE.md) to ensure your AI coding assistant follows **professional testing standards and testable design** in your own ROS 2 projects. See section [AI Assistants](#-ai-assistants) for more detail.
+🤖 **AI-Ready**: Use our [ROS 2 testing skill](.claude/skills/ros2-testing/SKILL.md) to ensure your AI coding assistant follows **professional testing standards and testable design** in your own ROS 2 projects. See section [AI Assistants](#-ai-assistants) for more detail.
 
 ## 🚀 Motivation
 
@@ -57,13 +57,19 @@ By the end of the workshop, participants will be able to:
 
 If you use AI coding assistants (ChatGPT, GitHub Copilot, Claude, Cursor, etc.), you can provide them with the engineering practices taught in this workshop to ensure generated code is testable and robust.
 
-See **[AI_TESTING_GUIDE.md](AI_TESTING_GUIDE.md)**
+See **[SKILL.md](.claude/skills/ros2-testing/SKILL.md)**
 
-Providing this document as context to an AI assistant helps it generate code and tests that follow these engineering practices.
+It is packaged as an [Agent Skill](https://agentskills.io), so assistants that support skills (e.g., [Claude Code](https://docs.claude.com/en/docs/claude-code/overview)) load it automatically when working on ROS 2 code or tests. To use it in other projects, copy the `ros2-testing` folder to your assistant's skills directory, e.g., for Claude Code:
+
+```bash
+cp -r .claude/skills/ros2-testing ~/.claude/skills/
+```
+
+For other assistants, provide the document as context.
 
 **Example prompt**:
 
-> I am developing a ROS 2 project. Act as a Senior Robotics Engineer. Before generating any code or tests, read AI_TESTING_GUIDE.md and strictly follow its guidelines regarding testable design, the testing pyramid, and deterministic execution.
+> I am developing a ROS 2 project. Act as a Senior Robotics Engineer. Before generating any code or tests, read SKILL.md and strictly follow its guidelines regarding testable design, the testing pyramid, and deterministic execution.
 
 ## 📋 Workshop structure
 

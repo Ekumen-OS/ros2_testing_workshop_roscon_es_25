@@ -38,6 +38,10 @@ bool SafetyMonitor::is_path_clear() {
   // (e.g., the scanner is disconnected), so there is no way to know
   // whether the path is clear. Return false in that case.
 
+  if (ranges.empty()) {
+    return false;
+  }
+
   /// END EDIT --------------------------------------------------------
 
   // Run the obstacle detection algorithm

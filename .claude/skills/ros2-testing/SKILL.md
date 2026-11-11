@@ -20,6 +20,9 @@ This document defines professional engineering and testing standards for ROS 2 s
    | Algorithm/logic, edge cases, invalid input | Unit (gtest, gmock for hardware) |
    | Node parameters, topics, services, callbacks | ROS unit (isolated gtest fixture + executor) |
    | Several nodes working together | Integration (isolated `launch_testing`) |
+   | Full system behavior with real components (simulation, rosbags, hardware) | End-to-end |
+
+   End-to-end tests are usually too costly to write as part of a change, but don't skip them silently: when a behavior can only be verified at system level (e.g., it depends on other components, timing, sensors or the robot's environment), say so in your report and suggest the end-to-end scenario that should cover it.
 
 4. **Write and register the tests** following the rules below.
 

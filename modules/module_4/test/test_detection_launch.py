@@ -103,43 +103,68 @@ class TestDetectionSystem(unittest.TestCase):
     def setUpClass(cls):
         """Initialize rclpy and create a node once for all tests."""
         # ===================== BEGIN EDIT =================================
-
+        rclpy.init()
+        cls.node = rclpy.create_node("test_node")
         # ====================== END EDIT ==================================
-        pass
 
     @classmethod
     def tearDownClass(cls):
         """Shutdown rclpy and destroy the node after all tests are done."""
         # ===================== BEGIN EDIT =================================
-
+        cls.node.destroy_node()
+        rclpy.shutdown()
         # ====================== END EDIT ==================================
-        pass
 
     def test_obstacle_triggers_red_light(self, proc_output):
         """
         Tests that a close laser scan reading triggers the 'RED LIGHT' status.
         """
         # ===================== BEGIN EDIT =================================
-        #
-        # 1. Create a publisher to the /scan topic.
-        #
-        # 2. Wait for the subscriber to be ready (THIS IS THE CRITICAL PART!)
-        #    - Create a loop that checks `self.scan_publisher.get_subscription_count()`
-        #    - Use a timeout (for example 10 seconds) to prevent an infinite loop.
-        #    - Inside the loop, spin the node (`rclpy.spin_once`)
-        #    - After the loop, use `self.assertGreater` to fail the test if
-        #      no subscriber appeared.
-        #
-        # 3. Create and publish a LaserScan message that will trigger the detector.
-        #    Use the helper function above.
-        #
-        # 4. Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message.
-        #    - Give it a timeout (for example, 5 seconds).
-        #
-        # 5. (Optional but good practice) Add a try/except block around
-        #    `assertWaitFor` to provide a clearer failure message if it times out.
-        #
-        assert False  # Replace this 'assert' with the necessary code for the test
+        # Create a publisher to the /scan topic.
+        scan_publisher = self.node.create_publisher(LaserScan, "scan", 10)
+
+        # Wait for the /scan subscriber (laser_detector_node) to be ready
+        # This is the crucial step to prevent a flaky test.
+        max_wait_time = 10.0  # seconds
+        start_time = time.time()
+
+        while (
+            scan_publisher.get_subscription_count() == 0
+            and (time.time() - start_time) < max_wait_time
+        ):
+            self.node.get_logger().info(
+                "Waiting for subscriber...", throttle_duration_sec=1.0
+            )
+            rclpy.spin_once(self.node, timeout_sec=0.1)
+
+        # Fail the test if the subscriber never appears
+        self.assertGreater(
+            scan_publisher.get_subscription_count(),
+            0,
+            "Test failed: /scan subscriber never appeared.",
+        )
+        self.node.get_logger().info("Subscriber found!")
+
+        # Create and publish a LaserScan message
+        scan_msg = create_triggering_scan_msg()
+
+        # Give a brief moment for connection to establish
+        time.sleep(0.5)
+        scan_publisher.publish(scan_msg)
+        self.node.get_logger().info("Published triggering /scan message.")
+
+        # Use 'proc_output.assertWaitFor' to check for the "RED LIGHT" message
+        # We set a timeout (for example, 5 seconds) to wait for the log message.
+        try:
+            proc_output.assertWaitFor(
+                "STATUS: RED LIGHT - OBSTACLE DETECTED!",
+                process=None,  # Check output of all processes
+                timeout=5.0,
+            )
+        except AssertionError as e:
+            self.fail(
+                f"Test failed: Did not find 'STATUS: RED LIGHT - OBSTACLE DETECTED!' in output, as expected. \n{e}"
+            )
         # ====================== END EDIT ==================================
 
 

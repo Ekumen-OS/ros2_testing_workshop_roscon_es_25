@@ -93,7 +93,10 @@ TEST_F(TestSafetyMonitor, PathClear) {
   // Make the scanner return ranges far away from the footprint (e.g., all
   // of them at 5.0 m), call is_path_clear() and expect it to return true.
 
-  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+  const std::vector<float> ranges{5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0};
+  EXPECT_CALL(*scanner_, read_ranges()).WillOnce(Return(ranges));
+
+  EXPECT_TRUE(dut_.is_path_clear());
 
   /// END EDIT --------------------------------------------------------
 }
@@ -107,7 +110,9 @@ TEST_F(TestSafetyMonitor, EmptyScanIsNotClear) {
   // Make the scanner return an empty scan (std::vector<float>{}), call
   // is_path_clear() and expect it to return false.
 
-  EXPECT_FALSE(true) << "Intentional failure: logic not implemented yet.";
+  EXPECT_CALL(*scanner_, read_ranges()).WillOnce(Return(std::vector<float>{}));
+
+  EXPECT_FALSE(dut_.is_path_clear());
 
   /// END EDIT --------------------------------------------------------
 }

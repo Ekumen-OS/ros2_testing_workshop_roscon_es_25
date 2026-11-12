@@ -22,13 +22,13 @@ LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
     : rclcpp::Node("laser_detector_node", options) {
   // Declare parameters
   this->declare_parameter("footprint_radius", 1.0);
-  this->declare_parameter("min_point", 20);
+  this->declare_parameter("min_points", 20);
   this->declare_parameter("roi_min_angle", 0.0);
   this->declare_parameter("roi_max_angle", 2.0 * M_PI);
 
   // Get parameters
   footprint_radius_ = this->get_parameter("footprint_radius").as_double();
-  min_points_ = this->get_parameter("min_point").as_int();
+  min_points_ = this->get_parameter("min_points").as_int();
   roi_min_angle_ = this->get_parameter("roi_min_angle").as_double();
   roi_max_angle_ = this->get_parameter("roi_max_angle").as_double();
 
@@ -48,7 +48,7 @@ LaserDetectorNode::LaserDetectorNode(const rclcpp::NodeOptions& options)
   }
 
   // Publishers
-  obstacle_pub_ = this->create_publisher<std_msgs::msg::Bool>("obstacle_detections", 10);
+  obstacle_pub_ = this->create_publisher<std_msgs::msg::Bool>("obstacle_detection", 10);
 
   // Subscribers
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(

@@ -22,7 +22,7 @@ jobs:
   build_and_test:
     name: Build and Test
     # The type of virtual machine to run the job on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
